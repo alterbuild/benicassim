@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="fr" data-type="place">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Benicàssim · Présenter sa ville</title>
+  <meta name="description" content="Présentation orale en français sur Benicàssim (Castellón) : des vols Google Earth Studio de l'espace jusqu'à la plage, puis son histoire, ses fêtes et ses plus beaux endroits.">
+  <meta name="page-type" content="place">
+  <meta name="site-kind" content="other">
+  <meta name="page-kind" content="place">
+  <meta name="theme-color" content="#14170b">
+  <meta property="og:title" content="Benicàssim · Présenter sa ville">
+  <meta property="og:description" content="De l'espace à la plage : une présentation sur Benicàssim, avec des vols Google Earth Studio.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="media/photos/cote-aerienne.jpg">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/eb-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/jost-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/deck.css">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <a class="skip" href="#s-titre">Aller à la présentation</a>
+
+  <main class="viewport" id="viewport">
+    <div class="stage" id="stage" data-tone="light" aria-roledescription="présentation" aria-label="Benicàssim, présentation">
+
+      <!-- Altimètre : il suit l'altitude réelle de la caméra pendant les vols -->
+      <aside class="rail" id="rail" aria-hidden="true">
+        <p class="rail__readout"><span class="rail__label">Altitude</span> <span class="rail__value" id="rail-value">45&nbsp;000 km</span></p>
+        <div class="rail__track">
+          <span class="rail__stop" data-alt="45000000">Espace</span>
+          <span class="rail__stop" data-alt="3300000">Espagne</span>
+          <span class="rail__stop" data-alt="333800">Région</span>
+          <span class="rail__stop" data-alt="1580">Ville</span>
+          <span class="rail__marker" id="rail-marker"></span>
+        </div>
+      </aside>
+
+      <!-- 1 · Titre -->
+      <section class="slide slide--title" id="s-titre" data-alt="45000000" aria-label="Titre">
+        <div class="canvas">
+          <p class="kicker">Présenter sa ville · jeudi 26 novembre</p>
+          <h1 class="title-word">Benicàssim</h1>
+          <p class="title-line">La ville où je passe mes étés</p>
+          <img class="title-photo" src="media/photos/cote-aerienne.jpg" width="1920" height="1281"
+               alt="Vue aérienne de la côte de Benicàssim : les plages, les digues et la ville">
+        </div>
+      </section>
+
+      <!-- 2 · Plan -->
+      <section class="slide slide--plan" id="s-plan" data-alt="45000000" aria-label="Plan">
+        <div class="canvas">
+          <p class="kicker">Au programme</p>
+          <ol class="plan">
+            <li><span class="plan__n">1</span> Où est Benicàssim&nbsp;?</li>
+            <li><span class="plan__n">2</span> Un peu d'histoire</li>
+            <li><span class="plan__n">3</span> Spécialités et fêtes</li>
+            <li><span class="plan__n">4</span> Des lieux à découvrir</li>
+            <li><span class="plan__n">5</span> L'été à Benicàssim</li>
+            <li><span class="plan__n">6</span> Les plus et les moins</li>
+            <li><span class="plan__n">7</span> Mon bon plan</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- 3 · Vol 1 : de l'espace à la péninsule -->
+      <section class="slide slide--flight" id="s-vol-1" data-flight="vol-1-espace-peninsule" aria-label="Vol 1 : de l'espace jusqu'à l'Espagne">
+        <div class="canvas">
+          <video class="flight" muted playsinline preload="auto"
+                 poster="media/vol-1-debut.jpg" data-end-poster="media/vol-1-fin.jpg"
+                 aria-label="Vol de l'espace jusqu'à l'Espagne, avec ses frontières">
+            <source src="media/vol-1-espace-peninsule.mp4" type='video/mp4; codecs="avc1.640029"'>
+            <source src="media/vol-1-espace-peninsule.webm" type='video/webm; codecs="vp9"'>
+          </video>
+          <div class="cartouche">
+            <p class="cartouche__kicker">Le sud-ouest de l'Europe</p>
+            <h2 class="cartouche__name">L'Espagne</h2>
+            <p class="cartouche__sub">Dans la péninsule Ibérique, à côté du Portugal</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 · Vol 2 : vers la Communauté valencienne -->
+      <section class="slide slide--flight" id="s-vol-2" data-flight="vol-2-peninsule-valence" aria-label="Vol 2 : vers la Communauté valencienne">
+        <div class="canvas">
+          <video class="flight" muted playsinline preload="auto"
+                 poster="media/vol-2-debut.jpg" data-end-poster="media/vol-2-fin.jpg"
+                 aria-label="Vol de la péninsule Ibérique jusqu'à la côte de Castellón">
+            <source src="media/vol-2-peninsule-valence.mp4" type='video/mp4; codecs="avc1.640029"'>
+            <source src="media/vol-2-peninsule-valence.webm" type='video/webm; codecs="vp9"'>
+          </video>
+          <div class="cartouche">
+            <p class="cartouche__kicker">L'est de l'Espagne</p>
+            <h2 class="cartouche__name">La Communauté valencienne</h2>
+            <p class="cartouche__sub">Trois provinces&nbsp;: Valence, Alicante et Castellón</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 · Vol 3 : jusqu'à Benicàssim -->
+      <section class="slide slide--flight" id="s-vol-3" data-flight="vol-3-castellon-benicassim" aria-label="Vol 3 : jusqu'à Benicàssim">
+        <div class="canvas">
+          <video class="flight" muted playsinline preload="auto"
+                 poster="media/vol-3-debut.jpg" data-end-poster="media/vol-3-fin.jpg"
+                 aria-label="Vol de la côte de Castellón jusqu'à Benicàssim, vue depuis la mer">
+            <source src="media/vol-3-castellon-benicassim.mp4" type='video/mp4; codecs="avc1.640029"'>
+            <source src="media/vol-3-castellon-benicassim.webm" type='video/webm; codecs="vp9"'>
+          </video>
+          <div class="cartouche">
+            <p class="cartouche__kicker">La côte de Castellón</p>
+            <h2 class="cartouche__name">Benicàssim</h2>
+            <p class="cartouche__sub">Au bord de la Méditerranée</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6 · Situation : l'orbite atterrit dans le panneau -->
+      <section class="slide slide--content slide--situation" id="s-situation" data-alt="ville" aria-label="Situation">
+        <div class="canvas">
+          <div class="copy">
+            <p class="kicker" data-rise>1 · Situation</p>
+            <h2 class="headline" data-rise>Entre la mer et la&nbsp;montagne</h2>
+            <dl class="facts">
+              <div class="fact" data-rise><dt>12 km</dt><dd>au nord de Castellón</dd></div>
+              <div class="fact" data-rise><dt>6,9 km</dt><dd>de côte et cinq plages</dd></div>
+              <div class="fact" data-rise><dt>20 539</dt><dd>habitants en 2025</dd></div>
+            </dl>
+          </div>
+          <figure class="panel" id="orbit-panel">
+            <video class="orbit" muted playsinline loop preload="auto"
+                   poster="media/vol-3-fin.jpg"
+                   aria-label="Vue aérienne de Benicàssim qui tourne autour de la ville">
+              <source src="media/vol-4-orbite-benicassim.mp4" type='video/mp4; codecs="avc1.640029"'>
+              <source src="media/vol-4-orbite-benicassim.webm" type='video/webm; codecs="vp9"'>
+            </video>
+          </figure>
+        </div>
+      </section>
+
+      <!-- 7 · Climat et nature -->
+      <section class="slide slide--content slide--split" id="s-climat" data-alt="ville" aria-label="Climat et nature">
+        <div class="canvas">
+          <div class="copy">
+            <p class="kicker">1 · Climat et nature</p>
+            <h2 class="headline">Du soleil presque toute l'année</h2>
+            <ul class="keywords">
+              <li>un climat méditerranéen</li>
+              <li>des étés chauds, des hivers doux</li>
+              <li>la mer d'un côté, la montagne de l'autre</li>
+            </ul>
+          </div>
+          <div class="media media--pair">
+            <img class="ph" src="media/photos/terrers-palmiers.jpg" width="1920" height="1440"
+                 alt="Une passerelle en bois entre les palmiers, vers la plage dels Terrers">
+            <img class="ph" style="--pos: 62% 50%" src="media/photos/agulles-santa-agueda.jpg" width="1920" height="1440"
+                 alt="Les Agulles de Santa Àgueda, dans le parc naturel du Desert de les Palmes">
+          </div>
+        </div>
+      </section>
+
+      <!-- 8 · Histoire -->
+      <section class="slide slide--content slide--split" id="s-histoire" data-alt="ville" aria-label="Un peu d'histoire">
+        <div class="canvas">
+          <div class="copy copy--wide">
+            <p class="kicker">2 · Un peu d'histoire</p>
+            <h2 class="headline">Des pirates aux festivals</h2>
+            <dl class="timeline">
+              <div><dt>XIII<sup>e</sup> siècle</dt><dd>Le roi Jacques I<sup>er</sup> a conquis la région.</dd></div>
+              <div><dt>XVI<sup>e</sup> siècle</dt><dd>On a construit la tour de Sant Vicent contre les pirates.</dd></div>
+              <div><dt>XVII<sup>e</sup> siècle</dt><dd>Des moines carmes se sont installés dans la montagne.</dd></div>
+              <div><dt>Vers 1900</dt><dd>Des familles riches ont construit des villas d'été.</dd></div>
+              <div><dt>1995</dt><dd>Le premier festival international, le FIB, a eu lieu.</dd></div>
+            </dl>
+          </div>
+          <div class="media media--stack">
+            <img class="ph" style="--pos: 50% 40%" src="media/photos/torre-sant-vicent.jpg" width="1920" height="1280"
+                 alt="La tour de Sant Vicent, une tour de défense en pierre au bord de la plage">
+            <img class="ph" style="--pos: 50% 45%" src="media/photos/villa-maria.jpg" width="1920" height="1440"
+                 alt="Villa María, une villa blanche entourée de palmiers">
+          </div>
+        </div>
+      </section>
+
+      <!-- 9 · Spécialités et fêtes -->
+      <section class="slide slide--content slide--split" id="s-fetes" data-alt="ville" aria-label="Spécialités et fêtes">
+        <div class="canvas">
+          <div class="copy">
+            <p class="kicker">3 · Spécialités et fêtes</p>
+            <h2 class="headline">La ville des festivals</h2>
+            <dl class="items">
+              <div><dt>Le FIB</dt><dd>pop et rock, depuis 1995, un public très international</dd></div>
+              <div><dt>Le Rototom Sunsplash</dt><dd>un grand festival de reggae, ici depuis 2010</dd></div>
+              <div><dt>Le Carmelitano</dt><dd>une liqueur créée par les moines carmes</dd></div>
+            </dl>
+          </div>
+          <div class="media media--stack">
+            <img class="ph" src="media/photos/fib.jpg" width="1920" height="998"
+                 alt="Le public d'un concert du FIB, la nuit">
+            <img class="ph" style="--pos: 50% 35%" src="media/photos/rototom.jpg" width="1920" height="1281"
+                 alt="La grande scène du Rototom Sunsplash, la nuit, devant le public">
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 · Lieux à découvrir -->
+      <section class="slide slide--content slide--cards" id="s-lieux" data-alt="ville" aria-label="Des lieux à découvrir">
+        <div class="canvas">
+          <p class="kicker">4 · Des lieux à découvrir</p>
+          <h2 class="headline">Trois endroits à ne pas manquer</h2>
+          <ul class="cards">
+            <li class="card">
+              <img class="ph" style="--pos: 55% 50%" src="media/photos/monastere-desert.jpg" width="1920" height="1281"
+                   alt="L'ancien monastère des carmes, au milieu des pins du Desert de les Palmes">
+              <h3>Le Desert de les Palmes</h3>
+              <p>un parc naturel et un monastère</p>
+            </li>
+            <li class="card">
+              <img class="ph" style="--pos: 30% 50%" src="media/photos/via-verde-falaises.jpg" width="1920" height="1277"
+                   alt="Des falaises au-dessus d'une mer turquoise, le long de la Vía Verde">
+              <h3>La Vía Verde</h3>
+              <p>une ancienne voie ferrée au bord de la mer</p>
+            </li>
+            <li class="card">
+              <img class="ph" style="--pos: 60% 50%" src="media/photos/villa-de-la-torre.jpg" width="1920" height="1440"
+                   alt="Villa de la Torre, une villa avec une tour, sur la route des Villas">
+              <h3>La route des Villas</h3>
+              <p>des maisons d'été du début du XX<sup>e</sup> siècle</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 11 · L'été à Benicàssim -->
+      <section class="slide slide--content slide--bleed" id="s-ete" data-alt="ville" aria-label="L'été à Benicàssim">
+        <div class="canvas">
+          <div class="copy">
+            <p class="kicker">5 · L'été à Benicàssim</p>
+            <h2 class="headline">L'équilibre parfait</h2>
+            <ol class="points">
+              <li>Du monde… mais jamais trop</li>
+              <li>Beaucoup de fêtes</li>
+              <li>Et pourtant, très calme</li>
+              <li>Beaucoup de mes amis sont là</li>
+            </ol>
+          </div>
+          <img class="bleed-photo" style="--pos: 45% 50%" src="media/photos/plage-parasols.jpg" width="1920" height="1440"
+               alt="Une plage de Benicàssim en été, avec des parasols en paille et des baigneurs">
+        </div>
+      </section>
+
+      <!-- 12 · Les plus et les moins -->
+      <section class="slide slide--content slide--pm" id="s-plus-moins" data-alt="ville" aria-label="Les plus et les moins">
+        <div class="canvas">
+          <p class="kicker">6 · Les plus et les moins</p>
+          <div class="pm">
+            <div class="pm__col">
+              <h2 class="pm__title"><span aria-hidden="true">+</span> Les plus</h2>
+              <ul>
+                <li>la mer et la montagne</li>
+                <li>l'ambiance de l'été</li>
+                <li>les festivals</li>
+                <li>mes amis</li>
+              </ul>
+            </div>
+            <div class="pm__col">
+              <h2 class="pm__title"><span aria-hidden="true">−</span> Les moins</h2>
+              <ul>
+                <li>en hiver, c'est très calme</li>
+                <li>pendant les festivals, c'est bruyant</li>
+                <li>les prix montent en été</li>
+                <li>il faut souvent la voiture</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 13 · Mon bon plan -->
+      <section class="slide slide--content slide--photo" id="s-bon-plan" data-alt="ville" data-tone="dark" data-rail="off" aria-label="Mon bon plan">
+        <div class="canvas">
+          <img class="full-photo" src="media/photos/via-verde-cote.jpg" width="1920" height="1440"
+               alt="Le chemin de la Vía Verde entre la mer et les collines, entre Benicàssim et Oropesa">
+          <div class="plate">
+            <p class="kicker">7 · Mon bon plan</p>
+            <h2 class="plate__title">La Vía Verde à vélo, au coucher du soleil</h2>
+            <ul class="plate__facts">
+              <li>5,7 km entre Benicàssim et Oropesa</li>
+              <li>un tunnel et des falaises</li>
+              <li>c'est gratuit&nbsp;!</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 14 · Merci -->
+      <section class="slide slide--content slide--photo" id="s-merci" data-alt="ville" data-tone="dark" data-rail="off" aria-label="Merci">
+        <div class="canvas">
+          <img class="full-photo" style="--pos: 50% 60%" src="media/photos/plage-palmier.jpg" width="1920" height="1277"
+               alt="Un palmier sur la plage de Benicàssim, avec la mer et la ville au fond">
+          <div class="plate plate--thanks">
+            <h2 class="plate__title">Merci&nbsp;!</h2>
+            <p class="plate__line">Des questions&nbsp;?</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 15 · Crédits -->
+      <section class="slide slide--content slide--credits" id="s-credits" data-alt="ville" aria-label="Crédits">
+        <div class="canvas">
+          <p class="kicker">Crédits</p>
+          <p class="credits-lead">Vols&nbsp;: Google Earth Studio (Data SIO, NOAA, U.S. Navy, Landsat / Copernicus, Airbus). Limites&nbsp;: IGN via geoBoundaries et OpenStreetMap. Photos&nbsp;: Wikimedia Commons.</p>
+          <ul class="credits-list">
+              <li><span>La côte vue du ciel</span> Martin Cox from Benicasim, España · CC BY 2.0</li>
+              <li><span>Plage dels Terrers</span> Juan Emilio Prades Bel · CC BY-SA 3.0</li>
+              <li><span>Les Agulles de Santa Àgueda</span> Juan Emilio Prades Bel · CC BY-SA 3.0 es</li>
+              <li><span>Tour de Sant Vicent</span> Artistosteles · CC BY-SA 4.0</li>
+              <li><span>Villa María</span> JavierMunozF · CC BY-SA 4.0</li>
+              <li><span>FIB 2016</span> ÒscarGarciaHerraiz · CC BY-SA 4.0</li>
+              <li><span>Rototom Sunsplash 2018</span> Luca Valenta · CC BY-SA 4.0</li>
+              <li><span>Monastère du Desert de les Palmes</span> JavierMunozF · CC BY 4.0</li>
+              <li><span>Vía Verde, falaises</span> RicardoDorda · CC BY-SA 3.0 es</li>
+              <li><span>Villa de la Torre</span> Juan Emilio Prades Bel · CC BY-SA 4.0</li>
+              <li><span>Plage d'Heliópolis</span> Juan Emilio Prades Bel · CC BY-SA 4.0</li>
+              <li><span>Côte d'Orpesa et Benicàssim</span> Millars · CC BY-SA 4.0</li>
+              <li><span>Plage d'Heliópolis</span> Juan Emilio Prades Bel · CC BY-SA 3.0</li>
+              <li><span>Plage de Benicàssim</span> Vcarc · CC BY-SA 3.0</li>
+          </ul>
+        </div>
+      </section>
+
+      <p class="credit" id="credit">Images&nbsp;: Google Earth · Photos&nbsp;: Wikimedia Commons</p>
+    </div>
+
+    <nav class="controls" id="controls" aria-label="Navigation">
+      <span class="ctrl-status" id="preload" aria-live="polite"></span>
+      <button class="ctrl" id="btn-prev" type="button" aria-label="Diapositive précédente">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <span class="ctrl-count" id="count" aria-live="polite">1 / 15</span>
+      <button class="ctrl" id="btn-next" type="button" aria-label="Diapositive suivante">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+      <button class="ctrl" id="btn-full" type="button" aria-label="Plein écran" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+      </button>
+    </nav>
+  </main>
+
+  <script src="js/altitudes.js"></script>
+  <script src="js/borders.js"></script>
+  <script src="js/deck.js"></script>
+</body>
+</html>

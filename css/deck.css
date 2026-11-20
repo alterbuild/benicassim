@@ -1,0 +1,835 @@
+/* Benicàssim · Présenter sa ville
+   Lienzo fijo de 1920 × 1080 que se escala a la pantalla (modo presentación)
+   o se apila diapositiva a diapositiva en pantallas estrechas (modo lectura). */
+
+@font-face {
+  font-family: "EB Garamond";
+  src: url("../fonts/eb-garamond-latin.woff2") format("woff2");
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "EB Garamond";
+  src: url("../fonts/eb-garamond-italic-latin.woff2") format("woff2");
+  font-weight: 400 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Jost";
+  src: url("../fonts/jost-latin.woff2") format("woff2");
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Reparto de Taste: olive-on-bone, EB Garamond / Jost */
+  --p-bg: #ecebe7;
+  --p-surface: #e1dfd9;
+  --p-ink: #38450f;
+  --p-muted: #5a6537;
+  --p-inv-bg: #38450f;
+  --p-inv-surface: #435020;
+  --p-inv-ink: #ecebe7;
+  --p-inv-muted: #bbbfaf;
+  --night: #14170b;
+
+  --font-display: "EB Garamond", Georgia, serif;
+  --font-text: "Jost", "Futura", system-ui, sans-serif;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  --s: 1; /* escala del lienzo, la calcula deck.js */
+  --gutter: 360px; /* donde empieza el texto, a la derecha del altímetro */
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--night);
+  color: var(--p-ink);
+  font-family: var(--font-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body { overflow: hidden; }
+
+.skip {
+  position: absolute;
+  left: 16px;
+  top: -60px;
+  z-index: 50;
+  padding: 12px 16px;
+  background: var(--p-bg);
+  color: var(--p-ink);
+  font: 500 16px/1 var(--font-text);
+  text-decoration: none;
+  border-radius: 4px;
+}
+.skip:focus-visible { top: 16px; outline: 2px solid var(--p-ink); outline-offset: 2px; }
+
+h1, h2, p, ol, ul, dl, dd, figure { margin: 0; }
+ol, ul { padding: 0; list-style: none; }
+
+/* ------------------------------------------------------------ escenario */
+
+.viewport {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1920px;
+  height: 1080px;
+  transform: translate(-50%, -50%) scale(var(--s));
+  transform-origin: 50% 50%;
+  background: var(--p-bg);
+  overflow: hidden;
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 180ms ease, visibility 0s linear 180ms;
+}
+.slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 180ms ease, visibility 0s;
+}
+/* Sin JavaScript se ve al menos la portada */
+html:not(.js) .slide--title { opacity: 1; visibility: visible; }
+
+/* Entre dos vuelos el último fotograma y el primero coinciden: corte seco */
+.slide.is-instant { transition: none; }
+
+.canvas {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background: var(--p-bg);
+}
+
+.kicker {
+  font: 500 26px/1.2 var(--font-text);
+  letter-spacing: 0.01em;
+  color: var(--p-muted);
+}
+
+/* ------------------------------------------------------------ altímetro */
+
+.rail {
+  position: absolute;
+  left: 96px;
+  top: 72px;
+  bottom: 120px;
+  width: 230px;
+  z-index: 5;
+  color: var(--p-ink);
+  pointer-events: none;
+  transition: color 400ms ease, opacity 300ms ease;
+}
+.stage[data-tone="dark"] .rail { color: var(--p-inv-ink); }
+
+.rail__readout {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.rail__label {
+  font: 500 20px/1 var(--font-text);
+}
+.rail__value {
+  font: 500 34px/1.1 var(--font-text);
+  letter-spacing: -0.01em;
+}
+
+.rail__track {
+  position: absolute;
+  left: 0;
+  top: 120px;
+  bottom: 0;
+  width: 100%;
+}
+.rail__track::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: currentColor;
+  opacity: 0.35;
+}
+
+.rail__stop {
+  position: absolute;
+  left: 0;
+  /* top lo coloca deck.js según la altitud (escala logarítmica) */
+  transform: translateY(-50%);
+  padding-left: 32px;
+  font: 400 22px/1 var(--font-text);
+  color: var(--p-muted);
+  white-space: nowrap;
+  transition: color 300ms ease;
+}
+.stage[data-tone="dark"] .rail__stop { color: var(--p-inv-muted); }
+.rail__stop::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  width: 8px;
+  height: 2px;
+  background: currentColor;
+}
+.rail__stop.is-current { color: inherit; font-weight: 500; }
+.stage[data-tone="dark"] .rail__stop.is-current { color: var(--p-inv-ink); }
+
+.rail__marker {
+  position: absolute;
+  left: -2px;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: -9px;
+  border-radius: 50%;
+  background: currentColor;
+  will-change: transform;
+}
+
+/* Velo lateral: solo existe para que el altímetro se lea sobre la imagen */
+.stage::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 520px;
+  z-index: 4;
+  background: linear-gradient(90deg, rgb(20 23 11 / 0.62), rgb(20 23 11 / 0) 100%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+.stage[data-tone="dark"]::before { opacity: 1; }
+
+/* En las fotos a pantalla completa el altímetro no aporta nada: se retira */
+.stage[data-rail="off"] .rail,
+.stage[data-rail="off"]::before { opacity: 0; }
+
+/* ------------------------------------------------------------ 1 · titre */
+
+.slide--title .kicker {
+  position: absolute;
+  left: var(--gutter);
+  top: 330px;
+}
+.title-word {
+  position: absolute;
+  left: calc(var(--gutter) - 10px);
+  top: 400px;
+  font: 400 168px/0.9 var(--font-display);
+  letter-spacing: -0.025em;
+  color: var(--p-ink);
+}
+.title-line {
+  position: absolute;
+  left: var(--gutter);
+  top: 600px;
+  font: 400 40px/1.25 var(--font-text);
+  color: var(--p-muted);
+}
+
+.title-photo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 800px;
+  height: 1080px;
+  object-fit: cover;
+  object-position: 62% 50%;
+}
+
+/* ------------------------------------------------------------ 2 · plan */
+
+.slide--plan .kicker {
+  position: absolute;
+  left: var(--gutter);
+  top: 200px;
+}
+.plan {
+  position: absolute;
+  left: var(--gutter);
+  top: 268px;
+  width: 1160px;
+}
+.plan li {
+  display: flex;
+  align-items: baseline;
+  gap: 28px;
+  padding: 18px 0 16px;
+  border-top: 2px solid rgb(56 69 15 / 0.22);
+  font: 400 56px/1.05 var(--font-display);
+  letter-spacing: -0.01em;
+}
+.plan__n {
+  flex: none;
+  width: 40px;
+  font: 500 30px/1 var(--font-text);
+  color: var(--p-muted);
+  font-variant-numeric: tabular-nums;
+}
+.plan li:first-child { color: var(--p-ink); }
+.plan li:not(:first-child) { color: var(--p-muted); }
+
+/* ------------------------------------------------------------ vuelos */
+
+.slide--flight .canvas { background: #000; }
+
+.flight {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+}
+
+/* Límite (España, Comunitat Valenciana, Benicàssim): se dibuja al aterrizar */
+.borders {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+  overflow: visible;
+}
+.borders path {
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dashoffset: var(--len);
+  transition: stroke-dashoffset 160ms ease;
+}
+.borders .casing path { stroke: rgb(20 23 11 / 0.5); stroke-width: 8; }
+.borders .line path { stroke: var(--p-inv-ink); stroke-width: 3.5; }
+.slide.is-landed .borders path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1400ms var(--ease-in-out);
+}
+.slide.is-drawn .borders path { transition: none; }
+
+/* Arriba a la derecha: en los tres finales esa esquina es Francia, el mar o la montaña,
+   nunca el lugar del que se habla */
+.cartouche {
+  position: absolute;
+  right: 120px;
+  top: 56px;
+  z-index: 6;
+  max-width: 900px;
+  padding: 20px 32px 22px;
+  background: var(--p-bg);
+  color: var(--p-ink);
+  border-radius: 4px;
+  opacity: 0;
+  transform: translateY(-12px);
+  transition: opacity 200ms ease, transform 200ms var(--ease-out);
+}
+.slide.is-landed .cartouche {
+  opacity: 1;
+  transform: none;
+  transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out);
+}
+.cartouche__kicker {
+  font: 500 20px/1.2 var(--font-text);
+  color: var(--p-muted);
+}
+.cartouche__name {
+  margin-top: 6px;
+  font: 400 64px/1 var(--font-display);
+  letter-spacing: -0.015em;
+}
+.cartouche__sub {
+  margin-top: 8px;
+  font: 400 22px/1.3 var(--font-text);
+  color: var(--p-muted);
+}
+
+/* ------------------------------------------------------------ diapositivas de contenido */
+
+.copy {
+  position: absolute;
+  left: var(--gutter);
+  top: 196px;
+  width: 560px;
+}
+.headline {
+  margin-top: 22px;
+  font: 400 88px/1 var(--font-display);
+  letter-spacing: -0.015em;
+  color: var(--p-ink);
+  text-wrap: balance;
+}
+
+.facts { margin-top: 64px; }
+.fact {
+  display: grid;
+  grid-template-columns: 210px 1fr;
+  align-items: baseline;
+  column-gap: 24px;
+  padding: 22px 0;
+  border-top: 2px solid rgb(56 69 15 / 0.22);
+}
+.fact dt {
+  font: 400 64px/1 var(--font-display);
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.fact dd {
+  font: 400 28px/1.3 var(--font-text);
+  color: var(--p-muted);
+}
+
+.panel {
+  position: absolute;
+  left: 960px;
+  top: 304px;
+  width: 840px;
+  height: 472px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #000;
+  transform-origin: 0 0;
+}
+.orbit {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.keywords { margin-top: 56px; }
+.keywords li {
+  padding: 20px 0;
+  border-top: 2px solid rgb(56 69 15 / 0.22);
+  font: 400 34px/1.3 var(--font-text);
+  color: var(--p-ink);
+}
+
+
+/* ------------------------------------------------------------ fotos y diseños de contenido */
+
+.ph {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: cover;
+  object-position: var(--pos, 50% 50%);
+  border-radius: 4px;
+  background: var(--p-surface);
+}
+
+/* texto a la izquierda, fotos a la derecha */
+.media {
+  position: absolute;
+  left: 1000px;
+  right: 120px;
+  top: 196px;
+  bottom: 140px;
+  display: grid;
+  gap: 24px;
+}
+.media--pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.media--stack { grid-template-rows: repeat(2, minmax(0, 1fr)); }
+.copy--wide { width: 600px; }
+
+.timeline { margin-top: 34px; }
+.timeline > div,
+.items > div {
+  border-top: 2px solid rgb(56 69 15 / 0.22);
+}
+.timeline > div {
+  display: grid;
+  grid-template-columns: 196px minmax(0, 1fr);
+  column-gap: 20px;
+  align-items: baseline;
+  padding: 12px 0;
+}
+.timeline dt {
+  font: 400 36px/1.1 var(--font-display);
+  font-variant-numeric: lining-nums;
+}
+.timeline dd {
+  font: 400 25px/1.35 var(--font-text);
+  color: var(--p-ink);
+}
+.timeline sup,
+.card sup { font-size: 0.6em; line-height: 0; }
+
+.items { margin-top: 52px; }
+.items > div { padding: 20px 0 22px; }
+.items dt { font: 400 50px/1.05 var(--font-display); }
+.items dd {
+  margin-top: 8px;
+  font: 400 26px/1.35 var(--font-text);
+  color: var(--p-muted);
+}
+
+/* tres tarjetas */
+.slide--cards .kicker {
+  position: absolute;
+  left: var(--gutter);
+  top: 140px;
+}
+.slide--cards .headline {
+  position: absolute;
+  left: var(--gutter);
+  top: 178px;
+  margin: 0;
+}
+.cards {
+  position: absolute;
+  left: var(--gutter);
+  right: 120px;
+  top: 330px;
+  bottom: 110px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
+.card {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  min-height: 0;
+}
+.card h3 {
+  margin: 22px 0 0;
+  font: 400 46px/1.05 var(--font-display);
+  letter-spacing: -0.01em;
+}
+.card p {
+  margin: 8px 0 0;
+  font: 400 24px/1.35 var(--font-text);
+  color: var(--p-muted);
+}
+
+/* foto a sangre a la derecha */
+.bleed-photo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 860px;
+  height: 1080px;
+  object-fit: cover;
+  object-position: var(--pos, 50% 50%);
+}
+.points { margin-top: 52px; }
+.points li {
+  padding: 22px 0;
+  border-top: 2px solid rgb(56 69 15 / 0.22);
+  font: 400 50px/1.1 var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+/* los plus y los moins */
+.slide--pm .kicker {
+  position: absolute;
+  left: var(--gutter);
+  top: 196px;
+}
+.pm {
+  position: absolute;
+  left: var(--gutter);
+  right: 160px;
+  top: 262px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 96px;
+}
+.pm__title {
+  font: 400 88px/1 var(--font-display);
+  letter-spacing: -0.015em;
+}
+.pm__title span {
+  display: inline-block;
+  width: 0.62em;
+  color: var(--p-muted);
+}
+.pm ul { margin-top: 40px; }
+.pm li {
+  padding: 22px 0;
+  border-top: 2px solid rgb(56 69 15 / 0.22);
+  font: 400 34px/1.3 var(--font-text);
+}
+
+/* foto completa con un cartel */
+.full-photo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--pos, 50% 50%);
+}
+.plate {
+  position: absolute;
+  left: var(--gutter);
+  bottom: 110px;
+  z-index: 6;
+  max-width: 1000px;
+  padding: 34px 48px 40px;
+  background: var(--p-bg);
+  border-radius: 4px;
+}
+.plate__title {
+  margin-top: 12px;
+  font: 400 76px/1.02 var(--font-display);
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.plate__facts { margin-top: 22px; }
+.plate__facts li {
+  padding: 10px 0;
+  border-top: 2px solid rgb(56 69 15 / 0.18);
+  font: 400 28px/1.3 var(--font-text);
+  color: var(--p-muted);
+}
+/* el bon plan va sobre el cielo, para no tapar el camino ni la costa */
+#s-bon-plan .plate { top: 120px; bottom: auto; }
+.plate--thanks { padding: 30px 56px 40px; }
+.plate--thanks .plate__title {
+  margin: 0;
+  font-size: 160px;
+  line-height: 1;
+}
+.plate__line {
+  margin-top: 10px;
+  font: 400 40px/1.2 var(--font-text);
+  color: var(--p-muted);
+}
+
+/* créditos */
+.slide--credits .kicker {
+  position: absolute;
+  left: var(--gutter);
+  top: 140px;
+}
+.credits-lead {
+  position: absolute;
+  left: var(--gutter);
+  top: 186px;
+  width: 1340px;
+  font: 400 24px/1.45 var(--font-text);
+}
+.credits-list {
+  position: absolute;
+  left: var(--gutter);
+  right: 120px;
+  top: 300px;
+  columns: 2;
+  column-gap: 64px;
+  font: 400 20px/1.4 var(--font-text);
+  color: var(--p-muted);
+}
+.credits-list li {
+  break-inside: avoid;
+  padding: 10px 0;
+  border-top: 1px solid rgb(56 69 15 / 0.22);
+}
+.credits-list span {
+  display: block;
+  color: var(--p-ink);
+  font-weight: 500;
+}
+
+/* Entrada del texto tras el aterrizaje del panel (solo una vez, tras el vuelo 3) */
+.slide.is-entering [data-rise] {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.slide.is-entering.is-risen [data-rise] {
+  opacity: 1;
+  transform: none;
+  transition: opacity 360ms var(--ease-out), transform 360ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 55ms);
+}
+
+/* ------------------------------------------------------------ créditos */
+
+.credit {
+  position: absolute;
+  right: 120px;
+  bottom: 56px;
+  z-index: 6;
+  font: 400 20px/1 var(--font-text);
+  color: var(--p-muted);
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.stage[data-slide="s-situation"] .credit { opacity: 1; }
+
+/* ------------------------------------------------------------ mandos */
+
+.controls {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 8px;
+  background: rgb(20 23 11 / 0.82);
+  color: var(--p-inv-ink);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 200ms ease, transform 200ms var(--ease-out);
+}
+.controls.is-visible,
+.controls:focus-within {
+  opacity: 1;
+  transform: none;
+}
+.ctrl {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 160ms var(--ease-out);
+}
+.ctrl svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ctrl:active { transform: scale(0.96); }
+.ctrl:focus-visible { outline: 2px solid var(--p-inv-ink); outline-offset: 1px; }
+@media (hover: hover) and (pointer: fine) {
+  .ctrl:hover { background: rgb(236 235 231 / 0.14); }
+}
+.ctrl-count {
+  min-width: 64px;
+  padding: 0 6px;
+  text-align: center;
+  font: 500 15px/1 var(--font-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.ctrl-status {
+  padding: 0 10px 0 8px;
+  font: 400 14px/1 var(--font-text);
+  color: var(--p-inv-muted);
+  white-space: nowrap;
+}
+.ctrl-status:empty { display: none; }
+.ctrl-status.is-done { color: var(--p-inv-ink); }
+
+/* ------------------------------------------------------------ modo lectura (móvil, vertical) */
+
+html.is-list body { overflow: auto; }
+html.is-list .viewport {
+  position: static;
+  overflow: visible;
+  padding: 16px;
+}
+html.is-list .stage {
+  position: static;
+  width: auto;
+  height: auto;
+  transform: none;
+  background: transparent;
+  overflow: visible;
+}
+html.is-list .slide {
+  position: relative;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  opacity: 1;
+  visibility: visible;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 12px;
+  overflow: hidden;
+  border-radius: 6px;
+  transition: none;
+}
+html.is-list .canvas {
+  transform: scale(var(--s));
+  transform-origin: 0 0;
+}
+html.is-list .cartouche { opacity: 1; transform: none; }
+html.is-list .slide--flight { cursor: pointer; }
+html.is-list .slide.is-playing .cartouche { opacity: 0; }
+html.is-list .rail,
+html.is-list .controls,
+html.is-list .stage::before,
+html.is-list .skip { display: none; }
+html.is-list .credit {
+  position: static;
+  opacity: 1;
+  padding: 4px 0 8px;
+  color: var(--p-inv-muted);
+  font-size: 14px;
+}
+
+/* ------------------------------------------------------------ movimiento reducido */
+
+@media (prefers-reduced-motion: reduce) {
+  .slide.is-landed .borders path { transition: none; }
+  .cartouche,
+  .slide.is-landed .cartouche { transform: none; }
+  .slide.is-entering [data-rise] { transform: none; }
+  .rail { transition: color 200ms ease; }
+}
