@@ -306,6 +306,19 @@
     slide.classList.remove('is-entering', 'is-risen');
   }
 
+  /* ---------------------------------------------------------------- pasos dentro de una diapositiva
+     data-steps="N" en la diapositiva; cada hijo con data-at="k" aparece en el paso k
+     y cada hijo con data-until="k" se va en el paso k. "Siguiente" avanza el paso antes de cambiar. */
+
+  const stepsOf = (s) => Number(s.dataset.steps || 0);
+  const stepOf = (s) => Number(s.dataset.step || 0);
+
+  function setStep(slide, n) {
+    slide.dataset.step = String(n);
+    slide.querySelectorAll('[data-at]').forEach((el) => el.classList.toggle('is-shown', n >= Number(el.dataset.at)));
+    slide.querySelectorAll('[data-until]').forEach((el) => el.classList.toggle('is-gone', n >= Number(el.dataset.until)));
+  }
+
   /* ---------------------------------------------------------------- navegación */
 
   /* Antes de seguir, las fronteras y el cartel del vuelo se desvanecen; las chinchetas del vuelo 2
@@ -355,6 +368,12 @@
       else { land(slide, true, true); }
     } else {
       setAltitude(altFor(slide));
+      // Hacia atrás la diapositiva vuelve completa y sin animaciones de entrada
+      if (dir < 0) {
+        slide.classList.add('is-static');
+        requestAnimationFrame(() => requestAnimationFrame(() => slide.classList.remove('is-static')));
+      }
+      if (stepsOf(slide)) setStep(slide, dir > 0 ? 0 : stepsOf(slide));
     }
     if (slide.classList.contains('slide--situation')) startOrbit(slide, flip);
   }
@@ -384,11 +403,14 @@
       // solo hace falta esperar si hay algo que desvanecer (fronteras, cartel, chinchetas)
       if (index + 1 < slides.length && s.querySelector('.borders, .cartouche, .pins--track')) { fadeThenNext(s); return; }
     }
+    if (stepOf(s) < stepsOf(s)) { setStep(s, stepOf(s) + 1); return; }
     go(index + 1, 1);
   }
 
   function prev() {
     if (listMode) return;
+    const s = slides[index];
+    if (stepOf(s) > 0 && !isFlight(s)) { setStep(s, stepOf(s) - 1); return; }
     go(index - 1, -1);
   }
 
@@ -409,6 +431,8 @@
     listMode = list;
     root.classList.toggle('is-list', list);
     slides.forEach((s) => {
+      // En modo lectura cada diapositiva se ve en su último paso
+      if (list && stepsOf(s)) setStep(s, stepsOf(s));
       if (isFlight(s)) {
         const v = videoOf(s);
         v.pause();

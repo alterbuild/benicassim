@@ -789,15 +789,15 @@ html.is-list .pins__lines line { opacity: 1; transform: none; }
   position: absolute;
   left: var(--gutter);
   right: 120px;
-  top: 300px;
-  columns: 2;
-  column-gap: 64px;
-  font: 400 20px/1.4 var(--font-text);
+  top: 330px;
+  columns: 3;
+  column-gap: 48px;
+  font: 400 17px/1.35 var(--font-text);
   color: var(--p-muted);
 }
 .credits-list li {
   break-inside: avoid;
-  padding: 10px 0;
+  padding: 7px 0 8px;
   border-top: 1px solid rgb(56 69 15 / 0.22);
 }
 .credits-list span {
@@ -805,6 +805,359 @@ html.is-list .pins__lines line { opacity: 1; transform: none; }
   color: var(--p-ink);
   font-weight: 500;
 }
+
+/* ------------------------------------------------------------ pasos dentro de una diapositiva
+   deck.js pone .is-shown a [data-at] y .is-gone a [data-until] según el paso actual. */
+
+.fade-step {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 160ms ease, visibility 0s linear 160ms;
+}
+.fade-step.is-shown {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 340ms var(--ease-out), visibility 0s;
+}
+.until-step { transition: opacity 340ms var(--ease-out), visibility 0s; }
+.until-step.is-gone {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 160ms ease, visibility 0s linear 160ms;
+}
+/* al volver hacia atrás la diapositiva aparece ya completa, sin repetir animaciones */
+.slide.is-static,
+.slide.is-static * { transition: none !important; }
+
+.slide-note {
+  position: absolute;
+  right: 120px;
+  bottom: 56px;
+  font: 400 20px/1 var(--font-text);
+  color: var(--p-muted);
+}
+
+/* la semana de fiesta: cada pulsación llena un día */
+.slide--week .kicker {
+  position: absolute;
+  left: var(--gutter);
+  top: 140px;
+}
+.slide--week .headline {
+  position: absolute;
+  left: var(--gutter);
+  top: 178px;
+  margin: 0;
+}
+.week {
+  position: absolute;
+  left: var(--gutter);
+  right: 120px;
+  top: 340px;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  column-gap: 18px;
+}
+.day {
+  display: grid;
+  grid-template-rows: auto 340px auto;
+  row-gap: 16px;
+}
+.day__name {
+  font: 500 30px/1 var(--font-text);
+  color: var(--p-muted);
+  opacity: 0.45;
+  transition: opacity 160ms ease, color 160ms ease;
+}
+.day__bar {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--p-surface);
+}
+.day__bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: var(--p-ink);
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+  transition: transform 160ms ease;
+}
+.day__note {
+  min-height: 2.5em;
+  font: 400 24px/1.25 var(--font-text);
+  color: var(--p-muted);
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.day.is-shown .day__name {
+  opacity: 1;
+  color: var(--p-ink);
+  transition: opacity 200ms var(--ease-out), color 200ms var(--ease-out);
+}
+.day.is-shown .day__bar::after {
+  transform: none;
+  transition: transform 420ms var(--ease-out);
+}
+.day.is-shown .day__note {
+  opacity: 1;
+  transition: opacity 260ms var(--ease-out) 160ms;
+}
+.week__end {
+  position: absolute;
+  left: var(--gutter);
+  top: 860px;
+  font: 400 76px/1 var(--font-display);
+  letter-spacing: -0.015em;
+}
+
+/* plano de las salidas: las etiquetas entran volando, de oeste a este */
+.slide--map .canvas { background: #e7e5dd; }
+.map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+}
+.map__sea {
+  position: absolute;
+  right: 160px;
+  bottom: 44px;
+  font: italic 400 34px/1 var(--font-display);
+  letter-spacing: 0.02em;
+  color: #5d6f6a;
+}
+.spots__lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.spots__lines line {
+  stroke: var(--p-ink);
+  stroke-width: 2;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.spot__dot {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  border-radius: 50%;
+  background: var(--p-bg);
+  border: 5px solid var(--p-ink);
+  box-shadow: 2px 3px 0 rgb(20 23 11 / 0.35);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+.spot__card {
+  position: absolute;
+  width: 250px;
+  margin: 0;
+  padding: 8px 8px 12px;
+  background: var(--p-bg);
+  border-radius: 4px;
+  box-shadow: 0 10px 28px rgb(20 23 11 / 0.18);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+.spot__card img {
+  display: block;
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  object-position: var(--pos, 50% 50%);
+  border-radius: 2px;
+}
+.spot__card figcaption { padding: 10px 6px 0; }
+.spot__name {
+  display: block;
+  font: 400 32px/1.05 var(--font-display);
+  color: var(--p-ink);
+}
+.spot__type {
+  display: block;
+  margin-top: 4px;
+  font: 400 19px/1.25 var(--font-text);
+  color: var(--p-muted);
+}
+.slide.is-active .spot__dot {
+  opacity: 1;
+  transform: none;
+  transition: opacity 180ms var(--ease-out), transform 260ms var(--ease-out);
+  transition-delay: calc(150ms + var(--i) * 90ms);
+}
+.slide.is-active .spots__lines line {
+  opacity: 1;
+  transition: opacity 240ms var(--ease-out);
+  transition-delay: calc(240ms + var(--i) * 90ms);
+}
+.slide.is-active .spot__card {
+  opacity: 1;
+  transform: none;
+  transition: opacity 360ms var(--ease-out), transform 420ms var(--ease-out);
+  transition-delay: calc(240ms + var(--i) * 90ms);
+}
+.plate--map {
+  left: 120px;
+  bottom: 64px;
+  padding: 26px 40px 30px;
+}
+.plate--map .plate__title { font-size: 64px; }
+.plate__note {
+  margin-top: 10px;
+  font: 400 20px/1.2 var(--font-text);
+  color: var(--p-muted);
+}
+
+/* festivales: los tres logos llegan a la vez */
+.slide--fest .kicker {
+  position: absolute;
+  left: var(--gutter);
+  top: 160px;
+}
+.slide--fest .headline {
+  position: absolute;
+  left: var(--gutter);
+  top: 198px;
+  margin: 0;
+}
+.fests {
+  position: absolute;
+  left: var(--gutter);
+  right: 120px;
+  top: 380px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 64px;
+}
+.fest {
+  padding-top: 40px;
+  border-top: 2px solid rgb(56 69 15 / 0.22);
+}
+.fest img {
+  display: block;
+  width: 100%;
+  height: 190px;
+  object-fit: contain;
+  object-position: 0 50%;
+  opacity: 0;
+  transform: scale(0.96);
+  transform-origin: 0 50%;
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+.slide.is-active .fest img {
+  opacity: 1;
+  transform: none;
+  transition: opacity 360ms var(--ease-out) 120ms, transform 420ms var(--ease-out) 120ms;
+}
+.fest__when {
+  margin-top: 40px;
+  font: 400 50px/1.05 var(--font-display);
+  letter-spacing: -0.01em;
+}
+.fest__what {
+  margin-top: 10px;
+  font: 400 26px/1.35 var(--font-text);
+  color: var(--p-muted);
+}
+.fests__also {
+  position: absolute;
+  left: var(--gutter);
+  bottom: 110px;
+  font: 400 26px/1.3 var(--font-text);
+  color: var(--p-muted);
+}
+
+/* deportes de mar: dos columnas, el kitesurf aparte */
+.slide--sports .copy { width: 700px; }
+.slide--sports .bleed-photo { width: 760px; }
+.sports {
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 40px;
+}
+.sports li {
+  padding: 18px 0;
+  border-top: 2px solid rgb(56 69 15 / 0.22);
+  font: 400 34px/1.25 var(--font-text);
+}
+.sports .sports__star {
+  grid-column: 1 / -1;
+  font: 400 54px/1.05 var(--font-display);
+  letter-spacing: -0.01em;
+}
+.sports__star span {
+  display: block;
+  margin-top: 6px;
+  font: 400 28px/1.3 var(--font-text);
+  color: var(--p-muted);
+}
+
+/* restaurantes: aparecen en lugar de los tres lugares; el Taj Mahal llega el último */
+.restos {
+  position: absolute;
+  left: var(--gutter);
+  right: 120px;
+  top: 330px;
+  bottom: 110px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+}
+.resto {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  min-height: 0;
+}
+.resto h3 {
+  margin: 14px 0 0;
+  font: 400 36px/1.05 var(--font-display);
+  letter-spacing: -0.01em;
+}
+.resto p {
+  margin: 6px 0 0;
+  font: 400 21px/1.3 var(--font-text);
+  color: var(--p-muted);
+}
+.resto--qg {
+  grid-column: 4;
+  grid-row: 1 / span 2;
+  grid-template-rows: minmax(0, 1fr) auto auto auto;
+  padding: 16px 16px 24px;
+  border-radius: 4px;
+  background: var(--p-ink);
+  color: var(--p-inv-ink);
+}
+.resto--qg.fade-step { transform: translateY(12px); }
+.resto--qg.fade-step.is-shown {
+  transform: none;
+  transition: opacity 340ms var(--ease-out), transform 420ms var(--ease-out), visibility 0s;
+}
+.resto--qg h3 { font-size: 56px; }
+.resto--qg p { color: var(--p-inv-muted); font-size: 24px; }
+.resto--qg .resto__qg {
+  margin-top: 14px;
+  font: italic 400 36px/1.12 var(--font-display);
+  color: var(--p-inv-ink);
+}
+
+/* mi día perfecto: la línea del tiempo con algo más de aire en la primera columna */
+.slide--day .timeline > div { grid-template-columns: 210px minmax(0, 1fr); }
+.slide--day .timeline dt { font-size: 32px; }
+.slide--day .timeline dd { font-size: 27px; }
 
 /* Entrada del texto tras el aterrizaje del panel (solo una vez, tras el vuelo 3) */
 .slide.is-entering [data-rise] {
@@ -935,6 +1288,10 @@ html.is-list .canvas {
   transform-origin: 0 0;
 }
 html.is-list .cartouche { opacity: 1; transform: none; }
+html.is-list .spot__dot,
+html.is-list .spot__card,
+html.is-list .spots__lines line,
+html.is-list .fest img { opacity: 1; transform: none; }
 html.is-list .slide--flight { cursor: pointer; }
 html.is-list .slide.is-playing .cartouche { opacity: 0; }
 html.is-list .rail,
@@ -957,5 +1314,10 @@ html.is-list .credit {
   .cartouche,
   .slide.is-landed .cartouche { transform: none; }
   .slide.is-entering [data-rise] { transform: none; }
+  .spot__card,
+  .spot__dot,
+  .fest img,
+  .resto--qg.fade-step { transform: none; }
+  .day.is-shown .day__bar::after { transition: none; }
   .rail { transition: color 200ms ease; }
 }

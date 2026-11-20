@@ -65,32 +65,6 @@
   ]
  },
  {
-  "file": "fib.jpg",
-  "title": "Festival Internacional de Benicàssim 2016",
-  "by": "ÒscarGarciaHerraiz",
-  "licence": "CC BY-SA 4.0",
-  "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Festival_Internacional_de_Benic%C3%A0ssim_2016.jpg",
-  "width": 1920,
-  "size": [
-   1920,
-   998
-  ]
- },
- {
-  "file": "rototom.jpg",
-  "title": "Rototom Sunsplash 2018 Main Stage",
-  "by": "Luca Valenta",
-  "licence": "CC BY-SA 4.0",
-  "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Rototom_Sunsplash_2018_Main_Stage.jpg",
-  "width": 1920,
-  "size": [
-   1920,
-   1281
-  ]
- },
- {
   "file": "monastere-desert.jpg",
   "title": "2021 07 Monasterio Carmelitas Desierto Palmas",
   "by": "JavierMunozF",
@@ -156,19 +130,6 @@
   ]
  },
  {
-  "file": "heliopolis-vagues.jpg",
-  "title": "Platja d'Heliòpolis (Benicàssim)",
-  "by": "Juan Emilio Prades Bel",
-  "licence": "CC BY-SA 3.0",
-  "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Platja_d%27Heli%C3%B2polis_(Benic%C3%A0ssim).JPG",
-  "width": 1920,
-  "size": [
-   1920,
-   1440
-  ]
- },
- {
   "file": "plage-palmier.jpg",
   "title": "Benicassim",
   "by": "Vcarc",
@@ -180,5 +141,215 @@
    1920,
    1277
   ]
+ },
+ {
+  "file": "hotel-voramar.jpg",
+  "title": "Torreta y hotel Voramar de Benicàssim 03",
+  "by": "19Tarrestnom65",
+  "licence": "CC BY-SA 4.0",
+  "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Torreta_y_hotel_Voramar_de_Benic%C3%A0ssim_03.JPG",
+  "width": 1000,
+  "size": [
+   1000,
+   750
+  ],
+  "illustration": false
+ },
+ {
+  "file": "kitesurf.jpg",
+  "title": "Atardecer en la playa de Vilanova i la Geltrú - Barcelona",
+  "by": "Sourcefindering",
+  "licence": "CC BY-SA 4.0",
+  "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Atardecer_en_la_playa_de_Vilanova_i_la_Geltr%C3%BA_-_Barcelona.jpg",
+  "width": 1280,
+  "size": [
+   1280,
+   836
+  ],
+  "illustration": false
+ },
+ {
+  "file": "sortie-la-santa.jpg",
+  "title": "Space Ibiza Crowd 1",
+  "by": "Abir Anwar",
+  "licence": "CC BY 2.0",
+  "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Space_Ibiza_Crowd_1.jpg",
+  "width": 800,
+  "size": [
+   800,
+   600
+  ],
+  "illustration": true
+ },
+ {
+  "file": "sortie-casablanca.jpg",
+  "title": "Pacha Ibiza Crowd",
+  "by": "pravin.premkumar",
+  "licence": "CC BY 2.0",
+  "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Pacha_Ibiza_Crowd.jpg",
+  "width": 800,
+  "size": [
+   800,
+   449
+  ],
+  "illustration": true
+ },
+ {
+  "file": "sortie-place.jpg",
+  "title": "Plaza de Santa Ana, Madrid (26159833570)",
+  "by": "Edgardo W. Olivera from Montevideo, Uruguay",
+  "licence": "CC BY 2.0",
+  "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Plaza_de_Santa_Ana,_Madrid_(26159833570).jpg",
+  "width": 800,
+  "size": [
+   800,
+   600
+  ],
+  "illustration": true
+ },
+ {
+  "file": "sortie-lluna.jpg",
+  "title": "Bartender at Sylvarum cocktail bar, Alicante",
+  "by": "Kartoman",
+  "licence": "CC0",
+  "licenceUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Bartender_at_Sylvarum_cocktail_bar,_Alicante.jpg",
+  "width": 800,
+  "size": [
+   800,
+   450
+  ],
+  "illustration": true
+ },
+ {
+  "file": "sortie-tropical.jpg",
+  "title": "Colorful cocktails served at a bar countertop",
+  "by": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Colorful_cocktails_served_at_a_bar_countertop.jpg",
+  "width": 800,
+  "size": [
+   800,
+   530
+  ],
+  "illustration": true
+ },
+ {
+  "file": "sortie-corb.jpg",
+  "title": "Montaditos con jarra de cerveza",
+  "by": "Trubble",
+  "licence": "CC BY-SA 2.0",
+  "licenceUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Montaditos_con_jarra_de_cerveza.jpg",
+  "width": 800,
+  "size": [
+   800,
+   600
+  ],
+  "illustration": true
+ },
+ {
+  "file": "sortie-fuit-fuio.jpg",
+  "title": "Green Mill Cocktail Lounge interior",
+  "by": "Kenneth C. Zirkel",
+  "licence": "CC BY-SA 4.0",
+  "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Green_Mill_Cocktail_Lounge_interior.jpg",
+  "width": 800,
+  "size": [
+   800,
+   600
+  ],
+  "illustration": true
+ },
+ {
+  "file": "resto-nou-cafe.jpg",
+  "title": "Bocadillo de calamares 22",
+  "by": "Xemenendura",
+  "licence": "CC BY-SA 4.0",
+  "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Bocadillo_de_calamares_22.jpg",
+  "width": 900,
+  "size": [
+   900,
+   675
+  ],
+  "illustration": true
+ },
+ {
+  "file": "resto-vin-up.jpg",
+  "title": "Barra de pintxos Donosti 01",
+  "by": "Basotxerri",
+  "licence": "CC BY-SA 4.0",
+  "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Barra_de_pintxos_Donosti_01.JPG",
+  "width": 900,
+  "size": [
+   900,
+   675
+  ],
+  "illustration": true
+ },
+ {
+  "file": "resto-marabrasa.jpg",
+  "title": "Porto da Cruz, Madeira, grilled parrot fish",
+  "by": "Gerda Arendt",
+  "licence": "CC0",
+  "licenceUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Porto_da_Cruz,_Madeira,_grilled_parrot_fish.jpg",
+  "width": 900,
+  "size": [
+   900,
+   675
+  ],
+  "illustration": true
+ },
+ {
+  "file": "resto-doma.jpg",
+  "title": "Tortilla Española-2011",
+  "by": "Tamorlan",
+  "licence": "CC BY 3.0",
+  "licenceUrl": "https://creativecommons.org/licenses/by/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Tortilla_Espa%C3%B1ola-2011.JPG",
+  "width": 900,
+  "size": [
+   900,
+   600
+  ],
+  "illustration": true
+ },
+ {
+  "file": "resto-masia-bellver.jpg",
+  "title": "Plancha de grillades du Baron à Gussignies",
+  "by": "Pierre André Leclercq",
+  "licence": "CC BY-SA 4.0",
+  "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Plancha_de_grillades_du_Baron_%C3%A0_Gussignies.jpg",
+  "width": 900,
+  "size": [
+   900,
+   610
+  ],
+  "illustration": true
+ },
+ {
+  "file": "resto-taj-mahal.jpg",
+  "title": "Döner Kebab, Berlin, 2010 (01)",
+  "by": "AleGranholm",
+  "licence": "CC BY 2.0",
+  "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:D%C3%B6ner_Kebab,_Berlin,_2010_(01).jpg",
+  "width": 900,
+  "size": [
+   900,
+   600
+  ],
+  "illustration": true
  }
 ]
