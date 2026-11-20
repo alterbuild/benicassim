@@ -33,7 +33,7 @@
   /* ---------------------------------------------------------------- altímetro */
 
   const LOG_TOP = Math.log10(60e6);
-  const LOG_BOTTOM = Math.log10(400);
+  const LOG_BOTTOM = Math.log10(60);
 
   function railY(alt) {
     const t = (LOG_TOP - Math.log10(Math.max(alt, 1))) / (LOG_TOP - LOG_BOTTOM);
@@ -269,12 +269,14 @@
   function startOrbit(slide, flip) {
     const panel = slide.querySelector('.panel');
     const v = panel.querySelector('video');
-    try { v.currentTime = 0; } catch (e) { /* sin metadatos */ }
-    if (!reduceMotion.matches) v.play().catch(() => {});
+    if (v) {
+      try { v.currentTime = 0; } catch (e) { /* sin metadatos */ }
+      if (!reduceMotion.matches) v.play().catch(() => {});
+    }
 
     if (!flip) return;
 
-    // FLIP: el panel empieza ocupando todo el lienzo (mismo fotograma que el final del vuelo 3)
+    // FLIP: el panel empieza ocupando todo el lienzo (la misma foto con la que acaba el vuelo 4)
     const L = panel.offsetLeft;
     const T = panel.offsetTop;
     const sx = 1920 / panel.offsetWidth;
@@ -299,7 +301,8 @@
     const panel = slide.querySelector('.panel');
     if (!panel) return;
     if (panel.getAnimations) panel.getAnimations().forEach((a) => a.finish());
-    panel.querySelector('video').pause();
+    const v = panel.querySelector('video');
+    if (v) v.pause();
     slide.classList.remove('is-entering', 'is-risen');
   }
 
@@ -361,7 +364,7 @@
     if (i < 0 || i >= slides.length || i === index) return;
     const from = slides[index];
     const to = slides[i];
-    const flip = dir > 0 && from.id === 's-vol-3' && to.id === 's-situation' && !reduceMotion.matches;
+    const flip = dir > 0 && from.id === 's-vol-4' && to.id === 's-situation' && !reduceMotion.matches;
     const seamless = dir > 0 && isFlight(from) && isFlight(to);
     const instant = seamless || flip;
     from.classList.toggle('is-instant', instant);
@@ -378,7 +381,8 @@
     if (isFlight(s)) {
       if (s.dataset.state === 'playing') { land(s, true); return; }
       if (s.dataset.state !== 'landed') { play(s); return; }
-      if (index + 1 < slides.length) { fadeThenNext(s); return; }
+      // solo hace falta esperar si hay algo que desvanecer (fronteras, cartel, chinchetas)
+      if (index + 1 < slides.length && s.querySelector('.borders, .cartouche, .pins--track')) { fadeThenNext(s); return; }
     }
     go(index + 1, 1);
   }
