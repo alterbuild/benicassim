@@ -116,6 +116,99 @@
     });
   }
 
+  /* ---------------------------------------------------------------- chinchetas
+     Cabeza redonda en el punto exacto, línea fina hasta la etiqueta (en el mar).
+     En el vuelo 2 aparecen al aterrizar; en el vuelo 3 siguen a su ciudad fotograma a fotograma. */
+
+  const PINS = window.FLIGHT_PINS || {};
+  const TRACKS = window.FLIGHT_PIN_TRACKS || {};
+
+  // Crea la capa de chinchetas. Cada chincheta se mueve entera con un solo transform.
+  function makePinLayer(slide, pins, tracked) {
+    const layer = document.createElement('div');
+    layer.className = 'pins' + (tracked ? ' pins--track' : '');
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('class', 'pins__lines');
+    svg.setAttribute('viewBox', '0 0 1920 1080');
+    svg.setAttribute('aria-hidden', 'true');
+    layer.appendChild(svg);
+    const list = document.createElement('ul');
+    list.className = 'pins__list';
+    list.setAttribute('aria-label', 'Villes sur la carte');
+    const handles = pins.map((p, i) => {
+      const line = document.createElementNS(SVG_NS, 'line');
+      line.style.setProperty('--i', i);
+      svg.appendChild(line);
+      const item = document.createElement('li');
+      item.className = 'pin' + (p.main ? ' pin--main' : '');
+      item.style.setProperty('--i', i);
+      const head = document.createElement('span');
+      head.className = 'pin__head';
+      const label = document.createElement('span');
+      label.className = 'pin__label';
+      label.style.left = `${p.dx}px`;
+      label.style.top = `${p.dy}px`;
+      const name = document.createElement('span');
+      name.className = 'pin__name';
+      name.textContent = p.name;
+      label.appendChild(name);
+      if (p.sub) {
+        const sub = document.createElement('span');
+        sub.className = 'pin__sub';
+        sub.textContent = p.sub;
+        label.appendChild(sub);
+      }
+      item.append(head, label);
+      list.appendChild(item);
+      return { item, line, dx: p.dx, dy: p.dy };
+    });
+    layer.appendChild(list);
+    slide.querySelector('.canvas').insertBefore(layer, slide.querySelector('.cartouche'));
+    return handles;
+  }
+
+  function placePin(h, xy) {
+    if (!xy) {
+      h.item.style.visibility = 'hidden';
+      h.line.style.visibility = 'hidden';
+      return;
+    }
+    const [x, y] = xy;
+    h.item.style.visibility = '';
+    h.line.style.visibility = '';
+    h.item.style.transform = `translate(${x}px, ${y}px)`;
+    h.line.setAttribute('x1', x);
+    h.line.setAttribute('y1', y);
+    h.line.setAttribute('x2', x + h.dx);
+    h.line.setAttribute('y2', y + h.dy);
+  }
+
+  const pinTracks = new Map();   // diapositiva → { handles, frames }
+
+  function buildPins() {
+    slides.filter(isFlight).forEach((slide) => {
+      const still = PINS[slide.dataset.flight];
+      if (still && still.length) {
+        const meta = still.map((p) => ({ ...p, dx: p.lx - p.x, dy: p.ly - p.y }));
+        const handles = makePinLayer(slide, meta, false);
+        handles.forEach((h, i) => placePin(h, [still[i].x, still[i].y]));
+      }
+      const track = TRACKS[slide.dataset.flight];
+      if (track && track.frames.length) {
+        const handles = makePinLayer(slide, track.pins, true);
+        pinTracks.set(slide, { handles, frames: track.frames });
+        trackPins(slide, 0);
+      }
+    });
+  }
+
+  function trackPins(slide, frame) {
+    const t = pinTracks.get(slide);
+    if (!t) return;
+    const row = t.frames[Math.max(0, Math.min(t.frames.length - 1, frame))];
+    t.handles.forEach((h, i) => placePin(h, row[i]));
+  }
+
   /* ---------------------------------------------------------------- vuelos */
 
   function follow(slide) {
@@ -124,7 +217,9 @@
     const fps = DATA.fps || 30;
     const tick = () => {
       if (slide.dataset.state !== 'playing') return;
-      if (alts.length) setAltitude(alts[Math.min(alts.length - 1, Math.round(v.currentTime * fps))]);
+      const frame = Math.round(v.currentTime * fps);
+      if (alts.length) setAltitude(alts[Math.min(alts.length - 1, frame)]);
+      trackPins(slide, frame);
       requestAnimationFrame(tick);
     };
     tick();
@@ -145,6 +240,7 @@
     slide.dataset.state = 'playing';
     v.onended = () => land(slide, false);
     try { v.currentTime = 0; } catch (e) { /* aún sin metadatos */ }
+    trackPins(slide, 0);
     const p = v.play();
     if (p && p.catch) {
       p.catch(() => {
@@ -163,6 +259,7 @@
     // Al volver atrás el límite ya está dibujado; al aterrizar se dibuja
     slide.classList.toggle('is-drawn', instant);
     slide.classList.add('is-landed');
+    trackPins(slide, Infinity);
     const alts = altsOf(slide);
     if (alts.length && slide.classList.contains('is-active')) setAltitude(alts[alts.length - 1]);
   }
@@ -208,8 +305,31 @@
 
   /* ---------------------------------------------------------------- navegación */
 
+  /* Antes de seguir, las fronteras y el cartel del vuelo se desvanecen; las chinchetas del vuelo 2
+     se quedan porque continúan en el vuelo 3. Una segunda pulsación durante el desvanecimiento no espera. */
+  const LEAVE_MS = 450;
+  let leaving = null;
+
+  function cancelLeaving() {
+    if (!leaving) return;
+    clearTimeout(leaving.timer);
+    leaving.slide.classList.remove('is-leaving');
+    leaving = null;
+  }
+
+  function fadeThenNext(slide) {
+    slide.classList.add('is-leaving');
+    leaving = {
+      slide,
+      timer: setTimeout(() => {
+        leaving = null;
+        if (slides[index] === slide) go(index + 1, 1);
+      }, LEAVE_MS),
+    };
+  }
+
   function leave(slide) {
-    slide.classList.remove('is-active');
+    slide.classList.remove('is-active', 'is-leaving');
     if (isFlight(slide)) {
       const v = videoOf(slide);
       v.pause();
@@ -237,6 +357,7 @@
   }
 
   function go(i, dir) {
+    cancelLeaving();
     if (i < 0 || i >= slides.length || i === index) return;
     const from = slides[index];
     const to = slides[i];
@@ -252,10 +373,12 @@
 
   function next() {
     if (listMode) return;
+    if (leaving) { go(index + 1, 1); return; }
     const s = slides[index];
     if (isFlight(s)) {
       if (s.dataset.state === 'playing') { land(s, true); return; }
       if (s.dataset.state !== 'landed') { play(s); return; }
+      if (index + 1 < slides.length) { fadeThenNext(s); return; }
     }
     go(index + 1, 1);
   }
@@ -290,6 +413,7 @@
           v.poster = v.dataset.endPoster || v.poster;
           s.dataset.state = 'landed';
           s.classList.add('is-landed');
+          trackPins(s, Infinity);   // la lista muestra el último fotograma: chinchetas en su sitio final
         }
       }
     });
@@ -426,6 +550,7 @@
   /* ---------------------------------------------------------------- arranque */
 
   buildBorders();
+  buildPins();
   const fromHash = slides.findIndex((s) => `#${s.id}` === location.hash);
   index = fromHash > 0 ? fromHash : 0;
   fit();
