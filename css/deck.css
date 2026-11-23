@@ -384,6 +384,7 @@ html:not(.is-list) .slide--plan:not(.is-active) .canvas::after { opacity: 0; }
 .slide--plan[data-dir="fwd"].is-active .plan li:nth-child(5) { animation-delay: 560ms; }
 .slide--plan[data-dir="fwd"].is-active .plan li:nth-child(6) { animation-delay: 630ms; }
 .slide--plan[data-dir="fwd"].is-active .plan li:nth-child(7) { animation-delay: 710ms; }
+.slide--plan[data-dir="fwd"].is-active .plan li:nth-child(8) { animation-delay: 780ms; }
 
 /* el altímetro, blanco sobre las dos primeras */
 .stage[data-slide="s-plan"]::before,
@@ -423,20 +424,21 @@ html:not(.is-list) .slide--plan.is-handoff .plan li:nth-child(4) { transition-de
 html:not(.is-list) .slide--plan.is-handoff .plan li:nth-child(5) { transition-delay: 110ms; }
 html:not(.is-list) .slide--plan.is-handoff .plan li:nth-child(6) { transition-delay: 130ms; }
 html:not(.is-list) .slide--plan.is-handoff .plan li:nth-child(7) { transition-delay: 150ms; }
+html:not(.is-list) .slide--plan.is-handoff .plan li:nth-child(8) { transition-delay: 170ms; }
 
 /* ------------------------------------------------------------ 2 · plan */
 
 .slide--plan .kicker {
   position: absolute;
   left: var(--gutter);
-  top: 200px;
+  top: 150px; /* 8 partes: el bloque sube para no rozar el borde de abajo */
   color: #fff;
   opacity: 0.92;
 }
 .plan {
   position: absolute;
   left: var(--gutter);
-  top: 268px;
+  top: 218px;
   width: 1160px;
 }
 .plan li {
