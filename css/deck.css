@@ -251,7 +251,7 @@ html:not(.js) .slide--title { opacity: 1; visibility: visible; }
 }
 /* abajo la barra pasa sobre el pueblo y el bosque: una sombra corta la despega de la foto */
 .stage[data-slide="s-climat"] .rail--progress {
-  text-shadow: 0 1px 2px rgb(4 18 32 / 0.7), 0 0 14px rgb(4 18 32 / 0.55);
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.6), 0 2px 12px rgb(0 0 0 / 0.4);
 }
 .stage[data-slide="s-climat"] .rail--progress .rail__stop { color: rgb(236 235 231 / 0.86); }
 .stage[data-slide="s-climat"] .rail--progress .rail__stop.is-current { color: #fff; }
@@ -954,7 +954,7 @@ html.is-list .pins__lines line { opacity: 1; transform: none; }
   left: var(--gutter);
   top: 104px;
   color: #fff;
-  text-shadow: 0 1px 28px rgb(8 52 92 / 0.28);
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.18), 0 2px 22px rgb(0 0 0 / 0.2);
 }
 .sky-copy .kicker { color: #fff; opacity: 0.94; }
 .sky-copy .headline {
@@ -982,7 +982,7 @@ html.is-list .pins__lines line { opacity: 1; transform: none; }
   z-index: 2;
   font: italic 400 42px/1 var(--font-display);
   color: #fff;
-  text-shadow: 0 1px 3px rgb(4 22 40 / 0.5), 0 2px 18px rgb(4 22 40 / 0.45);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.5), 0 2px 16px rgb(0 0 0 / 0.38);
   white-space: nowrap;
   opacity: 0;
   transform: translateY(10px);
