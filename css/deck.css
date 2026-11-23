@@ -244,6 +244,17 @@ html:not(.js) .slide--title { opacity: 1; visibility: visible; }
 .stage:not([data-rail="alt"]) .rail--alt,
 .stage:not([data-rail="progress"]) .rail--progress,
 .stage:not([data-rail="alt"])::before { opacity: 0; }
+/* el clima es una foto a sangre con la barra de progreso: el mismo velo, azul como en la portada */
+.stage[data-slide="s-climat"][data-rail="progress"]::before {
+  opacity: 1;
+  background: linear-gradient(90deg, rgb(8 30 52 / 0.56), rgb(8 30 52 / 0) 100%);
+}
+/* abajo la barra pasa sobre el pueblo y el bosque: una sombra corta la despega de la foto */
+.stage[data-slide="s-climat"] .rail--progress {
+  text-shadow: 0 1px 2px rgb(4 18 32 / 0.7), 0 0 14px rgb(4 18 32 / 0.55);
+}
+.stage[data-slide="s-climat"] .rail--progress .rail__stop { color: rgb(236 235 231 / 0.86); }
+.stage[data-slide="s-climat"] .rail--progress .rail__stop.is-current { color: #fff; }
 
 /* ------------------------------------------------------------ progreso por partes
    El mismo instrumento que el altímetro, en su hueco: las paradas son las partes del plan.
@@ -923,6 +934,69 @@ html.is-list .pins__lines line { opacity: 1; transform: none; }
   color: var(--p-muted);
 }
 
+/* clima: la foto aérea a sangre y el texto en el cielo, como en la portada.
+   «La mer d'un côté, la montagne de l'autre» se reparte sobre la foto: cada mitad encima de lo que nombra,
+   y aparecen en ese orden para que la mirada vaya de la mar a la montaña mientras se dice la frase. */
+.slide--sky .canvas::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 620px;
+  z-index: 1;
+  background: linear-gradient(180deg, rgb(8 52 92 / 0.44) 0, rgb(8 52 92 / 0.32) 360px, rgb(8 52 92 / 0) 620px);
+  pointer-events: none;
+}
+.sky-copy {
+  position: absolute;
+  z-index: 2;
+  left: var(--gutter);
+  top: 104px;
+  color: #fff;
+  text-shadow: 0 1px 28px rgb(8 52 92 / 0.28);
+}
+.sky-copy .kicker { color: #fff; opacity: 0.94; }
+.sky-copy .headline {
+  margin-top: 18px;
+  font-size: 96px;
+  color: #fff;
+  white-space: nowrap;
+}
+.sky-facts {
+  display: flex;
+  gap: 48px;
+  margin-top: 40px;
+}
+.sky-facts li {
+  min-width: 400px;
+  padding-top: 16px;
+  white-space: nowrap;
+  border-top: 2px solid rgb(255 255 255 / 0.6);
+  font: 400 34px/1.3 var(--font-text);
+}
+/* rótulos de mapa, en blanco sobre la foto: el de la mar cabe en el agua abierta,
+   entre el horizonte y los picos, sin tapar ninguno */
+.sky-tag {
+  position: absolute;
+  z-index: 2;
+  font: italic 400 42px/1 var(--font-display);
+  color: #fff;
+  text-shadow: 0 1px 3px rgb(4 22 40 / 0.5), 0 2px 18px rgb(4 22 40 / 0.45);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+.sky-tag--mer { left: var(--gutter); top: 446px; }
+.sky-tag--montagne { left: 1300px; top: 700px; }
+.slide--sky.is-active .sky-tag {
+  opacity: 1;
+  transform: none;
+  transition: opacity 420ms var(--ease-out), transform 480ms var(--ease-out);
+  transition-delay: calc(640ms + var(--i) * 280ms);
+}
+
 /* créditos */
 .slide--credits .kicker {
   position: absolute;
@@ -1380,6 +1454,102 @@ html.is-list .cats { display: none; }
   transition-delay: calc(var(--i, 0) * 55ms);
 }
 
+/* ------------------------------------------------------------ entradas de diapositiva
+   Para las diapositivas que solo tenían el fundido. El mismo lenguaje que la portada y el plan:
+   la foto se abre desde el borde del lienzo (o se posa, si lo ocupa todo), el texto sube detrás
+   y las listas llegan en una cascada corta que se va frenando, en el orden en que se leen.
+   Solo hacia delante: hacia atrás la diapositiva vuelve completa (data-dir="back").
+   Los fotogramas solo tienen «from»: cada elemento termina en su estilo normal, así que lo que
+   está oculto hasta un paso (los restaurantes, «Toute la semaine !») sigue oculto. */
+
+@keyframes enter-rise {
+  from { opacity: 0; transform: translateY(18px); }
+}
+@keyframes enter-settle {
+  from { transform: scale(1.06); }
+}
+/* clip-path necesita un final explícito: de inset() a «none» el navegador no interpola, salta */
+@keyframes enter-open {
+  from { clip-path: inset(0 0 0 100%); transform: scale(1.08); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes enter-drop {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+/* con movimiento reducido todo se queda en un fundido, sin desplazamientos */
+@media (prefers-reduced-motion: reduce) {
+  @keyframes enter-rise { from { opacity: 0; } }
+  @keyframes enter-settle { from { opacity: 1; } }
+  @keyframes enter-open { from { opacity: 0; } }
+  @keyframes enter-drop { from { opacity: 0; } }
+}
+
+/* cascada que se frena: cada fila sale antes de que acabe la anterior, y cada vez más pegada */
+:is(.sports, .timeline, .pm ul, .cards, .week, .sky-facts) > :nth-child(2) { --k: 60ms; }
+:is(.sports, .timeline, .pm ul, .cards, .week, .sky-facts) > :nth-child(3) { --k: 110ms; }
+:is(.sports, .timeline, .pm ul, .cards, .week, .sky-facts) > :nth-child(4) { --k: 150ms; }
+:is(.sports, .timeline, .pm ul, .cards, .week, .sky-facts) > :nth-child(5) { --k: 185ms; }
+:is(.sports, .timeline, .pm ul, .cards, .week, .sky-facts) > :nth-child(6) { --k: 215ms; }
+:is(.sports, .timeline, .pm ul, .cards, .week, .sky-facts) > :nth-child(7) { --k: 240ms; }
+:is(.sports, .timeline, .pm ul, .cards, .week, .sky-facts) > :nth-child(8) { --k: 260ms; }
+
+/* el rótulo de la parte y, detrás, el titular */
+html:not(.is-list) .slide[data-dir="fwd"].is-active:is(.slide--bleed, .slide--split, .slide--cards, .slide--week, .slide--pm, .slide--sky, .slide--credits) .kicker {
+  animation: enter-rise 560ms var(--ease-out) 60ms backwards;
+}
+html:not(.is-list) .slide[data-dir="fwd"].is-active:is(.slide--bleed, .slide--split, .slide--cards, .slide--week, .slide--sky) .headline {
+  animation: enter-rise 640ms var(--ease-out) 130ms backwards;
+}
+
+/* las listas, fila a fila */
+html:not(.is-list) .slide[data-dir="fwd"].is-active :is(.sports > li, .timeline > div, .sky-facts > li, .week > .day) {
+  animation: enter-rise 520ms var(--ease-out) backwards;
+  animation-delay: calc(280ms + var(--k, 0ms));
+}
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--cards .card {
+  animation: enter-rise 640ms var(--ease-out) backwards;
+  animation-delay: calc(240ms + var(--k, 0ms));
+}
+
+/* los plus llegan primero; los moins, cuando ya se han leído */
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--pm .pm__title {
+  animation: enter-rise 640ms var(--ease-out) 130ms backwards;
+}
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--pm .pm li {
+  animation: enter-rise 520ms var(--ease-out) backwards;
+  animation-delay: calc(300ms + var(--k, 0ms));
+}
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--pm .pm__col + .pm__col .pm__title { animation-delay: 420ms; }
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--pm .pm__col + .pm__col li { animation-delay: calc(580ms + var(--k, 0ms)); }
+
+/* la foto a sangre se abre desde el borde del lienzo hacia el texto */
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--bleed .bleed-photo {
+  transform-origin: 100% 50%;
+  animation: enter-open 1100ms var(--ease-out) backwards;
+}
+/* las fotos apiladas de la historia se descubren de arriba abajo, una detrás de otra */
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--split .media .ph {
+  animation: enter-drop 1000ms var(--ease-out) 60ms backwards;
+}
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--split .media .ph + .ph { animation-delay: 200ms; }
+
+/* foto a pantalla completa: se posa como la portada, y el cartel sube encima */
+html:not(.is-list) .slide[data-dir="fwd"].is-active:is(.slide--photo, .slide--sky) .full-photo {
+  animation: enter-settle 1400ms var(--ease-out) backwards;
+}
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--photo .plate {
+  animation: enter-rise 680ms var(--ease-out) 260ms backwards;
+}
+
+/* créditos: el texto y luego la lista, de una vez */
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--credits .credits-lead {
+  animation: enter-rise 600ms var(--ease-out) 140ms backwards;
+}
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--credits .credits-list {
+  animation: enter-rise 600ms var(--ease-out) 240ms backwards;
+}
+
 /* ------------------------------------------------------------ créditos */
 
 .credit {
@@ -1499,6 +1669,7 @@ html.is-list .canvas {
 html.is-list .cartouche { opacity: 1; transform: none; }
 html.is-list .spot__dot,
 html.is-list .spot__card,
+html.is-list .sky-tag,
 html.is-list .spots__lines line,
 html.is-list .fest img { opacity: 1; transform: none; }
 html.is-list .slide--flight { cursor: pointer; }
@@ -1525,6 +1696,7 @@ html.is-list .credit {
   .slide.is-entering [data-rise] { transform: none; }
   .spot__card,
   .spot__dot,
+  .sky-tag,
   .fest img,
   .resto--qg.fade-step { transform: none; }
   .day.is-shown .day__bar::after,
