@@ -241,41 +241,188 @@ html:not(.js) .slide--title { opacity: 1; visibility: visible; }
 .stage[data-tone="dark"]::before { opacity: 1; }
 
 /* En las fotos a pantalla completa el altímetro no aporta nada: se retira */
-.stage[data-rail="off"] .rail,
-.stage[data-rail="off"]::before { opacity: 0; }
+.stage:not([data-rail="alt"]) .rail--alt,
+.stage:not([data-rail="progress"]) .rail--progress,
+.stage:not([data-rail="alt"])::before { opacity: 0; }
+
+/* ------------------------------------------------------------ progreso por partes
+   El mismo instrumento que el altímetro, en su hueco: las paradas son las partes del plan.
+   La línea se rellena hasta el marcador; las partes hechas quedan en tinta, la actual en negrita. */
+
+.rail__fill {
+  position: absolute;
+  left: 6px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: currentColor;
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+}
+.rail--progress .rail__fill,
+.rail--progress .rail__marker { transition: transform 480ms var(--ease-out); }
+.rail--progress.is-still .rail__fill,
+.rail--progress.is-still .rail__marker { transition: none; }
+.rail__stop.is-done { color: inherit; }
+.stage[data-tone="dark"] .rail__stop.is-done { color: var(--p-inv-ink); }
 
 /* ------------------------------------------------------------ 1 · titre */
 
-.slide--title .kicker {
-  position: absolute;
-  left: var(--gutter);
-  top: 330px;
-}
-.title-word {
-  position: absolute;
-  left: calc(var(--gutter) - 10px);
-  top: 400px;
-  font: 400 168px/0.9 var(--font-display);
-  letter-spacing: -0.025em;
-  color: var(--p-ink);
-}
-.title-line {
-  position: absolute;
-  left: var(--gutter);
-  top: 600px;
-  font: 400 40px/1.25 var(--font-text);
-  color: var(--p-muted);
-}
-
+/* La portada es la foto a sangre; el título se apoya en el cielo, arriba a la izquierda.
+   Una sola entrada al cargar: la foto «aterriza» y el texto sube detrás. */
 .title-photo {
   position: absolute;
   top: 0;
-  right: 0;
-  width: 800px;
+  left: 0;
+  width: 1920px;
   height: 1080px;
   object-fit: cover;
-  object-position: 62% 50%;
+  object-position: 50% 10%;
+  z-index: 0;
 }
+.slide--title .canvas::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 520px;
+  z-index: 1;
+  background: linear-gradient(180deg, rgb(8 52 92 / 0.42), rgb(8 52 92 / 0));
+  pointer-events: none;
+}
+.slide--title .kicker,
+.title-word,
+.title-line {
+  position: absolute;
+  z-index: 2;
+  color: #fff;
+  text-shadow: 0 1px 28px rgb(8 52 92 / 0.28);
+}
+.slide--title .kicker {
+  left: var(--gutter);
+  top: 92px;
+  opacity: 0.94;
+}
+.title-word {
+  left: calc(var(--gutter) - 10px);
+  top: 124px;
+  font: 400 188px/0.9 var(--font-display);
+  letter-spacing: -0.025em;
+}
+.title-line {
+  left: var(--gutter);
+  top: 300px;
+  font: 400 40px/1.25 var(--font-text);
+}
+/* el velo del altímetro, más ligero y azul sobre el cielo de la portada */
+.stage[data-slide="s-titre"]::before {
+  background: linear-gradient(90deg, rgb(8 40 70 / 0.34), rgb(8 40 70 / 0) 100%);
+}
+
+@keyframes land {
+  from { transform: scale(1.06); }
+  to { transform: scale(1); }
+}
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.slide--title[data-dir="fwd"].is-active .title-photo {
+  animation: land 1400ms var(--ease-out) both;
+}
+.slide--title[data-dir="fwd"].is-active .kicker { animation: rise-in 520ms var(--ease-out) 380ms both; }
+.slide--title[data-dir="fwd"].is-active .title-word { animation: rise-in 620ms var(--ease-out) 500ms both; }
+.slide--title[data-dir="fwd"].is-active .title-line { animation: rise-in 520ms var(--ease-out) 660ms both; }
+
+/* Al pasar al plan la portada no se desvanece: la foto se queda y solo el texto sube
+   y se desenfoca al salir. Después de 650 ms la portada se oculta (el plan ya está encima). */
+html:not(.is-list) .slide--title:not(.is-active) {
+  opacity: 1;
+  transition: visibility 0s linear 650ms;
+}
+html:not(.is-list) .slide--title:not(.is-active) .kicker,
+html:not(.is-list) .slide--title:not(.is-active) .title-word,
+html:not(.is-list) .slide--title:not(.is-active) .title-line {
+  opacity: 0;
+  transform: translateY(-56px);
+  filter: blur(12px);
+  transition: opacity 420ms var(--ease-out), transform 520ms var(--ease-out), filter 420ms var(--ease-out);
+}
+html:not(.is-list) .slide--title:not(.is-active) .title-word { transition-delay: 40ms; }
+html:not(.is-list) .slide--title:not(.is-active) .title-line { transition-delay: 90ms; }
+
+/* 2 · el plan se apoya en la misma foto, con un velo que se enciende despacio;
+   su texto sube desde el desenfoque, uno tras otro. */
+.slide--plan .canvas { background: transparent; }
+.slide--plan .canvas::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  z-index: 1;
+  background: linear-gradient(90deg, rgb(8 44 78 / 0.66), rgb(8 44 78 / 0.46));
+  transition: opacity 700ms ease;
+  pointer-events: none;
+}
+html:not(.is-list) .slide--plan:not(.is-active) .canvas::after { opacity: 0; }
+.slide--plan .kicker,
+.plan { z-index: 2; }
+
+@keyframes up-in {
+  from { opacity: 0; transform: translateY(64px); filter: blur(14px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+.slide--plan[data-dir="fwd"].is-active .kicker { animation: up-in 760ms var(--ease-out) 200ms both; }
+.slide--plan[data-dir="fwd"].is-active .plan li { animation: up-in 760ms var(--ease-out) both; }
+.slide--plan[data-dir="fwd"].is-active .plan li:nth-child(1) { animation-delay: 260ms; }
+.slide--plan[data-dir="fwd"].is-active .plan li:nth-child(2) { animation-delay: 330ms; }
+.slide--plan[data-dir="fwd"].is-active .plan li:nth-child(3) { animation-delay: 410ms; }
+.slide--plan[data-dir="fwd"].is-active .plan li:nth-child(4) { animation-delay: 480ms; }
+.slide--plan[data-dir="fwd"].is-active .plan li:nth-child(5) { animation-delay: 560ms; }
+.slide--plan[data-dir="fwd"].is-active .plan li:nth-child(6) { animation-delay: 630ms; }
+.slide--plan[data-dir="fwd"].is-active .plan li:nth-child(7) { animation-delay: 710ms; }
+
+/* el altímetro, blanco sobre las dos primeras */
+.stage[data-slide="s-plan"]::before,
+.stage[data-handoff="s-plan"]::before {
+  background: linear-gradient(90deg, rgb(8 40 70 / 0.34), rgb(8 40 70 / 0) 100%);
+}
+
+/* Relevo al vuelo 1 (deck.js, 1700 ms): el plan se queda encima del vídeo, que ya corre debajo.
+   0–660 ms: el texto sube y se desenfoca, como la portada al salir.
+   300–1600 ms: la foto y su velo se funden sobre el espacio y se alejan un poco (despegamos);
+   el globo empieza a acercarse hacia 1 s, así que se le ve moverse a través del final del fundido. */
+html:not(.is-list) .slide--plan.is-handoff {
+  z-index: 3;
+  opacity: 1;
+  visibility: visible;
+}
+html:not(.is-list) .slide--plan.is-handoff .canvas {
+  opacity: 0;
+  transform: scale(0.97);
+  transition: opacity 1300ms ease 300ms, transform 1600ms var(--ease-out);
+}
+html:not(.is-list) .slide--plan.is-handoff .canvas::after { opacity: 1; }
+/* el altímetro es del vuelo: entra cuando ya se ve el globo, no encima de la playa */
+.stage[data-handoff="s-plan"] .rail--alt,
+.stage[data-handoff="s-plan"]::before { transition-delay: 550ms; }
+html:not(.is-list) .slide--plan.is-handoff .kicker,
+html:not(.is-list) .slide--plan.is-handoff .plan li {
+  opacity: 0;
+  transform: translateY(-56px);
+  filter: blur(12px);
+  transition: opacity 420ms var(--ease-out), transform 520ms var(--ease-out), filter 420ms var(--ease-out);
+}
+html:not(.is-list) .slide--plan.is-handoff .plan li:nth-child(1) { transition-delay: 30ms; }
+html:not(.is-list) .slide--plan.is-handoff .plan li:nth-child(2) { transition-delay: 50ms; }
+html:not(.is-list) .slide--plan.is-handoff .plan li:nth-child(3) { transition-delay: 70ms; }
+html:not(.is-list) .slide--plan.is-handoff .plan li:nth-child(4) { transition-delay: 90ms; }
+html:not(.is-list) .slide--plan.is-handoff .plan li:nth-child(5) { transition-delay: 110ms; }
+html:not(.is-list) .slide--plan.is-handoff .plan li:nth-child(6) { transition-delay: 130ms; }
+html:not(.is-list) .slide--plan.is-handoff .plan li:nth-child(7) { transition-delay: 150ms; }
 
 /* ------------------------------------------------------------ 2 · plan */
 
@@ -283,6 +430,8 @@ html:not(.js) .slide--title { opacity: 1; visibility: visible; }
   position: absolute;
   left: var(--gutter);
   top: 200px;
+  color: #fff;
+  opacity: 0.92;
 }
 .plan {
   position: absolute;
@@ -295,7 +444,7 @@ html:not(.js) .slide--title { opacity: 1; visibility: visible; }
   align-items: baseline;
   gap: 28px;
   padding: 18px 0 16px;
-  border-top: 2px solid rgb(56 69 15 / 0.22);
+  border-top: 2px solid rgb(255 255 255 / 0.34);
   font: 400 56px/1.05 var(--font-display);
   letter-spacing: -0.01em;
 }
@@ -303,11 +452,11 @@ html:not(.js) .slide--title { opacity: 1; visibility: visible; }
   flex: none;
   width: 40px;
   font: 500 30px/1 var(--font-text);
-  color: var(--p-muted);
+  color: rgb(255 255 255 / 0.8);
   font-variant-numeric: tabular-nums;
 }
-.plan li:first-child { color: var(--p-ink); }
-.plan li:not(:first-child) { color: var(--p-muted); }
+.plan li:first-child { color: #fff; }
+.plan li:not(:first-child) { color: rgb(255 255 255 / 0.8); }
 
 /* ------------------------------------------------------------ vuelos */
 
@@ -887,6 +1036,29 @@ html.is-list .pins__lines line { opacity: 1; transform: none; }
   transform-origin: 50% 100%;
   transition: transform 160ms ease;
 }
+.day__tick {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 96px;
+  height: 96px;
+  margin: -48px 0 0 -48px;
+  z-index: 1;
+  fill: none;
+  stroke: var(--p-bg);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.day__tick path {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  transition: stroke-dashoffset 120ms ease;
+}
+.day.is-shown .day__tick path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 380ms var(--ease-out) 140ms;
+}
 .day__note {
   min-height: 2.5em;
   font: 400 24px/1.25 var(--font-text);
@@ -914,6 +1086,41 @@ html.is-list .pins__lines line { opacity: 1; transform: none; }
   font: 400 76px/1 var(--font-display);
   letter-spacing: -0.015em;
 }
+
+/* fiesta de «Toute la semaine !»: confeti y gatitos (js/fiesta.js) */
+.confetti {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  pointer-events: none;
+}
+.cat {
+  position: absolute;
+  height: var(--h, 240px);
+  width: auto;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(28px) scale(0.92);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+.is-party .cat {
+  opacity: 1;
+  transform: translateY(0) scale(1) rotate(var(--tilt, 0deg)) scaleX(var(--flip, 1));
+  transition: opacity 320ms var(--ease-out), transform 520ms var(--ease-out);
+}
+/* tamaños, posiciones y orientaciones distintos; libres de títulos y columnas, repartidos por los bordes */
+.cat--1 { --h: 250px; --tilt: -6deg; --flip: 1;  top: 20px;   left: 1350px; }
+.cat--2 { --h: 170px; --tilt: 9deg;  --flip: -1; top: 90px;   left: 1650px; }
+.cat--3 { --h: 300px; --tilt: -3deg; --flip: -1; top: 735px;  left: 1010px; }
+.cat--4 { --h: 190px; --tilt: 12deg; --flip: 1;  top: 850px;  left: 1330px; }
+.cat--5 { --h: 220px; --tilt: -10deg; --flip: -1; top: 800px; left: 1560px; }
+.cat--6 { --h: 150px; --tilt: 5deg;  --flip: 1;  top: 800px;  left: 900px; }
+.cat--7 { --h: 130px; --tilt: -14deg; --flip: 1; top: 20px;   left: 1210px; }
+.cat--8 { --h: 200px; --tilt: 8deg;  --flip: -1; top: 780px;  left: 1760px; }
+html.is-list .confetti,
+html.is-list .cats { display: none; }
 
 /* plano de las salidas: las etiquetas entran volando, de oeste a este */
 .slide--map .canvas { background: #e7e5dd; }
@@ -1318,6 +1525,17 @@ html.is-list .credit {
   .spot__dot,
   .fest img,
   .resto--qg.fade-step { transform: none; }
-  .day.is-shown .day__bar::after { transition: none; }
+  .day.is-shown .day__bar::after,
+  .day.is-shown .day__tick path { transition: none; }
+  .slide--title[data-dir="fwd"].is-active .title-photo,
+  .slide--title[data-dir="fwd"].is-active .kicker,
+  .slide--title[data-dir="fwd"].is-active .title-word,
+  .slide--title[data-dir="fwd"].is-active .title-line { animation: none; }
+  /* el relevo al vuelo 1 se queda en un fundido, sin movimiento */
+  html:not(.is-list) .slide--plan.is-handoff .canvas,
+  html:not(.is-list) .slide--plan.is-handoff .kicker,
+  html:not(.is-list) .slide--plan.is-handoff .plan li { transform: none; filter: none; }
   .rail { transition: color 200ms ease; }
+  .rail--progress .rail__fill,
+  .rail--progress .rail__marker { transition: none; }
 }

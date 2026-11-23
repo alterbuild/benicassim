@@ -30,6 +30,17 @@
   const videoOf = (s) => s.querySelector('video');
   const altsOf = (s) => DATA.flights[s.dataset.flight] || [];
 
+  /* Velocidad por vídeo: data-rate="1.5" en el <video>. defaultPlaybackRate sobrevive al cambio
+     de src de la precarga (el navegador reinicia playbackRate a ese valor). El altímetro y las
+     chinchetas leen currentTime, así que siguen sincronizados a cualquier velocidad. */
+  const rateOf = (v) => Number(v.dataset.rate) || 1;
+  function applyRate(v) {
+    const r = rateOf(v);
+    if (v.defaultPlaybackRate !== r) v.defaultPlaybackRate = r;
+    if (v.playbackRate !== r) v.playbackRate = r;
+  }
+  stage.querySelectorAll('video[data-rate]').forEach(applyRate);
+
   /* ---------------------------------------------------------------- altímetro */
 
   const LOG_TOP = Math.log10(60e6);
@@ -81,6 +92,44 @@
       if (d < bestD) { bestD = d; best = stop; }
     });
     stops.forEach((stop) => stop.classList.toggle('is-current', stop === best));
+  }
+
+  /* ---------------------------------------------------------------- progreso por partes
+     Mismo hueco y aspecto que el altímetro. Cada parte ocupa 1/N de la pista y empieza en su parada;
+     dentro de una parte el marcador avanza un poco en cada diapositiva. Créditos (data-section="fin"):
+     la línea llena. */
+
+  const prog = document.getElementById('sections');
+  const progTrack = prog.querySelector('.rail__track');
+  const progFill = prog.querySelector('.rail__fill');
+  const progMarker = prog.querySelector('.rail__marker');
+  const progValue = prog.querySelector('.rail__value');
+  const progStops = Array.from(prog.querySelectorAll('.rail__stop'));
+  const PARTS = progStops.length;
+  progStops.forEach((stop, i) => { stop.style.top = `${(i / PARTS) * 100}%`; });
+  let progShown = false;
+
+  function setProgress(slide) {
+    const key = slide.dataset.section;
+    if (!key) return;
+    const part = key === 'fin' ? PARTS + 1 : Number(key);
+    const inPart = slides.filter((s) => s.dataset.section === key);
+    // Dentro de la parte avanza como mucho media parte: el punto nunca parece estar ya en la siguiente
+    const p = part > PARTS ? 1 : (part - 1 + 0.5 * (inPart.indexOf(slide) / inPart.length)) / PARTS;
+    // La primera vez se coloca sin recorrer la pista desde arriba
+    if (!progShown) prog.classList.add('is-still');
+    progFill.style.transform = `scaleY(${p.toFixed(4)})`;
+    progMarker.style.transform = `translateY(${(p * progTrack.offsetHeight).toFixed(1)}px)`;
+    progValue.textContent = part > PARTS ? 'Fin' : `${part} sur ${PARTS}`;
+    progStops.forEach((stop, i) => {
+      stop.classList.toggle('is-current', i === part - 1);
+      stop.classList.toggle('is-done', i < part - 1);
+    });
+    if (!progShown) {
+      progShown = true;
+      void prog.offsetWidth;
+      prog.classList.remove('is-still');
+    }
   }
 
   /* ---------------------------------------------------------------- límites al aterrizar
@@ -241,6 +290,7 @@
     v.onended = () => land(slide, false);
     try { v.currentTime = 0; } catch (e) { /* aún sin metadatos */ }
     trackPins(slide, 0);
+    applyRate(v);
     const p = v.play();
     if (p && p.catch) {
       p.catch(() => {
@@ -306,6 +356,30 @@
     slide.classList.remove('is-entering', 'is-risen');
   }
 
+  /* ---------------------------------------------------------------- relevo plan → vuelo 1
+     El vuelo 1 arranca nada más pulsar, debajo del plan. El texto del plan sube y se desenfoca
+     (como la portada al salir) y la foto se funde sobre el espacio: los primeros segundos del vuelo,
+     con el globo casi quieto, quedan bajo el fundido, y cuando el plan acaba de irse la Tierra
+     ya se está acercando. Los tiempos están en deck.css (.is-handoff). */
+  const HANDOFF_MS = 1700;
+  let handoff = null;
+
+  function startHandoff(slide) {
+    slide.classList.add('is-handoff');
+    stage.dataset.handoff = slide.id;
+    handoff = { slide, timer: setTimeout(endHandoff, HANDOFF_MS) };
+  }
+
+  function endHandoff() {
+    if (!handoff) return;
+    clearTimeout(handoff.timer);
+    // Se oculta de golpe (is-instant): sin el relevo su texto volvería a opacidad 1
+    handoff.slide.classList.add('is-instant');
+    handoff.slide.classList.remove('is-handoff');
+    delete stage.dataset.handoff;
+    handoff = null;
+  }
+
   /* ---------------------------------------------------------------- pasos dentro de una diapositiva
      data-steps="N" en la diapositiva; cada hijo con data-at="k" aparece en el paso k
      y cada hijo con data-until="k" se va en el paso k. "Siguiente" avanza el paso antes de cambiar. */
@@ -356,10 +430,13 @@
   }
 
   function activate(slide, dir, flip) {
+    slide.dataset.dir = dir > 0 ? 'fwd' : 'back';
     slide.classList.add('is-active');
     stage.dataset.slide = slide.id;
     stage.dataset.tone = slide.dataset.tone || (isFlight(slide) ? 'dark' : 'light');
-    stage.dataset.rail = slide.dataset.rail || 'on';
+    // El altímetro solo acompaña a los vuelos; en su hueco, el resto de partes muestran el progreso
+    stage.dataset.rail = slide.dataset.rail || (isFlight(slide) ? 'alt' : (slide.dataset.section ? 'progress' : 'off'));
+    setProgress(slide);
     count.textContent = `${index + 1} / ${slides.length}`;
     if (history.replaceState) history.replaceState(null, '', `#${slide.id}`);
 
@@ -381,14 +458,17 @@
   function go(i, dir) {
     cancelLeaving();
     if (i < 0 || i >= slides.length || i === index) return;
+    endHandoff();
     const from = slides[index];
     const to = slides[i];
     const flip = dir > 0 && from.id === 's-vol-4' && to.id === 's-situation' && !reduceMotion.matches;
     const seamless = dir > 0 && isFlight(from) && isFlight(to);
-    const instant = seamless || flip;
+    const relay = dir > 0 && from.classList.contains('slide--plan') && isFlight(to);
+    const instant = seamless || flip || relay;
     from.classList.toggle('is-instant', instant);
     to.classList.toggle('is-instant', instant);
     leave(from);
+    if (relay) startHandoff(from);
     index = i;
     activate(to, dir, flip);
   }
@@ -461,6 +541,7 @@
       if (!v.paused) { v.pause(); s.classList.remove('is-playing'); return; }
       s.classList.add('is-playing');
       v.currentTime = 0;
+      applyRate(v);
       v.onended = () => s.classList.remove('is-playing');
       v.play().catch(() => s.classList.remove('is-playing'));
     });
@@ -563,6 +644,7 @@
         const swap = () => {
           const t = v.currentTime;
           v.src = url;
+          applyRate(v);
           try { v.currentTime = t; } catch (e) { /* sin metadatos todavía */ }
         };
         if (v.paused) swap(); else v.addEventListener('pause', swap, { once: true });

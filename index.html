@@ -12,21 +12,21 @@
   <meta property="og:title" content="Benicàssim · Présenter sa ville">
   <meta property="og:description" content="De l'espace à la plage : une présentation sur Benicàssim, avec des vols Google Earth Studio.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="media/photos/cote-aerienne.jpg">
+  <meta property="og:image" content="media/photos/portada-plage.jpg">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preload" href="fonts/eb-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/jost-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/deck.css?v=20261120f">
+  <link rel="stylesheet" href="css/deck.css?v=20261123b">
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
   <a class="skip" href="#s-titre">Aller à la présentation</a>
 
   <main class="viewport" id="viewport">
-    <div class="stage" id="stage" data-tone="light" aria-roledescription="présentation" aria-label="Benicàssim, présentation">
+    <div class="stage" id="stage" data-tone="light" data-rail="off" aria-roledescription="présentation" aria-label="Benicàssim, présentation">
 
-      <!-- Altimètre : il suit l'altitude réelle de la caméra pendant les vols -->
-      <aside class="rail" id="rail" aria-hidden="true">
+      <!-- Altimètre : il suit l'altitude réelle de la caméra pendant les vols (solo en los vuelos) -->
+      <aside class="rail rail--alt" id="rail" aria-hidden="true">
         <p class="rail__readout"><span class="rail__label">Altitude</span> <span class="rail__value" id="rail-value">45&nbsp;000 km</span></p>
         <div class="rail__track">
           <span class="rail__stop" data-alt="45000000">Espace</span>
@@ -38,20 +38,38 @@
         </div>
       </aside>
 
+      <!-- Progression : mismo hueco y aspecto que el altímetro, en las diapositivas sin vídeo.
+           Una parada por parte (data-section de cada diapositiva); la línea se rellena al avanzar. -->
+      <aside class="rail rail--progress" id="sections" aria-hidden="true">
+        <p class="rail__readout"><span class="rail__label">Partie</span> <span class="rail__value">2 sur 7</span></p>
+        <div class="rail__track">
+          <span class="rail__fill"></span>
+          <span class="rail__stop">Situation</span>
+          <span class="rail__stop">Que faire&nbsp;?</span>
+          <span class="rail__stop">Climat, histoire</span>
+          <span class="rail__stop">Des lieux</span>
+          <span class="rail__stop">Ma journée</span>
+          <span class="rail__stop">Plus et moins</span>
+          <span class="rail__stop">Bon plan</span>
+          <span class="rail__marker"></span>
+        </div>
+      </aside>
+
       <!-- 1 · Titre -->
-      <section class="slide slide--title" id="s-titre" data-alt="45000000" aria-label="Titre">
+      <section class="slide slide--title" id="s-titre" data-alt="45000000" data-tone="dark" aria-label="Titre">
         <div class="canvas">
+          <img class="title-photo" src="media/photos/portada-plage.jpg" width="1360" height="1017"
+               alt="La plage de Benicàssim vue d'en haut, entre les pins, les palmiers et la mer">
           <p class="kicker">Présenter sa ville · jeudi 26 novembre</p>
           <h1 class="title-word">Benicàssim</h1>
           <p class="title-line">La ville où je passe mes étés</p>
-          <img class="title-photo" src="media/photos/cote-aerienne.jpg" width="1920" height="1281"
-               alt="Vue aérienne de la côte de Benicàssim : les plages, les digues et la ville">
         </div>
       </section>
 
       <!-- 2 · Plan -->
-      <section class="slide slide--plan" id="s-plan" data-alt="45000000" aria-label="Plan">
+      <section class="slide slide--plan" id="s-plan" data-alt="45000000" data-tone="dark" aria-label="Plan">
         <div class="canvas">
+          <img class="title-photo" src="media/photos/portada-plage.jpg" width="1360" height="1017" alt="">
           <p class="kicker">Au programme</p>
           <ol class="plan">
             <li><span class="plan__n">1</span> Où est Benicàssim&nbsp;?</li>
@@ -65,10 +83,10 @@
         </div>
       </section>
 
-      <!-- 3 · Vol 1 : de l'espace à la péninsule -->
-      <section class="slide slide--flight" id="s-vol-1" data-flight="vol-1-espace-peninsule" aria-label="Vol 1 : de l'espace jusqu'à l'Espagne">
+      <!-- 3 · Vol 1 : de l'espace à la péninsule (a 1,5×: data-rate; entra bajo el plan ya en marcha) -->
+      <section class="slide slide--flight" id="s-vol-1" data-section="1" data-flight="vol-1-espace-peninsule" aria-label="Vol 1 : de l'espace jusqu'à l'Espagne">
         <div class="canvas">
-          <video class="flight" muted playsinline preload="auto"
+          <video class="flight" muted playsinline preload="auto" data-rate="1.5"
                  poster="media/vol-1-debut.jpg" data-end-poster="media/vol-1-fin.jpg"
                  aria-label="Vol de l'espace jusqu'à l'Espagne, avec ses frontières">
             <source src="media/vol-1-espace-peninsule.mp4" type='video/mp4; codecs="avc1.640029"'>
@@ -83,7 +101,7 @@
       </section>
 
       <!-- 4 · Vol 2 : vers la Communauté valencienne -->
-      <section class="slide slide--flight" id="s-vol-2" data-flight="vol-2-peninsule-valence" aria-label="Vol 2 : vers la Communauté valencienne">
+      <section class="slide slide--flight" id="s-vol-2" data-section="1" data-flight="vol-2-peninsule-valence" aria-label="Vol 2 : vers la Communauté valencienne">
         <div class="canvas">
           <video class="flight" muted playsinline preload="auto"
                  poster="media/vol-2-debut.jpg" data-end-poster="media/vol-2-fin.jpg"
@@ -100,7 +118,7 @@
       </section>
 
       <!-- 5 · Vol 3 : jusqu'à Benicàssim -->
-      <section class="slide slide--flight" id="s-vol-3" data-flight="vol-3-castellon-benicassim" aria-label="Vol 3 : jusqu'à Benicàssim">
+      <section class="slide slide--flight" id="s-vol-3" data-section="1" data-flight="vol-3-castellon-benicassim" aria-label="Vol 3 : jusqu'à Benicàssim">
         <div class="canvas">
           <video class="flight" muted playsinline preload="auto"
                  poster="media/vol-3-debut.jpg" data-end-poster="media/vol-3-fin.jpg"
@@ -117,7 +135,7 @@
       </section>
 
       <!-- 6 · Vol 4 : comme un drone, le long de la côte, jusqu'à la plage (la photo reste à la fin) -->
-      <section class="slide slide--flight" id="s-vol-4" data-flight="vol-4-cote-voramar" aria-label="Vol 4 : le long de la côte, jusqu'à la plage">
+      <section class="slide slide--flight" id="s-vol-4" data-section="1" data-flight="vol-4-cote-voramar" aria-label="Vol 4 : le long de la côte, jusqu'à la plage">
         <div class="canvas">
           <video class="flight" muted playsinline preload="auto"
                  poster="media/vol-4-debut.jpg" data-end-poster="media/photos/plage-voramar.jpg"
@@ -131,7 +149,7 @@
       </section>
 
       <!-- 7 · Que faire : la photo de la plage se range dans le panneau -->
-      <section class="slide slide--content slide--situation" id="s-situation" data-alt="ville" aria-label="Que faire à Benicàssim">
+      <section class="slide slide--content slide--situation" id="s-situation" data-section="2" data-alt="ville" aria-label="Que faire à Benicàssim">
         <div class="canvas">
           <div class="copy">
             <p class="kicker" data-rise>2 · Que faire à Benicàssim&nbsp;?</p>
@@ -149,26 +167,38 @@
         </div>
       </section>
 
-      <!-- 8 · La semaine : cada pulsación enciende un día, de viernes a jueves -->
-      <section class="slide slide--content slide--week" id="s-semaine" data-alt="ville" data-steps="7" aria-label="Faire la fête, toute la semaine">
+      <!-- 8 · La semaine : días de lunes a domingo; cada pulsación marca un día con un tick, empezando por el viernes -->
+      <section class="slide slide--content slide--week" id="s-semaine" data-section="2" data-alt="ville" data-steps="7" aria-label="Faire la fête, toute la semaine">
         <div class="canvas">
           <p class="kicker">2 · Que faire à Benicàssim&nbsp;?</p>
           <h2 class="headline">Faire la fête… quel jour&nbsp;?</h2>
           <ol class="week">
-            <li class="day" data-at="1"><span class="day__name">vendredi</span><span class="day__bar"></span><span class="day__note"></span></li>
-            <li class="day" data-at="2"><span class="day__name">samedi</span><span class="day__bar"></span><span class="day__note"></span></li>
-            <li class="day" data-at="3"><span class="day__name">dimanche</span><span class="day__bar"></span><span class="day__note">aussi un bon jour</span></li>
-            <li class="day" data-at="4"><span class="day__name">lundi</span><span class="day__bar"></span><span class="day__note">si on veut</span></li>
-            <li class="day" data-at="5"><span class="day__name">mardi</span><span class="day__bar"></span><span class="day__note"></span></li>
-            <li class="day" data-at="6"><span class="day__name">mercredi</span><span class="day__bar"></span><span class="day__note">aussi</span></li>
-            <li class="day" data-at="7"><span class="day__name">jeudi</span><span class="day__bar"></span><span class="day__note">et même le jeudi&nbsp;!</span></li>
+            <li class="day" data-at="4"><span class="day__name">lundi</span><span class="day__bar"><svg class="day__tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="day__note">si on veut</span></li>
+            <li class="day" data-at="5"><span class="day__name">mardi</span><span class="day__bar"><svg class="day__tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="day__note"></span></li>
+            <li class="day" data-at="6"><span class="day__name">mercredi</span><span class="day__bar"><svg class="day__tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="day__note">aussi</span></li>
+            <li class="day" data-at="7"><span class="day__name">jeudi</span><span class="day__bar"><svg class="day__tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="day__note">et même le jeudi&nbsp;!</span></li>
+            <li class="day" data-at="1"><span class="day__name">vendredi</span><span class="day__bar"><svg class="day__tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="day__note"></span></li>
+            <li class="day" data-at="2"><span class="day__name">samedi</span><span class="day__bar"><svg class="day__tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="day__note"></span></li>
+            <li class="day" data-at="3"><span class="day__name">dimanche</span><span class="day__bar"><svg class="day__tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="day__note">aussi un bon jour</span></li>
           </ol>
           <p class="week__end fade-step" data-at="7">Toute la semaine&nbsp;!</p>
+          <!-- Fiesta: al llegar «Toute la semaine !» cae confeti y bailan gatitos (js/fiesta.js) -->
+          <canvas class="confetti" aria-hidden="true"></canvas>
+          <div class="cats" aria-hidden="true">
+            <img class="cat cat--1" data-src="media/gatos/gato-1.gif" alt="" decoding="async">
+            <img class="cat cat--2" data-src="media/gatos/gato-2.gif" alt="" decoding="async">
+            <img class="cat cat--3" data-src="media/gatos/gato-3.gif" alt="" decoding="async">
+            <img class="cat cat--4" data-src="media/gatos/gato-2.gif" alt="" decoding="async">
+            <img class="cat cat--5" data-src="media/gatos/gato-1.gif" alt="" decoding="async">
+            <img class="cat cat--6" data-src="media/gatos/gato-3.gif" alt="" decoding="async">
+            <img class="cat cat--7" data-src="media/gatos/gato-1.gif" alt="" decoding="async">
+            <img class="cat cat--8" data-src="media/gatos/gato-2.gif" alt="" decoding="async">
+          </div>
         </div>
       </section>
 
       <!-- 9 · Carte des sorties : las etiquetas entran volando sobre el plano (OpenStreetMap) -->
-      <section class="slide slide--map" id="s-sorties" data-alt="ville" data-rail="off" aria-label="Discothèques et pubs sur la carte">
+      <section class="slide slide--map" id="s-sorties" data-section="2" data-alt="ville" data-rail="off" aria-label="Discothèques et pubs sur la carte">
         <div class="canvas">
           <img class="map" src="media/carte-sorties.svg" width="1920" height="1080"
                alt="Plan de Benicàssim : le centre-ville, la voie rapide au nord et les plages au sud">
@@ -242,7 +272,7 @@
       </section>
 
       <!-- 10 · Festivals : los logos aparecen todos a la vez -->
-      <section class="slide slide--content slide--fest" id="s-festivals" data-alt="ville" aria-label="Les festivals">
+      <section class="slide slide--content slide--fest" id="s-festivals" data-section="2" data-alt="ville" aria-label="Les festivals">
         <div class="canvas">
           <p class="kicker">2 · Que faire à Benicàssim&nbsp;?</p>
           <h2 class="headline">La ville des festivals</h2>
@@ -268,7 +298,7 @@
       </section>
 
       <!-- 11 · Sports de mer -->
-      <section class="slide slide--content slide--bleed slide--sports" id="s-sports" data-alt="ville" aria-label="Les sports de mer">
+      <section class="slide slide--content slide--bleed slide--sports" id="s-sports" data-section="2" data-alt="ville" aria-label="Les sports de mer">
         <div class="canvas">
           <div class="copy">
             <p class="kicker">2 · Que faire à Benicàssim&nbsp;?</p>
@@ -289,7 +319,7 @@
       </section>
 
       <!-- 12 · Climat et nature -->
-      <section class="slide slide--content slide--split" id="s-climat" data-alt="ville" aria-label="Climat et nature">
+      <section class="slide slide--content slide--split" id="s-climat" data-section="3" data-alt="ville" aria-label="Climat et nature">
         <div class="canvas">
           <div class="copy">
             <p class="kicker">3 · Climat et nature</p>
@@ -310,7 +340,7 @@
       </section>
 
       <!-- 13 · Histoire -->
-      <section class="slide slide--content slide--split" id="s-histoire" data-alt="ville" aria-label="Un peu d'histoire">
+      <section class="slide slide--content slide--split" id="s-histoire" data-section="3" data-alt="ville" aria-label="Un peu d'histoire">
         <div class="canvas">
           <div class="copy copy--wide">
             <p class="kicker">3 · Un peu d'histoire</p>
@@ -333,7 +363,7 @@
       </section>
 
       <!-- 14 · Lieux à découvrir; → los restaurantes; → el Taj Mahal -->
-      <section class="slide slide--content slide--cards" id="s-lieux" data-alt="ville" data-steps="2" aria-label="Des lieux à découvrir et mes restaurants">
+      <section class="slide slide--content slide--cards" id="s-lieux" data-section="4" data-alt="ville" data-steps="2" aria-label="Des lieux à découvrir et mes restaurants">
         <div class="canvas">
           <p class="kicker">4 · Des lieux à découvrir</p>
           <h2 class="headline until-step" data-until="1">Trois endroits à ne pas manquer</h2>
@@ -402,7 +432,7 @@
       </section>
 
       <!-- 15 · Ma journée parfaite -->
-      <section class="slide slide--content slide--bleed slide--day" id="s-journee" data-alt="ville" aria-label="Ma journée parfaite">
+      <section class="slide slide--content slide--bleed slide--day" id="s-journee" data-section="5" data-alt="ville" aria-label="Ma journée parfaite">
         <div class="canvas">
           <div class="copy copy--wide">
             <p class="kicker">5 · Ma journée parfaite</p>
@@ -424,7 +454,7 @@
       </section>
 
       <!-- 16 · Les plus et les moins -->
-      <section class="slide slide--content slide--pm" id="s-plus-moins" data-alt="ville" aria-label="Les plus et les moins">
+      <section class="slide slide--content slide--pm" id="s-plus-moins" data-section="6" data-alt="ville" aria-label="Les plus et les moins">
         <div class="canvas">
           <p class="kicker">6 · Les plus et les moins</p>
           <div class="pm">
@@ -451,7 +481,7 @@
       </section>
 
       <!-- 17 · Mon bon plan -->
-      <section class="slide slide--content slide--photo" id="s-bon-plan" data-alt="ville" data-tone="dark" data-rail="off" aria-label="Mon bon plan">
+      <section class="slide slide--content slide--photo" id="s-bon-plan" data-section="7" data-alt="ville" data-tone="dark" data-rail="off" aria-label="Mon bon plan">
         <div class="canvas">
           <img class="full-photo" src="media/photos/via-verde-cote.jpg" width="1920" height="1440"
                alt="Le chemin de la Vía Verde entre la mer et les collines, entre Benicàssim et Oropesa">
@@ -481,13 +511,13 @@
       </section>
 
       <!-- 19 · Crédits -->
-      <section class="slide slide--content slide--credits" id="s-credits" data-alt="ville" aria-label="Crédits">
+      <section class="slide slide--content slide--credits" id="s-credits" data-section="fin" data-alt="ville" aria-label="Crédits">
         <div class="canvas">
           <p class="kicker">Crédits</p>
           <p class="credits-lead">Vols&nbsp;: Google Earth Studio (Data SIO, NOAA, U.S. Navy, Landsat / Copernicus, Airbus). Limites&nbsp;: IGN via geoBoundaries et OpenStreetMap. Plan des sorties&nbsp;: © les contributeurs d'OpenStreetMap (ODbL). Logos&nbsp;: SanSan Festival, FIB et Rototom Sunsplash. Photos&nbsp;: Wikimedia Commons&nbsp;; celles des bars et des restaurants sont des illustrations.</p>
           <ul class="credits-list">
               <li><span>Plage de Benicàssim (fin du vol)</span> photo fournie</li>
-              <li><span>La côte vue du ciel</span> Martin Cox from Benicasim, España · CC BY 2.0</li>
+              <li><span>Plage de Benicàssim (couverture)</span> photo fournie</li>
               <li><span>Plage dels Terrers</span> Juan Emilio Prades Bel · CC BY-SA 3.0</li>
               <li><span>Les Agulles de Santa Àgueda</span> Juan Emilio Prades Bel · CC BY-SA 3.0 es</li>
               <li><span>Tour de Sant Vicent</span> Artistosteles · CC BY-SA 4.0</li>
@@ -537,6 +567,7 @@
 
   <script src="js/altitudes.js?v=20261120f"></script>
   <script src="js/borders.js?v=20261120f"></script>
-  <script src="js/deck.js?v=20261120f"></script>
+  <script src="js/deck.js?v=20261123b"></script>
+  <script src="js/fiesta.js?v=20261123a"></script>
 </body>
 </html>

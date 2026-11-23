@@ -16,3 +16,5 @@ Funciona en Chrome, Edge, Firefox y Safari, en Windows y en Mac. En móvil se ve
 ## Créditos
 
 Vuelos: Google Earth Studio (Data SIO, NOAA, U.S. Navy, Landsat / Copernicus, Airbus). Límites: IGN vía geoBoundaries y OpenStreetMap. Fotos: Wikimedia Commons, con autor y licencia en la última diapositiva.
+
+Gatitos bailando de la última pantalla de la semana: stickers de GIPHY (fondo transparente), guardados en `media/gatos/`.
