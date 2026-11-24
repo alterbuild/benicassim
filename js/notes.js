@@ -8,7 +8,7 @@ window.DECK_NOTES = {
     "Bonjour à tous ! Aujourd'hui, je vais vous présenter Benicàssim, la ville où je passe mes étés. C'est une petite ville sur la côte est de l'Espagne, mais en été, elle est pleine de vie."
   ],
   's-plan': [
-    "D'abord, je vais vous montrer où se trouve Benicàssim. Ensuite, je vais vous parler de ce qu'on peut y faire, de ses fêtes et des lieux à visiter. Pour finir, je vais vous dire les plus et les moins, et je vais vous donner mon bon plan."
+    "D'abord, je vais vous montrer où se trouve Benicàssim. Ensuite, je vais vous parler de ce qu'on peut y faire, des lieux à visiter, de ma journée parfaite, de la fête et des festivals. Pour finir, je vais vous dire les plus et les moins, et je vais vous donner mon bon plan."
   ],
   's-vol-1': [
     "[→ vuelo 1] On commence de très haut. Voici la péninsule Ibérique, dans le sud-ouest de l'Europe. À gauche, il y a le Portugal, le pays de Jose, et tout ça, c'est l'Espagne."
@@ -25,17 +25,14 @@ window.DECK_NOTES = {
   's-situation': [
     "Entre la mer et la montagne. Ici, bien sûr, on peut profiter de la plage et de la montagne, mais il y a aussi beaucoup de choses à faire. On peut retrouver ses amis dans les bars à tapas pour manger des tapas et boire une bière. Tous les soirs, c'est plein de monde."
   ],
+  's-climat': [
+    "En plus, il fait beau presque toute l'année. Le climat est méditerranéen : les étés sont chauds et les hivers sont doux. Le matin, on peut aller à la plage et l'après-midi, monter au Desert de les Palmes."
+  ],
   's-sports': [
     "Et bien sûr, il y a la mer. Moi, personnellement, j'aime en profiter pour faire du sport : du surf, du kayak, de la pêche, du paddle, de la planche à voile, de la voile… et j'ai même essayé le kitesurf !"
   ],
-  's-climat': [
-    "Il fait beau presque toute l'année. Le climat est méditerranéen : les étés sont chauds et les hivers sont doux. Le matin, on peut aller à la plage et l'après-midi, monter au Desert de les Palmes."
-  ],
-  's-histoire': [
-    "L'histoire de Benicàssim va des pirates aux festivals. Au XIIIᵉ siècle, le roi Jacques Iᵉʳ a conquis la région. Au XVIᵉ siècle, on a construit la tour de Sant Vicent, qui servait à se défendre contre les pirates qui arrivaient par la mer. Au XVIIᵉ siècle, des moines carmes se sont installés dans la montagne, au Desert de les Palmes. Vers 1900, des familles riches ont construit des villas d'été au bord de la plage. Et en 1995, il y a eu le premier FIB, un festival avec un public qui vient de beaucoup de pays."
-  ],
   's-lieux': [
-    "Il y a trois lieux à ne pas manquer. Le premier, c'est le Desert de les Palmes, un parc naturel dans la montagne, avec le monastère des moines carmes. D'en haut, on voit la mer. Le deuxième, c'est la Vía Verde, une ancienne voie ferrée au bord de la mer. Aujourd'hui, c'est un chemin pour se promener à pied ou à vélo. Le troisième, c'est Aquarama : un grand parc aquatique avec des toboggans, parfait pour s'amuser en été.",
+    "Il y a trois lieux à ne pas manquer. Le premier, c'est le Desert de les Palmes, un parc naturel dans la montagne, avec un monastère de moines carmes. D'en haut, on voit la mer. Le deuxième, c'est la Vía Verde, une ancienne voie ferrée au bord de la mer. Aujourd'hui, c'est un chemin pour se promener à pied ou à vélo. Le troisième, c'est Aquarama : un grand parc aquatique avec des toboggans, parfait pour s'amuser en été.",
     "[→ aparecen los restaurantes] Je vais aussi vous laisser quelques-uns des restaurants que j'aime le plus : la Terraza Voramar, le Nou Cafè, le Vin Up, Marabrasa, Doma et la Masía Bellver.",
     "[→ aparece el Taj Mahal] Mais c'est vrai que le restaurant que j'ai le plus fréquenté pendant des années, c'est le kebab Taj Mahal !"
   ],

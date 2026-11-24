@@ -799,18 +799,6 @@ html.is-list .country,
   background: var(--p-surface);
 }
 
-/* texto a la izquierda, fotos a la derecha */
-.media {
-  position: absolute;
-  left: 1000px;
-  right: 120px;
-  top: 196px;
-  bottom: 140px;
-  display: grid;
-  gap: 24px;
-}
-.media--pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.media--stack { grid-template-rows: repeat(2, minmax(0, 1fr)); }
 .copy--wide { width: 600px; }
 
 .timeline { margin-top: 34px; }
@@ -1567,16 +1555,11 @@ html.is-list .cats,
   from { clip-path: inset(0 0 0 100%); transform: scale(1.08); }
   to { clip-path: inset(0 0 0 0); }
 }
-@keyframes enter-drop {
-  from { clip-path: inset(0 0 100% 0); }
-  to { clip-path: inset(0 0 0 0); }
-}
 /* con movimiento reducido todo se queda en un fundido, sin desplazamientos */
 @media (prefers-reduced-motion: reduce) {
   @keyframes enter-rise { from { opacity: 0; } }
   @keyframes enter-settle { from { opacity: 1; } }
   @keyframes enter-open { from { opacity: 0; } }
-  @keyframes enter-drop { from { opacity: 0; } }
 }
 
 /* cascada que se frena: cada fila sale antes de que acabe la anterior, y cada vez más pegada */
@@ -1589,10 +1572,10 @@ html.is-list .cats,
 :is(.sports, .timeline, .pm ul, .cards, .week, .sky-facts) > :nth-child(8) { --k: 260ms; }
 
 /* el rótulo de la parte y, detrás, el titular */
-html:not(.is-list) .slide[data-dir="fwd"].is-active:is(.slide--bleed, .slide--split, .slide--cards, .slide--week, .slide--pm, .slide--sky, .slide--credits) .kicker {
+html:not(.is-list) .slide[data-dir="fwd"].is-active:is(.slide--bleed, .slide--cards, .slide--week, .slide--pm, .slide--sky, .slide--credits) .kicker {
   animation: enter-rise 560ms var(--ease-out) 60ms backwards;
 }
-html:not(.is-list) .slide[data-dir="fwd"].is-active:is(.slide--bleed, .slide--split, .slide--cards, .slide--week, .slide--sky) .headline {
+html:not(.is-list) .slide[data-dir="fwd"].is-active:is(.slide--bleed, .slide--cards, .slide--week, .slide--sky) .headline {
   animation: enter-rise 640ms var(--ease-out) 130ms backwards;
 }
 
@@ -1622,12 +1605,6 @@ html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--bleed .bleed-photo {
   transform-origin: 100% 50%;
   animation: enter-open 1100ms var(--ease-out) backwards;
 }
-/* las fotos apiladas de la historia se descubren de arriba abajo, una detrás de otra */
-html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--split .media .ph {
-  animation: enter-drop 1000ms var(--ease-out) 60ms backwards;
-}
-html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--split .media .ph + .ph { animation-delay: 200ms; }
-
 /* foto a pantalla completa: se posa como la portada, y el cartel sube encima */
 html:not(.is-list) .slide[data-dir="fwd"].is-active:is(.slide--photo, .slide--sky) .full-photo {
   animation: enter-settle 1400ms var(--ease-out) backwards;
