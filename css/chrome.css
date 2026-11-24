@@ -1,0 +1,436 @@
+/* Benicàssim · mandos de la presentación (ventana del proyector)
+   Barra inferior, notas, info, cronómetro en pantalla, pantalla en negro y lista de pantallas.
+   Adaptado de los mandos de la presentación de International Business, con la paleta olivo/hueso de este proyecto.
+   Todo lo que ve el público va en francés; la vista del orador (css/presenter.css) va en español. */
+
+:root {
+  --chrome: rgb(20 23 11 / 0.94);
+  --chrome-fg: #ecebe7;
+  --chrome-dim: rgb(236 235 231 / 0.64);
+  --chrome-line: rgb(236 235 231 / 0.14);
+  --chrome-dot: rgb(236 235 231 / 0.3);
+  --chrome-shadow: rgb(8 10 4 / 0.5);
+  --cue-bg: rgb(232 185 49 / 0.2);
+  --cue-fg: #f0d27a;
+}
+
+/* ------------------------------------------------------------ barra */
+
+#ctrl {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--chrome);
+  color: var(--chrome-fg);
+  font: 500 14px/1 var(--font-text);
+  box-shadow: 0 0 0 1px var(--chrome-line), 0 10px 30px -12px var(--chrome-shadow);
+  opacity: 0;
+  transform: translate(-50%, 6px);
+  transition: opacity 200ms ease, transform 200ms var(--ease-out);
+}
+html.is-idle #ctrl { pointer-events: none; }
+#ctrl.is-visible,
+#ctrl:focus-within {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+html.fs.is-idle { cursor: none; }
+
+#ctrl button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 36px;
+  min-width: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 160ms var(--ease-out);
+}
+#ctrl button:active { transform: scale(0.97); }
+#ctrl button:focus-visible { outline: 2px solid var(--chrome-fg); outline-offset: 1px; }
+#ctrl button[aria-pressed="true"] { background: var(--chrome-line); }
+#ctrl button[hidden] { display: none; }
+#ctrl .ic {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+#ctrl #b-prev,
+#ctrl #b-next { padding: 0; width: 36px; }
+@media (hover: hover) and (pointer: fine) {
+  #ctrl button:hover { background: var(--chrome-line); }
+}
+/* El presentador está abierto y conectado */
+#ctrl #b-pv.live::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #7fd18b;
+}
+
+#dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 8px;
+}
+#ctrl #dots button {
+  position: relative;
+  min-width: 0;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  background: var(--chrome-dot);
+  transition: width 240ms var(--ease-out), background-color 240ms ease;
+}
+#ctrl #dots button::before { content: ""; position: absolute; inset: -12px -3px; }
+#ctrl #dots button[aria-current="true"] { width: 24px; background: var(--chrome-fg); }
+@media (hover: hover) and (pointer: fine) {
+  #ctrl #dots button:not([aria-current="true"]):hover { background: var(--chrome-dim); }
+}
+#count {
+  min-width: 52px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.ctrl-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 6px 0 12px;
+  font: 400 13px/1 var(--font-text);
+  font-variant-numeric: tabular-nums;
+  color: var(--chrome-dim);
+  white-space: nowrap;
+}
+.ctrl-status:empty { display: none; }
+.ctrl-status.is-done { color: var(--chrome-fg); }
+.ctrl-status__bar {
+  width: 72px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--chrome-line);
+  overflow: hidden;
+}
+.ctrl-status__bar i {
+  display: block;
+  height: 100%;
+  background: var(--chrome-fg);
+  transform: scaleX(var(--p, 0));
+  transform-origin: 0 50%;
+  transition: transform 200ms linear;
+}
+/* Mientras cargan los vídeos la barra no se esconde y la navegación está apagada */
+#ctrl.is-loading,
+html.is-idle #ctrl.is-loading {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+#ctrl button:disabled { opacity: 0.35; cursor: default; }
+#ctrl button:disabled:active { transform: none; }
+#ctrl #b-force { background: var(--chrome-fg); color: #14170b; font-weight: 500; }
+@media (hover: hover) and (pointer: fine) {
+  #ctrl #b-force:hover { background: var(--cue-fg); }
+}
+/* Un intento de avanzar mientras carga: el texto se sacude y se calienta un momento */
+#ctrl.is-nudged .ctrl-status { animation: ctrl-nudge 380ms var(--ease-out); }
+@keyframes ctrl-nudge {
+  30% { transform: translateX(-4px); color: var(--cue-fg); }
+  60% { transform: translateX(3px); color: var(--cue-fg); }
+}
+@media (max-width: 1100px) { #dots { display: none; } }
+
+/* ------------------------------------------------------------ notas (N) */
+
+#notes {
+  position: fixed;
+  left: 50%;
+  bottom: 72px;
+  z-index: 19;
+  width: min(880px, calc(100% - 32px));
+  max-height: 44vh;
+  overflow: auto;
+  padding: 18px 26px 22px;
+  border-radius: 20px;
+  background: var(--chrome);
+  color: var(--chrome-fg);
+  box-shadow: 0 14px 40px var(--chrome-shadow);
+  transform: translateX(-50%);
+  transform-origin: 50% 100%;
+  animation: chrome-pop 160ms var(--ease-out);
+}
+#notes[hidden] { display: none; }
+#notes h2 {
+  margin: 0 0 10px;
+  font: 500 13px/1.3 var(--font-text);
+  letter-spacing: 0.02em;
+  color: var(--chrome-dim);
+}
+#notes-t { font: 500 21px/1.55 var(--font-text); }
+#notes-t p { margin: 0; }
+#notes-t p + p { margin-top: 0.7em; }
+#notes-t p.none { color: var(--chrome-dim); font-size: 17px; }
+.cue {
+  display: inline-block;
+  margin-right: 0.4em;
+  padding: 0.18em 0.6em 0.22em;
+  border-radius: 999px;
+  background: var(--cue-bg);
+  color: var(--cue-fg);
+  font-size: 0.72em;
+  font-weight: 500;
+  line-height: 1.2;
+  vertical-align: 0.12em;
+}
+@keyframes chrome-pop {
+  from { opacity: 0; transform: translateX(-50%) scale(0.98); }
+}
+
+/* ------------------------------------------------------------ info (I) */
+
+#info {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  overflow: auto;
+  padding: 20px;
+  background: rgb(10 12 5 / 0.55);
+  animation: info-in 200ms ease-out;
+}
+#info[hidden] { display: none; }
+.info-card {
+  position: relative;
+  width: min(460px, 100%);
+  margin: auto;
+  padding: 38px 34px 28px;
+  border-radius: 24px;
+  background: var(--chrome);
+  color: var(--chrome-fg);
+  box-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.6);
+  text-align: center;
+  font: 400 15px/1.55 var(--font-text);
+  animation: info-up 260ms var(--ease-out);
+}
+.info-x {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 160ms var(--ease-out);
+}
+.info-x:active { transform: scale(0.95); }
+.info-x:focus-visible { outline: 2px solid var(--chrome-fg); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) { .info-x:hover { background: var(--chrome-line); } }
+.info-x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.info-card h2 { margin: 0 0 4px; font: 500 38px/1.1 var(--font-display); letter-spacing: -0.01em; }
+.info-lead { margin: 0 0 20px; color: var(--chrome-dim); }
+.info-keys {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 20px;
+  margin: 0 0 22px;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--chrome-dim);
+}
+.info-keys span { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.info-keys kbd + :not(kbd) { margin-left: 3px; }
+.info-keys kbd {
+  display: inline-block;
+  margin: 0 1px;
+  padding: 3px 7px;
+  border: 1px solid var(--chrome-line);
+  border-radius: 6px;
+  font: 500 12px/1 var(--font-text);
+  color: var(--chrome-fg);
+}
+.info-credit {
+  margin: 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--chrome-line);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--chrome-dim);
+  text-wrap: balance;
+}
+@keyframes info-in { from { opacity: 0; } }
+@keyframes info-up { from { opacity: 0; transform: translateY(12px) scale(0.97); } }
+
+/* ------------------------------------------------------------ pantalla en negro (B), cronómetro (T), avisos */
+
+/* Se apaga de golpe y se enciende con un fundido corto */
+#blank {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: #000;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 320ms var(--ease-out), visibility 0s linear 320ms;
+}
+body.blank #blank {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: none;
+}
+#hud {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 9;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: var(--chrome);
+  color: var(--chrome-fg);
+  font: 500 22px/1 var(--font-text);
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 10px 26px -12px var(--chrome-shadow);
+  pointer-events: none;
+}
+#hud[hidden] { display: none; }
+#hud small { font: 400 14px/1 var(--font-text); color: var(--chrome-dim); }
+#hud[data-s="warn"] b { color: #f2c660; }
+#hud[data-s="over"] b { color: #ff9c8e; }
+
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: 76px;
+  z-index: 41;
+  max-width: min(560px, calc(100% - 32px));
+  padding: 11px 18px;
+  border-radius: 14px;
+  background: var(--chrome);
+  color: var(--chrome-fg);
+  font: 500 14.5px/1.4 var(--font-text);
+  text-align: center;
+  box-shadow: 0 14px 34px -14px var(--chrome-shadow);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity 250ms ease;
+}
+#toast.on { opacity: 1; }
+
+/* Ventana de presentación abierta desde el presentador: un clic y a pantalla completa */
+#fsgo {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  display: grid;
+  place-items: center;
+  background: rgb(10 12 5 / 0.82);
+  color: var(--chrome-fg);
+  cursor: pointer;
+  text-align: center;
+  font: 500 40px/1.2 var(--font-display);
+}
+#fsgo small { display: block; margin-top: 12px; font: 400 18px/1.4 var(--font-text); color: var(--chrome-dim); }
+
+/* Lista de pantallas: pantalla completa en el proyector, o dónde abrir la ventana de presentación */
+#fsm {
+  position: fixed;
+  left: 50%;
+  bottom: 72px;
+  z-index: 45;
+  width: min(460px, calc(100% - 24px));
+  padding: 14px;
+  border-radius: 20px;
+  background: var(--chrome);
+  color: var(--chrome-fg);
+  box-shadow: 0 22px 60px -18px rgb(0 0 0 / 0.55);
+  font: 400 14px/1.4 var(--font-text);
+  transform: translateX(-50%);
+  transform-origin: 50% 100%;
+  animation: chrome-pop 160ms var(--ease-out);
+}
+#fsm h3 { margin: 2px 4px 10px; font: 500 22px/1.2 var(--font-display); }
+#fsm .fm-l { display: grid; gap: 8px; }
+#fsm button {
+  appearance: none;
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--chrome-line);
+  border-radius: 14px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 160ms var(--ease-out);
+}
+#fsm button:active { transform: scale(0.98); }
+#fsm button:hover,
+#fsm button:focus-visible { background: var(--chrome-line); outline: none; }
+#fsm button b { display: block; font-weight: 500; font-size: 15px; line-height: 1.25; }
+#fsm button small { display: block; margin-top: 2px; font-size: 12.5px; color: var(--chrome-dim); }
+#fsm .fm-i {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 24px;
+  border-radius: 5px;
+  background: var(--chrome-fg);
+  color: #14170b;
+  font: 600 12px/1 var(--font-text);
+}
+#fsm button[data-cur="1"] .fm-i { background: var(--chrome-dot); color: var(--chrome-fg); }
+#fsm .fm-n { margin: 10px 4px 2px; font-size: 12.5px; color: var(--chrome-dim); }
+#fsm .fm-x { margin: 10px 0 0; grid-template-columns: 1fr; text-align: center; color: var(--chrome-dim); }
+
+html.is-list #hud,
+html.is-list #blank,
+html.is-list #toast { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  #ctrl { transform: translateX(-50%); transition: opacity 120ms linear; }
+  #ctrl.is-visible, #ctrl:focus-within { transform: translateX(-50%); }
+  #notes, #fsm { animation: none; }
+  #info, .info-card { animation: none; }
+  #ctrl #dots button { transition: background-color 120ms linear; }
+  #ctrl.is-nudged .ctrl-status { animation: none; }
+  .ctrl-status__bar i { transition: none; }
+}

@@ -1,7 +1,11 @@
 /* Benicàssim · motor de la presentación
-   - Flechas, espacio, AvPág/RePág (mandos de presentación), Inicio/Fin, F = pantalla completa.
+   - Flechas, espacio, AvPág/RePág (mandos de presentación), Inicio/Fin.
    - En una diapositiva de vuelo, "siguiente" mientras el vídeo corre salta al final (aterriza).
-   - El altímetro lee la altitud real de la cámara de cada fotograma (js/altitudes.js). */
+   - El altímetro lee la altitud real de la cámara de cada fotograma (js/altitudes.js).
+   - Expone window.DECK (diapositiva, paso, fase del vuelo, ir a, siguiente, anterior y un aviso de cambios)
+     para la barra (js/chrome.js) y para el modo presentador (js/presenter.js).
+   - Con ?presenter no presenta nada: deja las diapositivas ya aterrizadas y completas, sin vídeos,
+     para que la vista del orador las clone como miniaturas. */
 (() => {
   'use strict';
 
@@ -13,18 +17,41 @@
   const marker = document.getElementById('rail-marker');
   const readout = document.getElementById('rail-value');
   const stops = Array.from(rail.querySelectorAll('.rail__stop'));
-  const controls = document.getElementById('controls');
-  const count = document.getElementById('count');
-  const btnPrev = document.getElementById('btn-prev');
-  const btnNext = document.getElementById('btn-next');
-  const btnFull = document.getElementById('btn-full');
 
   const DATA = window.FLIGHT_DATA || { fps: 30, flights: {} };
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const EASE_IN_OUT = 'cubic-bezier(0.77, 0, 0.175, 1)';
+  const PRESENTER = new URLSearchParams(location.search).has('presenter');
 
   let index = 0;
   let listMode = false;
+
+  /* ---------------------------------------------------------------- API pública
+     La barra y el presentador no tocan el motor: le preguntan por aquí y se enteran de los cambios. */
+  const listeners = [];
+  const emit = () => listeners.forEach((fn) => { try { fn(); } catch (e) { /* un oyente roto no para la presentación */ } });
+  const titleOf = (s) => { const t = s.getAttribute('aria-label') || ''; return t.charAt(0).toUpperCase() + t.slice(1); };
+  const RAW_NOTES = window.DECK_NOTES || {};
+  const WPM = 120;   // ritmo de «hablando con calma», para repartir el tiempo entre diapositivas
+  const notes = slides.map((s) => {
+    const paras = RAW_NOTES[s.id] || [];
+    const words = paras.join(' ').replace(/\[[^\]]*\]/g, ' ').split(/\s+/).filter(Boolean).length;
+    return { title: titleOf(s), text: paras.join('\n'), words, sec: words ? Math.max(8, Math.round((words / WPM) * 60)) : 0 };
+  });
+  const hooks = { nav: null };
+  let held = false;   // un vuelo en pausa porque la pantalla está en negro
+
+  /* Mientras los vídeos se descargan (precarga, más abajo) no se puede avanzar: ni teclas, ni clics, ni puntos,
+     ni el presentador. `active` frena la navegación; `running` dura mientras haya descarga en marcha
+     (si se pulsa «Commencer quand même» tras un fallo, se libera la navegación y la descarga sigue). */
+  const gate = { running: false, active: false, total: 0, done: 0, frac: 0, failed: false };
+  function blocked() {
+    const c = document.getElementById('ctrl');
+    if (!c) return;
+    c.classList.remove('is-nudged');
+    void c.offsetWidth;
+    c.classList.add('is-nudged');
+  }
 
   const isFlight = (s) => s.classList.contains('slide--flight');
   const videoOf = (s) => s.querySelector('video');
@@ -299,6 +326,7 @@
       });
     }
     follow(slide);
+    emit();
   }
 
   function land(slide, jump, instant = false) {
@@ -312,6 +340,7 @@
     trackPins(slide, Infinity);
     const alts = altsOf(slide);
     if (alts.length && slide.classList.contains('is-active')) setAltitude(alts[alts.length - 1]);
+    emit();
   }
 
   /* ---------------------------------------------------------------- órbita y paso del vuelo 3 al panel */
@@ -391,6 +420,7 @@
     slide.dataset.step = String(n);
     slide.querySelectorAll('[data-at]').forEach((el) => el.classList.toggle('is-shown', n >= Number(el.dataset.at)));
     slide.querySelectorAll('[data-until]').forEach((el) => el.classList.toggle('is-gone', n >= Number(el.dataset.until)));
+    emit();
   }
 
   /* ---------------------------------------------------------------- navegación */
@@ -420,6 +450,7 @@
 
   function leave(slide) {
     slide.classList.remove('is-active', 'is-leaving');
+    held = false;
     if (isFlight(slide)) {
       const v = videoOf(slide);
       v.pause();
@@ -437,7 +468,6 @@
     // El altímetro solo acompaña a los vuelos; en su hueco, el resto de partes muestran el progreso
     stage.dataset.rail = slide.dataset.rail || (isFlight(slide) ? 'alt' : (slide.dataset.section ? 'progress' : 'off'));
     setProgress(slide);
-    count.textContent = `${index + 1} / ${slides.length}`;
     if (history.replaceState) history.replaceState(null, '', `#${slide.id}`);
 
     if (isFlight(slide)) {
@@ -453,9 +483,12 @@
       if (stepsOf(slide)) setStep(slide, dir > 0 ? 0 : stepsOf(slide));
     }
     if (slide.classList.contains('slide--situation')) startOrbit(slide, flip);
+    emit();
   }
 
   function go(i, dir) {
+    if (gate.active) { blocked(); return; }
+    if (hooks.nav) hooks.nav();
     cancelLeaving();
     if (i < 0 || i >= slides.length || i === index) return;
     endHandoff();
@@ -475,6 +508,8 @@
 
   function next() {
     if (listMode) return;
+    if (gate.active) { blocked(); return; }
+    if (hooks.nav) hooks.nav();
     if (leaving) { go(index + 1, 1); return; }
     const s = slides[index];
     if (isFlight(s)) {
@@ -489,6 +524,8 @@
 
   function prev() {
     if (listMode) return;
+    if (gate.active) { blocked(); return; }
+    if (hooks.nav) hooks.nav();
     const s = slides[index];
     if (stepOf(s) > 0 && !isFlight(s)) { setStep(s, stepOf(s) - 1); return; }
     go(index - 1, -1);
@@ -549,7 +586,10 @@
 
   /* ---------------------------------------------------------------- entrada */
 
+  /* Las demás teclas (N notas, I info, F pantalla completa, P presentador, T cronómetro, B negro)
+     son de js/chrome.js y js/presenter.js. Con un cuadro abierto (info, lista de pantallas) D.locked las frena. */
   document.addEventListener('keydown', (e) => {
+    if (PRESENTER || window.DECK.locked) return;
     if (e.altKey || e.ctrlKey || e.metaKey) return;
     const onButton = e.target instanceof HTMLButtonElement;
     switch (e.key) {
@@ -564,13 +604,16 @@
         e.preventDefault(); go(0, -1); break;
       case 'End':
         e.preventDefault(); go(slides.length - 1, -1); break;
-      case 'f': case 'F':
-        e.preventDefault(); toggleFullscreen(); break;
       default:
     }
   });
 
-  stage.addEventListener('click', () => { if (!listMode) next(); });
+  // Un clic en la diapositiva avanza (con Mayús, retrocede), salvo que cierre una selección de texto
+  stage.addEventListener('click', (e) => {
+    if (listMode) return;
+    if (window.getSelection && String(window.getSelection())) return;
+    if (e.shiftKey) prev(); else next();
+  });
 
   let touchX = null;
   stage.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') touchX = e.clientX; });
@@ -581,45 +624,18 @@
     if (Math.abs(dx) > 50 && !listMode) { e.preventDefault(); if (dx < 0) next(); else prev(); }
   });
 
-  btnPrev.addEventListener('click', (e) => { e.stopPropagation(); prev(); });
-  btnNext.addEventListener('click', (e) => { e.stopPropagation(); next(); });
-  btnFull.addEventListener('click', (e) => { e.stopPropagation(); toggleFullscreen(); });
-
-  // Pantalla completa con y sin prefijo (Safari antiguo devuelve undefined en vez de una promesa)
-  const fsElement = () => document.fullscreenElement || document.webkitFullscreenElement || null;
-  const quiet = (p) => { if (p && typeof p.catch === 'function') p.catch(() => {}); };
-  function toggleFullscreen() {
-    if (!fsElement()) {
-      const req = root.requestFullscreen || root.webkitRequestFullscreen;
-      if (req) quiet(req.call(root));
-    } else {
-      const exit = document.exitFullscreen || document.webkitExitFullscreen;
-      if (exit) quiet(exit.call(document));
-    }
-  }
-  const onFs = () => btnFull.setAttribute('aria-pressed', String(Boolean(fsElement())));
-  document.addEventListener('fullscreenchange', onFs);
-  document.addEventListener('webkitfullscreenchange', onFs);
-
-  // Los mandos aparecen al mover el ratón y se esconden solos
-  let hideTimer = 0;
-  function showControls() {
-    controls.classList.add('is-visible');
-    clearTimeout(hideTimer);
-    hideTimer = setTimeout(() => controls.classList.remove('is-visible'), 2400);
-  }
-  document.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') showControls(); });
-
   // Escalonado del texto que entra tras el aterrizaje
   slides.forEach((s) => s.querySelectorAll('[data-rise]').forEach((el, i) => el.style.setProperty('--i', i)));
 
-  window.addEventListener('resize', fit);
+  if (!PRESENTER) window.addEventListener('resize', fit);
 
   /* ---------------------------------------------------------------- precarga completa de los vídeos
-     En clase la wifi puede ser lenta: al abrir la página se descargan los vuelos enteros a memoria
-     y los mandos muestran el progreso ("Vidéos 3/4"). Si algo falla, el vídeo sigue con su URL normal. */
+     En clase la wifi puede ser lenta: al abrir la página se descargan los vuelos enteros a memoria y,
+     hasta que están todos, la presentación no avanza (gate). La barra (js/chrome.js) enseña el progreso.
+     Si una descarga falla se reintenta sin parar; solo entonces la barra ofrece «Commencer quand même»
+     (D.release()), por si el aula tiene un proxy que lo impide. Sin fetch o desde file:// no hay precarga ni bloqueo:
+     los vídeos se reproducen desde su URL. */
 
-  const status = document.getElementById('preload');
   function playableSource(v) {
     const sources = Array.from(v.querySelectorAll('source'));
     for (const s of sources) {
@@ -628,39 +644,135 @@
     }
     return null;
   }
+  // Lee la respuesta a trozos para poder contar los bytes; sin tamaño o sin lector, de una vez
+  async function readBlob(res, onFrac) {
+    const len = Number(res.headers.get('content-length')) || 0;
+    if (!len || !res.body || !res.body.getReader) return res.blob();
+    const type = res.headers.get('content-type');
+    const reader = res.body.getReader();
+    const chunks = [];
+    let got = 0;
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      got += value.length;
+      onFrac(Math.min(1, got / len));
+    }
+    return new Blob(chunks, type ? { type } : undefined);
+  }
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
   async function preloadAll() {
     if (!window.fetch || location.protocol === 'file:') return;
-    const videos = Array.from(stage.querySelectorAll('video'));
-    let done = 0;
-    const show = () => { status.textContent = done < videos.length ? `Vidéos ${done}/${videos.length}` : 'Vidéos prêtes'; };
-    show();
-    for (const v of videos) {
-      const src = playableSource(v);
-      if (!src) { done += 1; show(); continue; }
-      try {
-        const res = await fetch(src);
-        if (!res.ok) throw new Error(String(res.status));
-        const url = URL.createObjectURL(await res.blob());
-        const swap = () => {
-          const t = v.currentTime;
-          v.src = url;
-          applyRate(v);
-          try { v.currentTime = t; } catch (e) { /* sin metadatos todavía */ }
-        };
-        if (v.paused) swap(); else v.addEventListener('pause', swap, { once: true });
-      } catch (e) {
-        /* se queda con la URL normal */
+    const jobs = Array.from(stage.querySelectorAll('video'))
+      .map((v) => [v, playableSource(v)])
+      .filter(([, src]) => src);
+    if (!jobs.length) return;
+    Object.assign(gate, { running: true, active: true, total: jobs.length, done: 0, frac: 0, failed: false });
+    emit();
+    let lastStep = -1;
+    const bump = () => {   // un aviso cada 2 % para no saturar a la barra ni al presentador
+      const step = Math.floor(((gate.done + gate.frac) / gate.total) * 50);
+      if (step !== lastStep) { lastStep = step; emit(); }
+    };
+    for (const [v, src] of jobs) {
+      for (let attempt = 0; ; attempt += 1) {
+        try {
+          gate.frac = 0;
+          const res = await fetch(src);
+          if (!res.ok) throw new Error(String(res.status));
+          const url = URL.createObjectURL(await readBlob(res, (f) => { gate.frac = f; bump(); }));
+          const swap = () => {
+            const t = v.currentTime;
+            v.src = url;
+            applyRate(v);
+            try { v.currentTime = t; } catch (e) { /* sin metadatos todavía */ }
+          };
+          if (v.paused) swap(); else v.addEventListener('pause', swap, { once: true });
+          break;
+        } catch (e) {
+          gate.failed = true;
+          emit();
+          // Liberado a mano: se reintenta un par de veces más y se deja (el vídeo sigue con su URL normal)
+          if (!gate.active && attempt >= 2) break;
+          await wait(Math.min(5000, 800 * 2 ** attempt));
+        }
       }
-      done += 1;
-      show();
+      gate.done += 1;
+      gate.frac = 0;
+      gate.failed = false;
+      bump();
     }
-    status.classList.add('is-done');
+    gate.running = false;
+    gate.active = false;
+    emit();
   }
 
   /* ---------------------------------------------------------------- arranque */
 
+  /* Vista del orador (?presenter): todas las diapositivas se dejan como al final (vuelos aterrizados con
+     su póster del último fotograma, fronteras y chinchetas dibujadas, todos los pasos), sin vídeos que bajar,
+     y js/presenter.js las clona para las miniaturas. No se activa ninguna. */
+  function preparePresenter() {
+    root.classList.add('is-presenter');
+    slides.forEach((s) => {
+      s.querySelectorAll('video').forEach((v) => {
+        v.pause();
+        v.preload = 'none';
+        v.removeAttribute('autoplay');
+        v.querySelectorAll('source').forEach((src) => src.remove());
+        v.removeAttribute('src');
+        v.poster = v.dataset.endPoster || v.poster;
+        try { v.load(); } catch (e) { /* sin vídeo, solo póster */ }
+      });
+      if (isFlight(s)) {
+        s.dataset.state = 'landed';
+        s.classList.add('is-landed', 'is-drawn');
+        trackPins(s, Infinity);
+      } else if (stepsOf(s)) {
+        setStep(s, stepsOf(s));
+      }
+    });
+  }
+
+  window.DECK = {
+    slides,
+    notes,
+    presenter: PRESENTER,
+    locked: false,
+    get index() { return index; },
+    get step() { return stepOf(slides[index]); },
+    get steps() { return stepsOf(slides[index]); },
+    // 'playing' mientras corre el vídeo de un vuelo, 'landed' cuando ya ha aterrizado; '' en las demás
+    get phase() { const s = slides[index]; return isFlight(s) ? (s.dataset.state || 'ready') : ''; },
+    // null si no hay descarga en marcha; si la hay, cuánto va y si la navegación está frenada
+    get loading() {
+      if (!gate.running) return null;
+      return { pct: Math.round(((gate.done + gate.frac) / gate.total) * 100), failed: gate.failed, blocking: gate.active };
+    },
+    release() { if (gate.active) { gate.active = false; emit(); } },
+    next, prev,
+    goTo(i) { if (i !== index && i >= 0 && i < slides.length) go(i, i > index ? 1 : -1); },
+    on(fn) { listeners.push(fn); },
+    // El hook se llama al empezar cualquier navegación (la barra lo usa para quitar la pantalla en negro)
+    set onNav(fn) { hooks.nav = fn; },
+    // Pantalla en negro: el vuelo que corre se para y sigue donde estaba al volver
+    hold(on) {
+      const s = slides[index];
+      if (!isFlight(s)) return;
+      const v = videoOf(s);
+      if (on) { if (s.dataset.state === 'playing' && !v.paused) { v.pause(); held = true; } }
+      else if (held) { held = false; v.play().catch(() => {}); }
+    },
+  };
+
   buildBorders();
   buildPins();
+  if (PRESENTER) {
+    preparePresenter();
+    return;
+  }
   const fromHash = slides.findIndex((s) => `#${s.id}` === location.hash);
   index = fromHash > 0 ? fromHash : 0;
   fit();
@@ -669,5 +781,5 @@
     activate(slides[index], fromHash > 0 ? -1 : 1, false);
   }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(layoutRail);
-  if (!listMode) { showControls(); preloadAll(); }
+  if (!listMode) preloadAll();
 })();

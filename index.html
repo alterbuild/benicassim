@@ -16,7 +16,9 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preload" href="fonts/eb-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/jost-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/deck.css?v=20261123h">
+  <link rel="stylesheet" href="css/deck.css?v=20261124a">
+  <link rel="stylesheet" href="css/chrome.css?v=20261124a">
+  <link rel="stylesheet" href="css/presenter.css?v=20261124a">
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -549,24 +551,57 @@
       <p class="credit" id="credit">Images&nbsp;: Google Earth · Photos&nbsp;: Wikimedia Commons</p>
     </div>
 
-    <nav class="controls" id="controls" aria-label="Navigation">
-      <span class="ctrl-status" id="preload" aria-live="polite"></span>
-      <button class="ctrl" id="btn-prev" type="button" aria-label="Diapositive précédente">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    <nav id="ctrl" aria-label="Commandes de la présentation">
+      <span class="ctrl-status" id="preload" role="status" aria-live="polite"></span>
+      <button type="button" id="b-force" class="lbl" hidden>Commencer quand même</button>
+      <button type="button" id="b-prev" aria-label="Diapositive précédente">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
       </button>
-      <span class="ctrl-count" id="count" aria-live="polite">1 / 19</span>
-      <button class="ctrl" id="btn-next" type="button" aria-label="Diapositive suivante">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      <div id="dots"></div>
+      <span id="count" aria-live="polite">1 / 19</span>
+      <button type="button" id="b-next" aria-label="Diapositive suivante">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
       </button>
-      <button class="ctrl" id="btn-full" type="button" aria-label="Plein écran" aria-pressed="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+      <button type="button" id="b-notes" class="lbl" aria-pressed="false" title="Notes de l'orateur (N)">Notes</button>
+      <button type="button" id="b-pv" class="lbl" aria-pressed="false" title="Vue du présentateur sur un second écran (P)">Présentateur</button>
+      <button type="button" id="b-fs" class="lbl" aria-pressed="false" title="Plein écran, avec choix de l'écran (F)">Plein écran</button>
+      <button type="button" id="b-info" class="lbl" aria-haspopup="dialog" aria-expanded="false" aria-controls="info" title="Info (I)">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6h.01"/></svg>Info
       </button>
     </nav>
+
+    <aside id="notes" hidden aria-label="Notes de l'orateur">
+      <h2 id="notes-h"></h2>
+      <div id="notes-t"></div>
+    </aside>
+
+    <div id="info" role="dialog" aria-modal="true" aria-labelledby="info-t" hidden>
+      <div class="info-card">
+        <button type="button" class="info-x" aria-label="Fermer" title="Fermer (Échap)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <h2 id="info-t">Benicàssim</h2>
+        <p class="info-lead">Présenter sa ville · oral de FLE</p>
+        <p class="info-keys">
+          <span><kbd>←</kbd><kbd>→</kbd><kbd>espace</kbd>avancer</span>
+          <span><kbd>N</kbd>notes</span>
+          <span><kbd>P</kbd>présentateur</span>
+          <span><kbd>T</kbd>chrono</span>
+          <span><kbd>B</kbd>écran noir</span>
+          <span><kbd>F</kbd>plein écran</span>
+          <span><kbd>I</kbd>info</span>
+        </p>
+        <p class="info-credit">Vols : Google Earth Studio (Data SIO, NOAA, U.S. Navy, Landsat / Copernicus, Airbus). Limites : IGN via geoBoundaries et OpenStreetMap. Photos : Wikimedia Commons, avec auteur et licence sur la dernière diapositive.</p>
+      </div>
+    </div>
   </main>
 
   <script src="js/altitudes.js?v=20261120f"></script>
   <script src="js/borders.js?v=20261120f"></script>
-  <script src="js/deck.js?v=20261123b"></script>
+  <script src="js/notes.js?v=20261124a"></script>
+  <script src="js/deck.js?v=20261124a"></script>
   <script src="js/fiesta.js?v=20261123a"></script>
+  <script src="js/chrome.js?v=20261124a"></script>
+  <script src="js/presenter.js?v=20261124a"></script>
 </body>
 </html>

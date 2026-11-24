@@ -621,7 +621,10 @@ html:not(.is-list) .slide--plan.is-handoff .plan li:nth-child(8) { transition-de
 .slide.is-drawn .pins__lines line { transition: none; }
 html.is-list .pin__head,
 html.is-list .pin__label,
-html.is-list .pins__lines line { opacity: 1; transform: none; }
+html.is-list .pins__lines line,
+.pvs .pin__head,
+.pvs .pin__label,
+.pvs .pins__lines line { opacity: 1; transform: none; }
 
 /* En el vuelo 3 las chinchetas ya están puestas: siguen a su ciudad sin animación de entrada */
 .slide .pins--track .pin__head,
@@ -1196,7 +1199,9 @@ html.is-list .pins__lines line { opacity: 1; transform: none; }
 .cat--7 { --h: 130px; --tilt: -14deg; --flip: 1; top: 20px;   left: 1210px; }
 .cat--8 { --h: 200px; --tilt: 8deg;  --flip: -1; top: 780px;  left: 1760px; }
 html.is-list .confetti,
-html.is-list .cats { display: none; }
+html.is-list .cats,
+.pvs .confetti,
+.pvs .cats { display: none; }
 
 /* plano de las salidas: las etiquetas entran volando, de oeste a este */
 .slide--map .canvas { background: #e7e5dd; }
@@ -1564,73 +1569,6 @@ html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--credits .credits-list
 }
 .stage[data-slide="s-situation"] .credit { opacity: 1; }
 
-/* ------------------------------------------------------------ mandos */
-
-.controls {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px;
-  border-radius: 8px;
-  background: rgb(20 23 11 / 0.82);
-  color: var(--p-inv-ink);
-  opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 200ms ease, transform 200ms var(--ease-out);
-}
-.controls.is-visible,
-.controls:focus-within {
-  opacity: 1;
-  transform: none;
-}
-.ctrl {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  transition: background-color 160ms ease, transform 160ms var(--ease-out);
-}
-.ctrl svg {
-  width: 22px;
-  height: 22px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.ctrl:active { transform: scale(0.96); }
-.ctrl:focus-visible { outline: 2px solid var(--p-inv-ink); outline-offset: 1px; }
-@media (hover: hover) and (pointer: fine) {
-  .ctrl:hover { background: rgb(236 235 231 / 0.14); }
-}
-.ctrl-count {
-  min-width: 64px;
-  padding: 0 6px;
-  text-align: center;
-  font: 500 15px/1 var(--font-text);
-  font-variant-numeric: tabular-nums;
-}
-
-.ctrl-status {
-  padding: 0 10px 0 8px;
-  font: 400 14px/1 var(--font-text);
-  color: var(--p-inv-muted);
-  white-space: nowrap;
-}
-.ctrl-status:empty { display: none; }
-.ctrl-status.is-done { color: var(--p-inv-ink); }
-
 /* ------------------------------------------------------------ modo lectura (móvil, vertical) */
 
 html.is-list body { overflow: auto; }
@@ -1666,16 +1604,23 @@ html.is-list .canvas {
   transform: scale(var(--s));
   transform-origin: 0 0;
 }
-html.is-list .cartouche { opacity: 1; transform: none; }
+html.is-list .cartouche,
+.pvs .cartouche { opacity: 1; transform: none; }
 html.is-list .spot__dot,
 html.is-list .spot__card,
 html.is-list .sky-tag,
 html.is-list .spots__lines line,
-html.is-list .fest img { opacity: 1; transform: none; }
+html.is-list .fest img,
+.pvs .spot__dot,
+.pvs .spot__card,
+.pvs .sky-tag,
+.pvs .spots__lines line,
+.pvs .fest img { opacity: 1; transform: none; }
 html.is-list .slide--flight { cursor: pointer; }
 html.is-list .slide.is-playing .cartouche { opacity: 0; }
 html.is-list .rail,
-html.is-list .controls,
+html.is-list #ctrl,
+html.is-list #notes,
 html.is-list .stage::before,
 html.is-list .skip { display: none; }
 html.is-list .credit {
