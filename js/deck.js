@@ -471,6 +471,10 @@
     slide.dataset.step = String(n);
     slide.querySelectorAll('[data-at]').forEach((el) => el.classList.toggle('is-shown', n >= Number(el.dataset.at)));
     slide.querySelectorAll('[data-until]').forEach((el) => el.classList.toggle('is-gone', n >= Number(el.dataset.until)));
+    // data-rail-from-step="k": desde el paso k la barra de partes se retira (un plano a pantalla completa no la quiere encima)
+    if (slide.dataset.railFromStep && slide.classList.contains('is-active')) {
+      stage.dataset.rail = n >= Number(slide.dataset.railFromStep) ? 'off' : 'progress';
+    }
     emit();
   }
 

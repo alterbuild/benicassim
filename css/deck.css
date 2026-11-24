@@ -1101,13 +1101,6 @@ html.is-list .country,
 .slide.is-static,
 .slide.is-static * { transition: none !important; }
 
-.slide-note {
-  position: absolute;
-  right: 120px;
-  bottom: 56px;
-  font: 400 20px/1 var(--font-text);
-  color: var(--p-muted);
-}
 
 /* la semana de fiesta: cada pulsación llena un día */
 .slide--week .kicker {
@@ -1278,7 +1271,8 @@ html.is-list .cats,
   opacity: 0;
   transition: opacity 120ms ease;
 }
-.spot__dot {
+.spot__dot,
+.rspot__dot {
   position: absolute;
   width: 22px;
   height: 22px;
@@ -1291,7 +1285,8 @@ html.is-list .cats,
   transform: scale(0.6);
   transition: opacity 120ms ease, transform 120ms ease;
 }
-.spot__card {
+.spot__card,
+.rspot__card {
   position: absolute;
   width: 250px;
   margin: 0;
@@ -1303,7 +1298,8 @@ html.is-list .cats,
   transform: translateY(14px);
   transition: opacity 160ms ease, transform 160ms ease;
 }
-.spot__card img {
+.spot__card img,
+.rspot__card img {
   display: block;
   width: 100%;
   height: 140px;
@@ -1311,7 +1307,8 @@ html.is-list .cats,
   object-position: var(--pos, 50% 50%);
   border-radius: 2px;
 }
-.spot__card figcaption { padding: 10px 6px 0; }
+.spot__card figcaption,
+.rspot__card figcaption { padding: 10px 6px 0; }
 .spot__name {
   display: block;
   font: 400 32px/1.05 var(--font-display);
@@ -1358,6 +1355,95 @@ html.is-list .cats,
   margin-top: 10px;
   font: 400 20px/1.2 var(--font-text);
   color: var(--p-muted);
+}
+
+/* mes restaurants sur le plan (paso 1 de la diapositiva de los lugares): las chinchetas llegan de oeste a este,
+   el Taj Mahal cierra en el paso 2. Mismo lenguaje que el plano de las salidas; cada pin lleva su línea, su punto y su tarjeta. */
+.rmap {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 5;
+  background: #e7e5dd;
+}
+.slide--cards .rmap .kicker { position: static; }
+/* el plano entra un poco más rápido que el resto de pasos: los lugares se van en 160 ms y no deben verse a través de él */
+.rmap.fade-step.is-shown { transition: opacity 260ms var(--ease-out), visibility 0s; }
+.rspots {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rspot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+}
+.rspot__line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.rspot__line line {
+  stroke: var(--p-ink);
+  stroke-width: 2;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.rspot__pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+.rspot.is-shown .rspot__dot {
+  opacity: 1;
+  transform: none;
+  transition: opacity 180ms var(--ease-out), transform 260ms var(--ease-out);
+  transition-delay: calc(150ms + var(--i) * 90ms);
+}
+.rspot.is-shown .rspot__line line {
+  opacity: 1;
+  transition: opacity 240ms var(--ease-out);
+  transition-delay: calc(240ms + var(--i) * 90ms);
+}
+.rspot.is-shown .rspot__card {
+  opacity: 1;
+  transform: none;
+  transition: opacity 360ms var(--ease-out), transform 420ms var(--ease-out);
+  transition-delay: calc(240ms + var(--i) * 90ms);
+}
+/* el Taj Mahal: mi vrai QG, en oscuro y más grande que los demás */
+.rspot--qg .rspot__dot {
+  background: var(--p-ink);
+  border-color: var(--p-ink);
+  box-shadow: 0 0 0 4px var(--p-bg), 3px 4px 0 4px rgb(20 23 11 / 0.3);
+}
+.rspot--qg .rspot__card {
+  width: 330px;
+  background: var(--p-ink);
+}
+.rspot--qg .rspot__card img { height: 170px; }
+.rspot--qg figcaption { padding-bottom: 6px; }
+.rspot--qg .spot__name {
+  font-size: 52px;
+  color: var(--p-inv-ink);
+}
+.rspot--qg .spot__type {
+  font-size: 22px;
+  color: var(--p-inv-muted);
+}
+.rspot__qg {
+  display: block;
+  margin-top: 14px;
+  font: italic 400 34px/1.12 var(--font-display);
+  color: var(--p-inv-ink);
 }
 
 /* festivales: los tres logos llegan a la vez */
@@ -1443,63 +1529,6 @@ html.is-list .cats,
   margin-top: 6px;
   font: 400 28px/1.3 var(--font-text);
   color: var(--p-muted);
-}
-
-/* restaurantes: aparecen en lugar de los tres lugares; el Taj Mahal llega el último */
-.restos {
-  position: absolute;
-  left: var(--gutter);
-  right: 120px;
-  top: 330px;
-  bottom: 110px;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: 28px;
-}
-.resto {
-  display: grid;
-  grid-template-rows: minmax(0, 1fr) auto auto;
-  min-height: 0;
-}
-/* Nou Cafè: deux photos verticales côte à côte dans la place d'une seule */
-.resto__pair {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: minmax(0, 1fr);
-  gap: 6px;
-  min-height: 0;
-}
-.resto h3 {
-  margin: 14px 0 0;
-  font: 400 36px/1.05 var(--font-display);
-  letter-spacing: -0.01em;
-}
-.resto p {
-  margin: 6px 0 0;
-  font: 400 21px/1.3 var(--font-text);
-  color: var(--p-muted);
-}
-.resto--qg {
-  grid-column: 4;
-  grid-row: 1 / span 2;
-  grid-template-rows: minmax(0, 1fr) auto auto auto;
-  padding: 16px 16px 24px;
-  border-radius: 4px;
-  background: var(--p-ink);
-  color: var(--p-inv-ink);
-}
-.resto--qg.fade-step { transform: translateY(12px); }
-.resto--qg.fade-step.is-shown {
-  transform: none;
-  transition: opacity 340ms var(--ease-out), transform 420ms var(--ease-out), visibility 0s;
-}
-.resto--qg h3 { font-size: 56px; }
-.resto--qg p { color: var(--p-inv-muted); font-size: 24px; }
-.resto--qg .resto__qg {
-  margin-top: 14px;
-  font: italic 400 36px/1.12 var(--font-display);
-  color: var(--p-inv-ink);
 }
 
 /* mi día perfecto: la línea del tiempo con algo más de aire en la primera columna */
@@ -1703,7 +1732,8 @@ html.is-list .credit {
   .spot__dot,
   .sky-tag,
   .fest img,
-  .resto--qg.fade-step { transform: none; }
+  .rspot__card,
+  .rspot__dot { transform: none; }
   .day.is-shown .day__bar::after,
   .day.is-shown .day__tick path { transition: none; }
   .slide--title[data-dir="fwd"].is-active .title-photo,

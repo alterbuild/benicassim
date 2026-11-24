@@ -16,7 +16,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preload" href="fonts/eb-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/jost-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/deck.css?v=20261124s">
+  <link rel="stylesheet" href="css/deck.css?v=20261124t">
   <link rel="stylesheet" href="css/chrome.css?v=20261124e">
   <link rel="stylesheet" href="css/presenter.css?v=20261124e">
   <script>document.documentElement.classList.add('js');</script>
@@ -235,11 +235,10 @@
       </section>
 
       <!-- 11 · Lieux à découvrir; → los restaurantes; → el Taj Mahal -->
-      <section class="slide slide--content slide--cards" id="s-lieux" data-section="4" data-alt="ville" data-steps="2" aria-label="Des lieux à découvrir et mes restaurants">
+      <section class="slide slide--content slide--cards" id="s-lieux" data-section="4" data-alt="ville" data-steps="2" data-rail-from-step="1" aria-label="Des lieux à découvrir et mes restaurants">
         <div class="canvas">
-          <p class="kicker">4 · Des lieux à découvrir</p>
+          <p class="kicker until-step" data-until="1">4 · Des lieux à découvrir</p>
           <h2 class="headline until-step" data-until="1">Trois endroits à ne pas manquer</h2>
-          <h2 class="headline fade-step" data-at="1">Mes restaurants préférés</h2>
           <ul class="cards until-step" data-until="1">
             <li class="card">
               <img class="ph" style="--pos: 20% 50%" src="media/photos/desert-palmes.jpg" width="762" height="508"
@@ -260,53 +259,88 @@
               <p>un parc aquatique avec des toboggans</p>
             </li>
           </ul>
-          <ul class="restos fade-step" data-at="1">
-            <li class="resto">
-              <img class="ph" style="--pos: 50% 70%" src="media/photos/resto-voramar-terrasse.jpg" width="600" height="400"
-                   alt="La terrasse de l'hôtel Voramar : une table avec des tapas, face à la plage et à la mer">
-              <h3>La Terraza Voramar</h3>
-              <p>face à la mer, à l'hôtel Voramar</p>
-            </li>
-            <li class="resto">
-              <div class="resto__pair">
-                <img class="ph" src="media/photos/resto-nou-cafe-frites.jpg" width="495" height="619"
-                     alt="Des frites avec du fromage fondu et des morceaux de bacon">
-                <img class="ph" style="--pos: 50% 45%" src="media/photos/resto-nou-cafe-bocadillo.jpg" width="900" height="1125"
-                     alt="Un énorme bocadillo avec des champignons, des oignons et de la moutarde">
-              </div>
-              <h3>Nou Cafè</h3>
-              <p>d'énormes bocadillos</p>
-            </li>
-            <li class="resto">
-              <img class="ph" src="media/photos/resto-vin-up-comptoir.jpg" width="547" height="365"
-                   alt="Le comptoir de Vin Up, plein de montaditos, avec les serveuses et des clients">
-              <h3>Vin Up</h3>
-              <p>des montaditos au comptoir</p>
-            </li>
-            <li class="resto">
-              <img class="ph" src="media/photos/resto-marabrasa.jpg" width="900" height="675" alt="">
-              <h3>Marabrasa</h3>
-              <p>du poisson à la braise</p>
-            </li>
-            <li class="resto">
-              <img class="ph" style="--pos: 50% 60%" src="media/photos/resto-doma.jpg" width="900" height="600" alt="">
-              <h3>Doma</h3>
-              <p>tortilla, croquettes et tapas</p>
-            </li>
-            <li class="resto">
-              <img class="ph" style="--pos: 50% 55%" src="media/photos/resto-masia-bellver-terrasse.jpg" width="1000" height="900"
-                   alt="La terrasse de la Masía Bellver : un bar en bois, des plantes et un grand canapé sous les arbres">
-              <h3>Masía Bellver</h3>
-              <p>une masia et des viandes grillées</p>
-            </li>
-            <li class="resto resto--qg fade-step" data-at="2">
-              <img class="ph" src="media/photos/resto-taj-mahal.jpg" width="900" height="600" alt="">
-              <h3>Taj Mahal</h3>
-              <p>le kebab</p>
-              <p class="resto__qg">Mon vrai QG pendant des années</p>
-            </li>
-          </ul>
-          <p class="slide-note fade-step" data-at="1">Photos d'illustration pour Marabrasa, Doma et le Taj Mahal</p>
+
+          <!-- Mes restaurants : paso 1, el plano (OpenStreetMap, earth-studio/make_map_restos.py) y las chinchetas de oeste a este; paso 2, el Taj Mahal -->
+          <div class="rmap fade-step" data-at="1">
+            <img class="map" src="media/carte-restos.svg" width="1920" height="1080"
+                 alt="Plan de Benicàssim : le centre-ville au nord-ouest, la grande plage et le cap de Voramar au sud-est">
+            <p class="map__sea" aria-hidden="true">Mer Méditerranée</p>
+            <ul class="rspots">
+              <li class="rspot" data-at="1" style="--i:0">
+                <svg class="rspot__line" viewBox="0 0 1920 1080" aria-hidden="true"><line x1="104" y1="425" x2="104" y2="510"/></svg>
+                <span class="rspot__dot" style="left:104px; top:425px"></span>
+                <figure class="rspot__card" style="left:36px; top:510px">
+                  <img src="media/photos/resto-marabrasa.jpg" width="900" height="675" alt="">
+                  <figcaption><span class="spot__name">Marabrasa</span><span class="spot__type">du poisson à la braise</span></figcaption>
+                </figure>
+              </li>
+              <li class="rspot" data-at="1" style="--i:1">
+                <svg class="rspot__line" viewBox="0 0 1920 1080" aria-hidden="true"><line x1="283" y1="412" x2="360" y2="510"/></svg>
+                <span class="rspot__dot" style="left:283px; top:412px"></span>
+                <figure class="rspot__card" style="left:310px; top:510px">
+                  <img src="media/photos/resto-doma.jpg" width="900" height="600" style="--pos: 50% 60%" alt="">
+                  <figcaption><span class="spot__name">Doma</span><span class="spot__type">tortilla, croquettes et tapas</span></figcaption>
+                </figure>
+              </li>
+              <li class="rspot" data-at="1" style="--i:2">
+                <svg class="rspot__line" viewBox="0 0 1920 1080" aria-hidden="true"><line x1="357" y1="305" x2="357" y2="272"/></svg>
+                <span class="rspot__dot" style="left:357px; top:305px"></span>
+                <figure class="rspot__card" style="left:232px; top:40px">
+                  <div class="rspot__pair">
+                    <img src="media/photos/resto-nou-cafe-frites.jpg" width="495" height="619"
+                         alt="Des frites avec du fromage fondu et des morceaux de bacon">
+                    <img src="media/photos/resto-nou-cafe-bocadillo.jpg" width="900" height="1125" style="--pos: 50% 45%"
+                         alt="Un énorme bocadillo avec des champignons, des oignons et de la moutarde">
+                  </div>
+                  <figcaption><span class="spot__name">Nou Cafè</span><span class="spot__type">d'énormes bocadillos</span></figcaption>
+                </figure>
+              </li>
+              <li class="rspot" data-at="1" style="--i:3">
+                <svg class="rspot__line" viewBox="0 0 1920 1080" aria-hidden="true"><line x1="381" y1="400" x2="640" y2="510"/></svg>
+                <span class="rspot__dot" style="left:381px; top:400px"></span>
+                <figure class="rspot__card" style="left:584px; top:510px">
+                  <img src="media/photos/resto-vin-up-comptoir.jpg" width="547" height="365"
+                       alt="Le comptoir de Vin Up, plein de montaditos, avec les serveuses et des clients">
+                  <figcaption><span class="spot__name">Vin Up</span><span class="spot__type">montaditos au comptoir</span></figcaption>
+                </figure>
+              </li>
+              <li class="rspot" data-at="1" style="--i:4">
+                <svg class="rspot__line" viewBox="0 0 1920 1080" aria-hidden="true"><line x1="1255" y1="670" x2="1255" y2="612"/></svg>
+                <span class="rspot__dot" style="left:1255px; top:670px"></span>
+                <figure class="rspot__card" style="left:1130px; top:380px">
+                  <img src="media/photos/resto-voramar-terrasse.jpg" width="600" height="400" style="--pos: 50% 70%"
+                       alt="La terrasse de l'hôtel Voramar : une table avec des tapas, face à la plage et à la mer">
+                  <figcaption><span class="spot__name">Terraza Voramar</span><span class="spot__type">face à la mer</span></figcaption>
+                </figure>
+              </li>
+              <li class="rspot" data-at="1" style="--i:5">
+                <svg class="rspot__line" viewBox="0 0 1920 1080" aria-hidden="true"><line x1="1808" y1="872" x2="1720" y2="792"/></svg>
+                <span class="rspot__dot" style="left:1808px; top:872px"></span>
+                <figure class="rspot__card" style="left:1560px; top:560px">
+                  <img src="media/photos/resto-masia-bellver-terrasse.jpg" width="1000" height="900" style="--pos: 50% 55%"
+                       alt="La terrasse de la Masía Bellver : un bar en bois, des plantes et un grand canapé sous les arbres">
+                  <figcaption><span class="spot__name">Masía Bellver</span><span class="spot__type">une masia à Orpesa</span></figcaption>
+                </figure>
+              </li>
+              <li class="rspot rspot--qg" data-at="2" style="--i:0">
+                <svg class="rspot__line" viewBox="0 0 1920 1080" aria-hidden="true"><line x1="363" y1="376" x2="620" y2="250"/></svg>
+                <span class="rspot__dot" style="left:363px; top:376px"></span>
+                <figure class="rspot__card" style="left:620px; top:60px">
+                  <img src="media/photos/resto-taj-mahal.jpg" width="900" height="600" alt="">
+                  <figcaption>
+                    <span class="spot__name">Taj Mahal</span>
+                    <span class="spot__type">le kebab</span>
+                    <span class="rspot__qg">Mon vrai QG pendant des années</span>
+                  </figcaption>
+                </figure>
+              </li>
+            </ul>
+            <div class="plate plate--map">
+              <p class="kicker">4 · Des lieux à découvrir</p>
+              <h2 class="plate__title">Mes restaurants préférés</h2>
+              <p class="plate__note">Photos d'illustration pour Marabrasa, Doma et le Taj Mahal</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -607,7 +641,7 @@
   <script src="js/altitudes.js?v=20261120f"></script>
   <script src="js/borders.js?v=20261124e"></script>
   <script src="js/notes.js?v=20261124e"></script>
-  <script src="js/deck.js?v=20261124e"></script>
+  <script src="js/deck.js?v=20261124t"></script>
   <script src="js/fiesta.js?v=20261123a"></script>
   <script src="js/chrome.js?v=20261124e"></script>
   <script src="js/presenter.js?v=20261124e"></script>
