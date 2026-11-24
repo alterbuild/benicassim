@@ -503,6 +503,8 @@ html:not(.is-list) .slide--plan.is-handoff .plan li:nth-child(8) { transition-de
   transition: opacity 1600ms ease;
 }
 .slide.is-drawn .flight-still { transition: none; }
+/* Durante los 2 últimos segundos del vuelo 4 deck.js fija la opacidad en cada fotograma: sin transición, para no ir retrasado */
+.slide.is-fading .flight-still { transition: none; }
 
 /* Límite (España, Comunitat Valenciana, Benicàssim): se dibuja al aterrizar */
 .borders {

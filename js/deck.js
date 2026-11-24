@@ -315,6 +315,26 @@
 
   /* ---------------------------------------------------------------- vuelos */
 
+  /* Fundido final del vuelo 4: la foto que viene después (.flight-still) empieza a aparecer FADE_S segundos antes
+     de que acabe el vídeo y llega a opacidad 1 justo al terminar. La opacidad se calcula en cada fotograma a partir
+     del tiempo que le queda al vídeo (y de su velocidad), así el fundido y el vuelo van siempre a la par. */
+  const FADE_S = 2;
+  const smooth = (t) => t * t * (3 - 2 * t);
+
+  function crossfade(slide, v) {
+    const still = slide.querySelector('.flight-still');
+    if (!still || !Number.isFinite(v.duration)) return;
+    const left = (v.duration - v.currentTime) / (v.playbackRate || 1);
+    const t = Math.min(1, Math.max(0, 1 - left / FADE_S));
+    slide.classList.toggle('is-fading', t > 0);
+    still.style.opacity = t > 0 ? smooth(t).toFixed(3) : '';
+  }
+  function clearCrossfade(slide) {
+    const still = slide.querySelector('.flight-still');
+    if (still) still.style.opacity = '';
+    slide.classList.remove('is-fading');
+  }
+
   function follow(slide) {
     const v = videoOf(slide);
     const alts = altsOf(slide);
@@ -324,6 +344,7 @@
       const frame = Math.round(v.currentTime * fps);
       if (alts.length) setAltitude(alts[Math.min(alts.length - 1, frame)]);
       trackPins(slide, frame);
+      crossfade(slide, v);
       requestAnimationFrame(tick);
     };
     tick();
@@ -341,6 +362,7 @@
   function play(slide) {
     const v = videoOf(slide);
     slide.classList.remove('is-landed');
+    clearCrossfade(slide);
     slide.dataset.state = 'playing';
     v.onended = () => land(slide, false);
     try { v.currentTime = 0; } catch (e) { /* aún sin metadatos */ }
@@ -362,6 +384,7 @@
     v.onended = null;
     if (jump) { v.pause(); seekToEnd(v); }
     slide.dataset.state = 'landed';
+    clearCrossfade(slide);
     // Al volver atrás el límite ya está dibujado; al aterrizar se dibuja
     slide.classList.toggle('is-drawn', instant);
     slide.classList.add('is-landed');
