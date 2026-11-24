@@ -132,20 +132,6 @@
   "illustration": false
  },
  {
-  "file": "sortie-la-santa.jpg",
-  "title": "Space Ibiza Crowd 1",
-  "by": "Abir Anwar",
-  "licence": "CC BY 2.0",
-  "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Space_Ibiza_Crowd_1.jpg",
-  "width": 800,
-  "size": [
-   800,
-   600
-  ],
-  "illustration": true
- },
- {
   "file": "sortie-casablanca.jpg",
   "title": "Pacha Ibiza Crowd",
   "by": "pravin.premkumar",
@@ -160,34 +146,6 @@
   "illustration": true
  },
  {
-  "file": "sortie-place.jpg",
-  "title": "Plaza de Santa Ana, Madrid (26159833570)",
-  "by": "Edgardo W. Olivera from Montevideo, Uruguay",
-  "licence": "CC BY 2.0",
-  "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Plaza_de_Santa_Ana,_Madrid_(26159833570).jpg",
-  "width": 800,
-  "size": [
-   800,
-   600
-  ],
-  "illustration": true
- },
- {
-  "file": "sortie-lluna.jpg",
-  "title": "Bartender at Sylvarum cocktail bar, Alicante",
-  "by": "Kartoman",
-  "licence": "CC0",
-  "licenceUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "page": "https://commons.wikimedia.org/wiki/File:Bartender_at_Sylvarum_cocktail_bar,_Alicante.jpg",
-  "width": 800,
-  "size": [
-   800,
-   450
-  ],
-  "illustration": true
- },
- {
   "file": "sortie-tropical.jpg",
   "title": "Colorful cocktails served at a bar countertop",
   "by": "Shixart1985",
@@ -198,34 +156,6 @@
   "size": [
    800,
    530
-  ],
-  "illustration": true
- },
- {
-  "file": "sortie-corb.jpg",
-  "title": "Montaditos con jarra de cerveza",
-  "by": "Trubble",
-  "licence": "CC BY-SA 2.0",
-  "licenceUrl": "https://creativecommons.org/licenses/by-sa/2.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Montaditos_con_jarra_de_cerveza.jpg",
-  "width": 800,
-  "size": [
-   800,
-   600
-  ],
-  "illustration": true
- },
- {
-  "file": "sortie-fuit-fuio.jpg",
-  "title": "Green Mill Cocktail Lounge interior",
-  "by": "Kenneth C. Zirkel",
-  "licence": "CC BY-SA 4.0",
-  "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Green_Mill_Cocktail_Lounge_interior.jpg",
-  "width": 800,
-  "size": [
-   800,
-   600
   ],
   "illustration": true
  },

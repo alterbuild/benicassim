@@ -1323,6 +1323,14 @@ html.is-list .cats,
   font: 400 19px/1.25 var(--font-text);
   color: var(--p-muted);
 }
+/* sitio sin foto: solo el nombre y el tipo, mismo papel y misma sombra que las tarjetas con foto */
+.spot__card--text {
+  width: max-content;
+  min-width: 170px;
+  max-width: 280px;
+  padding: 14px 24px 16px 20px;
+}
+.spot__card--text figcaption { padding: 0; }
 .slide.is-active .spot__dot {
   opacity: 1;
   transform: none;
