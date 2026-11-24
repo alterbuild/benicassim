@@ -633,9 +633,51 @@ html.is-list .pins__lines line,
 .slide .pins--track .pin__head { transform: none; }
 .pins--track { transition: opacity 450ms ease; }
 
+/* Rótulos de países sobre el mapa (vuelo 1): letras blancas con sombra, como las del mar y la montaña de «Climat».
+   Salen cuando el límite ya está casi dibujado; el país del que se habla (lg) va primero. */
+.countries {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 4;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+.country {
+  position: absolute;
+  color: var(--p-inv-ink);
+  font: 500 34px/1 var(--font-display);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-shadow: 0 1px 3px rgb(10 14 0 / 0.85), 0 0 16px rgb(10 14 0 / 0.6);
+  transform: translate(-50%, -50%) rotate(var(--rot, 0deg));
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.country--lg { font-size: 54px; letter-spacing: 0.26em; }
+.country--sm { font-size: 32px; letter-spacing: 0.16em; }
+.slide.is-landed .country {
+  opacity: 1;
+  transition: opacity 500ms var(--ease-out);
+  transition-delay: calc(1000ms + var(--i) * 260ms);
+}
+.slide.is-drawn .country { transition: none; }
+html.is-list .country,
+.pvs .country { opacity: 1; }
+
+/* En el vuelo 1 el cartel se corre a la derecha para dejar sitio al rótulo de Francia entre la costa y él */
+.slide[data-flight="vol-1-espace-peninsule"] .cartouche { right: 72px; }
+
 /* Antes del siguiente vuelo: fronteras, cartel y chinchetas que no continúan se desvanecen */
 .borders { transition: opacity 450ms ease; }
+.countries { transition: opacity 450ms ease; }
 .slide.is-leaving .borders,
+.slide.is-leaving .countries,
 .slide.is-leaving .pins--track { opacity: 0; }
 
 /* Arriba a la derecha: en los tres finales esa esquina es Francia, el mar o la montaña,

@@ -193,6 +193,33 @@
     });
   }
 
+  /* ---------------------------------------------------------------- rótulos de países
+     Nombres sobre el mapa del último fotograma (js/borders.js, FLIGHT_LABELS, generado por make_borders.py).
+     Salen al aterrizar, cuando el límite ya está casi dibujado, y se van con él antes del siguiente vuelo. */
+
+  const LABELS = window.FLIGHT_LABELS || {};
+
+  function buildLabels() {
+    slides.filter(isFlight).forEach((slide) => {
+      const items = LABELS[slide.dataset.flight];
+      if (!items || !items.length) return;
+      const layer = document.createElement('ul');
+      layer.className = 'countries';
+      layer.setAttribute('aria-label', 'Pays sur la carte');
+      items.forEach((c, i) => {
+        const li = document.createElement('li');
+        li.className = 'country' + (c.size ? ` country--${c.size}` : '');
+        li.textContent = c.name;
+        li.style.left = `${c.x}px`;
+        li.style.top = `${c.y}px`;
+        li.style.setProperty('--i', i);
+        if (c.rot) li.style.setProperty('--rot', `${c.rot}deg`);
+        layer.appendChild(li);
+      });
+      slide.querySelector('.canvas').insertBefore(layer, slide.querySelector('.cartouche'));
+    });
+  }
+
   /* ---------------------------------------------------------------- chinchetas
      Cabeza redonda en el punto exacto, línea fina hasta la etiqueta (en el mar).
      En el vuelo 2 aparecen al aterrizar; en el vuelo 3 siguen a su ciudad fotograma a fotograma. */
@@ -855,6 +882,7 @@
 
   buildBorders();
   buildPins();
+  buildLabels();
   if (PRESENTER) {
     preparePresenter();
     return;
