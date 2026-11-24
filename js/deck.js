@@ -468,6 +468,8 @@
   const stepOf = (s) => Number(s.dataset.step || 0);
 
   function setStep(slide, n) {
+    // data-back-delay="ms": al retroceder un paso lo que reaparece espera a que termine el movimiento del paso (--rv)
+    if (slide.dataset.backDelay) slide.style.setProperty('--rv', n < stepOf(slide) ? slide.dataset.backDelay : '0ms');
     slide.dataset.step = String(n);
     slide.querySelectorAll('[data-at]').forEach((el) => el.classList.toggle('is-shown', n >= Number(el.dataset.at)));
     slide.querySelectorAll('[data-until]').forEach((el) => el.classList.toggle('is-gone', n >= Number(el.dataset.until)));
@@ -552,9 +554,14 @@
     const flip = dir > 0 && from.id === 's-vol-4' && to.id === 's-situation' && !reduceMotion.matches;
     const seamless = dir > 0 && isFlight(from) && isFlight(to);
     const relay = dir > 0 && from.classList.contains('slide--plan') && isFlight(to);
-    const instant = seamless || flip || relay;
+    // data-continues="id": esta diapositiva es la continuación exacta de la anterior (los logos del zoom del plano
+    // ya están en su sitio): el cambio es un corte seco, sin fundido, y solo si la animación del paso ya ha terminado
+    const continued = (dir > 0 && to.dataset.continues === from.id && stepOf(from) === stepsOf(from)) ||
+      (dir < 0 && from.dataset.continues === to.id);
+    const instant = seamless || flip || relay || continued;
     from.classList.toggle('is-instant', instant);
     to.classList.toggle('is-instant', instant);
+    to.classList.toggle('is-continued', continued && dir > 0);
     leave(from);
     if (relay) startHandoff(from);
     index = i;

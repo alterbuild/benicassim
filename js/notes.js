@@ -43,7 +43,7 @@ window.DECK_NOTES = {
     "[cada → enciende un día] On peut aussi faire la fête le vendredi, le samedi… le dimanche, c'est aussi un bon jour… le lundi, si on veut, le mardi, le mercredi aussi… et même le jeudi !"
   ],
   's-sorties': [
-    "Voici quelques-unes des meilleures discothèques et des meilleurs pubs. [Nombra los que quieras: La Santa, Casablanca, le Select…]"
+    "Voici quelques-unes des meilleures discothèques et des meilleurs pubs. [Nombra los que quieras: La Santa, Casablanca, le Select…] [→ al terminar: zoom sobre el recinto de los festivales y los logos se colocan; con otro → empieza la diapositiva de los festivales]"
   ],
   's-festivals': [
     "Et pour continuer la fête, il y a les festivals : le SanSan à Pâques, le FIB en juillet et le Rototom Sunsplash en août."

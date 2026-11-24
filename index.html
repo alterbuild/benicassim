@@ -16,7 +16,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preload" href="fonts/eb-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/jost-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/deck.css?v=20261124h">
+  <link rel="stylesheet" href="css/deck.css?v=20261124u">
   <link rel="stylesheet" href="css/chrome.css?v=20261124h">
   <link rel="stylesheet" href="css/presenter.css?v=20261124h">
   <script>document.documentElement.classList.add('js');</script>
@@ -372,85 +372,103 @@
       </section>
 
       <!-- 13 · Carte des sorties : las etiquetas entran volando sobre el plano (OpenStreetMap) -->
-      <section class="slide slide--map" id="s-sorties" data-section="5" data-alt="ville" data-rail="off" aria-label="Discothèques et pubs sur la carte">
+      <section class="slide slide--map" id="s-sorties" data-section="5" data-alt="ville" data-rail="off" data-steps="1" data-back-delay="700ms" aria-label="Discothèques et pubs sur la carte">
         <div class="canvas">
-          <img class="map" src="media/carte-sorties.svg" width="1920" height="1080"
-               alt="Plan de Benicàssim : le centre-ville, la voie rapide au nord et les plages au sud">
+          <!-- la cámara: el plano y todo lo que va pegado a él se acercan juntos al recinto en el paso 1 -->
+          <div class="mapcam">
+            <img class="map" src="media/carte-sorties.svg" width="1920" height="1080"
+                 alt="Plan de Benicàssim : le centre-ville, la voie rapide au nord et les plages au sud">
+            <svg class="recinto" style="--i:8" viewBox="0 0 1920 1080" aria-hidden="true"><path d="M172.1 102.9 L169.2 102.5 L166.6 101.2 L164.9 98.5 L155.1 55.1 L155.1 54.6 L156.5 52.7 L213.6 48.3 L263.5 43.8 L266.4 43.6 L265.4 50.1 L301.8 47.2 L303.9 64.8 L306.2 78.4 L314.2 83.0 L366.2 85.6 L366.4 83.0 L400.4 82.5 L400.0 111.7 L401.8 160.0 L393.6 159.5 L393.8 170.8 L392.0 172.6 L392.0 176.7 L392.1 180.6 L393.9 182.2 L393.9 195.5 L392.0 197.0 L392.0 201.1 L392.0 205.2 L393.9 206.7 L393.9 212.2 L392.0 213.9 L392.1 217.7 L392.1 221.6 L394.0 223.3 L394.1 236.3 L392.1 238.1 L392.2 241.9 L392.3 246.0 L394.0 247.5 L394.2 264.1 L394.1 266.0 L393.8 267.9 L393.2 269.6 L392.3 271.2 L391.1 272.6 L389.7 273.8 L387.6 274.8 L382.7 274.6 L381.6 275.8 L381.5 277.7 L381.3 283.4 L368.3 282.9 L365.2 283.5 L264.1 276.4 L260.3 276.1 L254.5 275.7 L178.5 271.9 L174.8 272.0 L169.6 269.2 L167.8 269.4 L167.1 269.0 L159.0 268.8 L117.6 266.5 L116.0 265.8 L115.7 263.9 L116.0 256.8 L116.0 251.1 L115.8 235.4 L126.1 209.0 L132.2 196.1 L134.1 190.9 L136.4 185.7 L139.3 178.8 L140.6 175.8 L140.4 175.0 L138.4 172.8 L150.0 152.8 L150.3 153.0 L153.1 148.2 L157.5 150.8 L159.7 147.3 L164.0 148.3 L168.6 140.7 L172.9 132.0 L176.1 120.8 L176.7 107.7 L177.0 105.7 L176.1 105.1 L172.1 102.9Z"/></svg>
+            <svg class="spots__lines" viewBox="0 0 1920 1080" aria-hidden="true">
+              <line style="--i:0" x1="456" y1="327" x2="456" y2="272"/>
+              <line style="--i:1" x1="1126" y1="305" x2="1165" y2="530"/>
+              <line style="--i:2" x1="1158" y1="262" x2="1090" y2="256"/>
+              <line style="--i:3" x1="1186" y1="270" x2="1230" y2="161"/>
+              <line style="--i:4" x1="1249" y1="282" x2="1420" y2="141"/>
+              <line style="--i:5" x1="1360" y1="288" x2="1400" y2="540"/>
+              <line style="--i:6" x1="1457" y1="398" x2="1610" y2="330"/>
+              <line style="--i:7" x1="1180" y1="912" x2="1262" y2="881"/>
+              <line style="--i:8" x1="300" y1="279" x2="300" y2="330"/>
+            </svg>
+            <ul class="spots">
+              <li class="spot" style="--i:0">
+                <span class="spot__dot" style="left:456px; top:327px"></span>
+                <figure class="spot__card" style="left:420px; top:40px">
+                  <img src="media/photos/sortie-la-santa-fournie.jpg" width="399" height="501" style="--pos: 50% 42%" alt="">
+                  <figcaption><span class="spot__name">La Santa</span><span class="spot__type">discothèque</span></figcaption>
+                </figure>
+              </li>
+              <li class="spot" style="--i:1">
+                <span class="spot__dot" style="left:1126px; top:305px"></span>
+                <figure class="spot__card" style="left:1040px; top:530px">
+                  <img src="media/photos/sortie-tropical.jpg" width="800" height="530" alt="">
+                  <figcaption><span class="spot__name">Tropical Surf Bar</span><span class="spot__type">bar à cocktails</span></figcaption>
+                </figure>
+              </li>
+              <li class="spot" style="--i:2">
+                <span class="spot__dot" style="left:1158px; top:262px"></span>
+                <figure class="spot__card" style="left:860px; top:24px">
+                  <img src="media/photos/sortie-select-fournie.jpg" width="1200" height="565" style="--pos: 30% 50%" alt="">
+                  <figcaption><span class="spot__name">Le Select</span><span class="spot__type">bar, sur la place des Dolors</span></figcaption>
+                </figure>
+              </li>
+              <li class="spot" style="--i:3">
+                <span class="spot__dot" style="left:1186px; top:270px"></span>
+                <figure class="spot__card spot__card--text" style="left:1138px; top:70px">
+                  <figcaption><span class="spot__name">Piropo</span><span class="spot__type">pub, place des Dolors</span></figcaption>
+                </figure>
+              </li>
+              <li class="spot" style="--i:4">
+                <span class="spot__dot" style="left:1249px; top:282px"></span>
+                <figure class="spot__card spot__card--text" style="left:1390px; top:50px">
+                  <figcaption><span class="spot__name">La Tremenda</span><span class="spot__type">discothèque</span></figcaption>
+                </figure>
+              </li>
+              <li class="spot" style="--i:5">
+                <span class="spot__dot" style="left:1360px; top:288px"></span>
+                <figure class="spot__card spot__card--text" style="left:1330px; top:540px">
+                  <figcaption><span class="spot__name">Bufambo</span><span class="spot__type">club d'été</span></figcaption>
+                </figure>
+              </li>
+              <li class="spot" style="--i:6">
+                <span class="spot__dot" style="left:1457px; top:398px"></span>
+                <figure class="spot__card" style="left:1610px; top:190px">
+                  <img src="media/photos/sortie-casablanca.jpg" width="800" height="449" alt="">
+                  <figcaption><span class="spot__name">Casablanca</span><span class="spot__type">discothèque</span></figcaption>
+                </figure>
+              </li>
+              <li class="spot" style="--i:7">
+                <span class="spot__dot" style="left:1180px; top:912px"></span>
+                <figure class="spot__card spot__card--text" style="left:1240px; top:790px">
+                  <figcaption><span class="spot__name">Zalê</span><span class="spot__type">bar de plage</span></figcaption>
+                </figure>
+              </li>
+              <li class="spot" style="--i:8">
+                <span class="spot__dot" style="left:300px; top:279px"></span>
+                <figure class="spot__card spot__card--fz" style="left:24px; top:330px">
+                  <div class="spot__slots"></div>
+                  <figcaption><span class="spot__name">Le site des festivals</span><span class="spot__type">le SanSan, le FIB et le Rototom</span></figcaption>
+                </figure>
+              </li>
+            </ul>
+          </div>
           <p class="map__sea" aria-hidden="true">Mer Méditerranée</p>
-          <svg class="spots__lines" viewBox="0 0 1920 1080" aria-hidden="true">
-            <line style="--i:0" x1="456" y1="327" x2="456" y2="272"/>
-            <line style="--i:1" x1="1126" y1="305" x2="1165" y2="530"/>
-            <line style="--i:2" x1="1158" y1="262" x2="1090" y2="256"/>
-            <line style="--i:3" x1="1186" y1="270" x2="1230" y2="161"/>
-            <line style="--i:4" x1="1249" y1="282" x2="1420" y2="141"/>
-            <line style="--i:5" x1="1360" y1="288" x2="1400" y2="540"/>
-            <line style="--i:6" x1="1457" y1="398" x2="1610" y2="330"/>
-            <line style="--i:7" x1="1180" y1="912" x2="1262" y2="881"/>
-          </svg>
-          <ul class="spots">
-            <li class="spot" style="--i:0">
-              <span class="spot__dot" style="left:456px; top:327px"></span>
-              <figure class="spot__card" style="left:330px; top:40px">
-                <img src="media/photos/sortie-la-santa-fournie.jpg" width="399" height="501" style="--pos: 50% 42%" alt="">
-                <figcaption><span class="spot__name">La Santa</span><span class="spot__type">discothèque</span></figcaption>
-              </figure>
-            </li>
-            <li class="spot" style="--i:1">
-              <span class="spot__dot" style="left:1126px; top:305px"></span>
-              <figure class="spot__card" style="left:1040px; top:530px">
-                <img src="media/photos/sortie-tropical.jpg" width="800" height="530" alt="">
-                <figcaption><span class="spot__name">Tropical Surf Bar</span><span class="spot__type">bar à cocktails</span></figcaption>
-              </figure>
-            </li>
-            <li class="spot" style="--i:2">
-              <span class="spot__dot" style="left:1158px; top:262px"></span>
-              <figure class="spot__card" style="left:860px; top:24px">
-                <img src="media/photos/sortie-select-fournie.jpg" width="1200" height="565" style="--pos: 30% 50%" alt="">
-                <figcaption><span class="spot__name">Le Select</span><span class="spot__type">bar, sur la place des Dolors</span></figcaption>
-              </figure>
-            </li>
-            <li class="spot" style="--i:3">
-              <span class="spot__dot" style="left:1186px; top:270px"></span>
-              <figure class="spot__card spot__card--text" style="left:1138px; top:70px">
-                <figcaption><span class="spot__name">Piropo</span><span class="spot__type">pub, place des Dolors</span></figcaption>
-              </figure>
-            </li>
-            <li class="spot" style="--i:4">
-              <span class="spot__dot" style="left:1249px; top:282px"></span>
-              <figure class="spot__card spot__card--text" style="left:1390px; top:50px">
-                <figcaption><span class="spot__name">La Tremenda</span><span class="spot__type">discothèque</span></figcaption>
-              </figure>
-            </li>
-            <li class="spot" style="--i:5">
-              <span class="spot__dot" style="left:1360px; top:288px"></span>
-              <figure class="spot__card spot__card--text" style="left:1330px; top:540px">
-                <figcaption><span class="spot__name">Bufambo</span><span class="spot__type">club d'été</span></figcaption>
-              </figure>
-            </li>
-            <li class="spot" style="--i:6">
-              <span class="spot__dot" style="left:1457px; top:398px"></span>
-              <figure class="spot__card" style="left:1610px; top:190px">
-                <img src="media/photos/sortie-casablanca.jpg" width="800" height="449" alt="">
-                <figcaption><span class="spot__name">Casablanca</span><span class="spot__type">discothèque</span></figcaption>
-              </figure>
-            </li>
-            <li class="spot" style="--i:7">
-              <span class="spot__dot" style="left:1180px; top:912px"></span>
-              <figure class="spot__card spot__card--text" style="left:1240px; top:790px">
-                <figcaption><span class="spot__name">Zalê</span><span class="spot__type">bar de plage</span></figcaption>
-              </figure>
-            </li>
-          </ul>
           <div class="plate plate--map">
             <p class="kicker">5 · La fête</p>
             <h2 class="plate__title">Discothèques et pubs</h2>
             <p class="plate__note">Photos d'illustration</p>
           </div>
+          <!-- los logos viajan solos: pequeños en la tarjeta del recinto y, con el zoom, a las cajas exactas de .fest img de la diapositiva siguiente (--k: orden de llegada a la tarjeta; --kf: orden de salida, el de más lejos primero para que no se pisen) -->
+          <div class="fz" aria-hidden="true">
+            <img class="fz__logo" style="--k:0; --kf:2; left:360px; --tx:-320px; --ty:-80px" src="media/logos/sansan.svg" width="119" height="80" alt="">
+            <img class="fz__logo" style="--k:1; --kf:1; left:861.3px; --tx:-696px; --ty:-80px" src="media/logos/fib.svg" width="222" height="102" alt="">
+            <img class="fz__logo" style="--k:2; --kf:0; left:1362.7px; --tx:-1072.1px; --ty:-80px" src="media/logos/rototom.png" width="900" height="340" alt="">
+          </div>
         </div>
       </section>
 
       <!-- 14 · Festivals : los logos aparecen todos a la vez -->
-      <section class="slide slide--content slide--fest" id="s-festivals" data-section="5" data-alt="ville" aria-label="Les festivals">
+      <section class="slide slide--content slide--fest" id="s-festivals" data-section="5" data-alt="ville" data-continues="s-sorties" aria-label="Les festivals">
         <div class="canvas">
           <p class="kicker">5 · La fête</p>
           <h2 class="headline">La ville des festivals</h2>
@@ -613,8 +631,8 @@
 
   <script src="js/altitudes.js?v=20261120f"></script>
   <script src="js/borders.js?v=20261124h"></script>
-  <script src="js/notes.js?v=20261124h"></script>
-  <script src="js/deck.js?v=20261124h"></script>
+  <script src="js/notes.js?v=20261124u"></script>
+  <script src="js/deck.js?v=20261124u"></script>
   <script src="js/fiesta.js?v=20261123a"></script>
   <script src="js/chrome.js?v=20261124h"></script>
   <script src="js/presenter.js?v=20261124h"></script>
