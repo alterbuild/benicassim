@@ -244,17 +244,17 @@ html:not(.js) .slide--title { opacity: 1; visibility: visible; }
 .stage:not([data-rail="alt"]) .rail--alt,
 .stage:not([data-rail="progress"]) .rail--progress,
 .stage:not([data-rail="alt"])::before { opacity: 0; }
-/* el clima es una foto a sangre con la barra de progreso: el mismo velo, azul como en la portada */
-.stage[data-slide="s-climat"][data-rail="progress"]::before {
+/* el clima y los deportes de mar son fotos a sangre con la barra de progreso: el mismo velo, azul como en la portada */
+.stage:is([data-slide="s-climat"], [data-slide="s-sports"])[data-rail="progress"]::before {
   opacity: 1;
   background: linear-gradient(90deg, rgb(8 30 52 / 0.56), rgb(8 30 52 / 0) 100%);
 }
-/* abajo la barra pasa sobre el pueblo y el bosque: una sombra corta la despega de la foto */
-.stage[data-slide="s-climat"] .rail--progress {
+/* abajo la barra pasa sobre el pueblo, el bosque o la arena: una sombra corta la despega de la foto */
+.stage:is([data-slide="s-climat"], [data-slide="s-sports"]) .rail--progress {
   text-shadow: 0 1px 2px rgb(0 0 0 / 0.6), 0 2px 12px rgb(0 0 0 / 0.4);
 }
-.stage[data-slide="s-climat"] .rail--progress .rail__stop { color: rgb(236 235 231 / 0.86); }
-.stage[data-slide="s-climat"] .rail--progress .rail__stop.is-current { color: #fff; }
+.stage:is([data-slide="s-climat"], [data-slide="s-sports"]) .rail--progress .rail__stop { color: rgb(236 235 231 / 0.86); }
+.stage:is([data-slide="s-climat"], [data-slide="s-sports"]) .rail--progress .rail__stop.is-current { color: #fff; }
 
 /* ------------------------------------------------------------ progreso por partes
    El mismo instrumento que el altímetro, en su hueco: las paradas son las partes del plan.
@@ -1623,30 +1623,130 @@ html:not(.is-list) .slide--fest.is-continued.is-active :is(.fest__when, .fest__w
 }
 html:not(.is-list) .slide--fest.is-continued.is-active .fests__also { animation: enter-rise 560ms var(--ease-out) 760ms backwards; }
 
-/* deportes de mar: dos columnas, el kitesurf aparte */
-.slide--sports .copy { width: 700px; }
-.slide--sports .bleed-photo { width: 760px; }
-.sports {
-  margin-top: 48px;
+/* deportes de mar: las cinco fotos del usuario a sangre, en láminas verticales de izquierda a derecha
+   (kayak y paddle, kitesurf, vela y windsurf, windsurf en la arena). Los cielos de las fotos quedan arriba:
+   un velo azul las une y el titular va en el cielo, como en el clima; abajo, un velo oscuro y la lista
+   corre como una regla. El medio queda limpio: ahí se ven los deportes. */
+.slide--blades .blades {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  background: var(--night);
+}
+.blade {
+  position: relative;
+  flex: none;
+  height: 1080px;
+  overflow: hidden;
+}
+.blade img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--pos, 50% 50%);
+}
+/* anchos pensados para que cada foto conserve su motivo: la del kayak entera (con el titular en su cielo),
+   tres apiladas para la vela y el windsurf, y el kitesurfista y su cometa a la vez */
+.blade--kayak { width: 860px; }
+.blade--trio {
+  width: 420px;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: 386px 315px minmax(0, 1fr);
+}
+.blade--trio img { position: static; }
+.blade--kite { width: 640px; }
+/* la foto de la vela es pequeña (517 px): se queda a su tamaño, sin ampliarla */
+/* costuras finas, del color del papel */
+.blade + .blade::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  z-index: 2;
+  background: rgb(236 235 231 / 0.92);
+}
+.blade--trio img + img { border-top: 3px solid rgb(236 235 231 / 0.92); }
+
+/* velos solo donde hay texto: el azul arriba de la foto grande (el titular va en su cielo, como en el clima)
+   y el oscuro abajo de la grande (la lista) y de la del kitesurf (su frase); la vela y el windsurf conservan su color */
+.blade--kayak::after,
+.blade--kite::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.blade--kayak::after {
+  background:
+    linear-gradient(180deg, rgb(8 40 70 / 0.5) 0, rgb(8 40 70 / 0.34) 340px, rgb(8 40 70 / 0) 620px),
+    linear-gradient(0deg, rgb(14 18 8 / 0.8) 0, rgb(14 18 8 / 0.52) 180px, rgb(14 18 8 / 0) 400px),
+    /* un poco más de sombra a la izquierda, donde la barra de progreso pasa sobre la arena clara */
+    linear-gradient(90deg, rgb(14 18 8 / 0.34) 0, rgb(14 18 8 / 0) 330px);
+}
+.blade--kite::after {
+  background: linear-gradient(0deg, rgb(14 18 8 / 0.8) 0, rgb(14 18 8 / 0.52) 180px, rgb(14 18 8 / 0) 400px);
+}
+
+.sea-copy {
+  position: absolute;
+  z-index: 2;
+  left: var(--gutter);
+  top: 104px;
+  color: #fff;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.2), 0 2px 22px rgb(0 0 0 / 0.24);
+}
+.sea-copy .kicker { color: #fff; opacity: 0.94; }
+.sea-copy .headline {
+  margin-top: 18px;
+  max-width: 620px;
+  font-size: 96px;
+  color: #fff;
+}
+
+.sports {
+  position: absolute;
+  z-index: 2;
+  left: var(--gutter);
+  bottom: 84px;
+  display: grid;
+  grid-template-columns: 250px 160px;
   column-gap: 40px;
+  color: #fff;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.5), 0 2px 16px rgb(0 0 0 / 0.38);
 }
 .sports li {
-  padding: 18px 0;
-  border-top: 2px solid rgb(56 69 15 / 0.22);
-  font: 400 34px/1.25 var(--font-text);
+  padding: 14px 0;
+  white-space: nowrap;
+  border-top: 2px solid rgb(255 255 255 / 0.6);
+  font: 400 32px/1.25 var(--font-text);
 }
+/* el kitesurf, aparte y encima de su foto: lo único que el usuario dice haber probado */
 .sports .sports__star {
-  grid-column: 1 / -1;
-  font: 400 54px/1.05 var(--font-display);
+  position: absolute;
+  left: 1020px; /* 1380 en el lienzo: dentro de la lámina del kitesurf */
+  bottom: 0;
+  padding: 16px 0 0;
+  min-width: 380px;
+  font: 400 56px/1.05 var(--font-display);
   letter-spacing: -0.01em;
 }
 .sports__star span {
   display: block;
   margin-top: 6px;
   font: 400 28px/1.3 var(--font-text);
-  color: var(--p-muted);
+  color: rgb(255 255 255 / 0.88);
 }
 
 /* mi día perfecto: la línea del tiempo con algo más de aire en la primera columna */
@@ -1685,11 +1785,17 @@ html:not(.is-list) .slide--fest.is-continued.is-active .fests__also { animation:
   from { clip-path: inset(0 0 0 100%); transform: scale(1.08); }
   to { clip-path: inset(0 0 0 0); }
 }
+/* las láminas de los deportes bajan como una persiana */
+@keyframes enter-blade {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
 /* con movimiento reducido todo se queda en un fundido, sin desplazamientos */
 @media (prefers-reduced-motion: reduce) {
   @keyframes enter-rise { from { opacity: 0; } }
   @keyframes enter-settle { from { opacity: 1; } }
   @keyframes enter-open { from { opacity: 0; } }
+  @keyframes enter-blade { from { opacity: 0; } }
 }
 
 /* cascada que se frena: cada fila sale antes de que acabe la anterior, y cada vez más pegada */
@@ -1729,6 +1835,27 @@ html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--pm .pm li {
 }
 html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--pm .pm__col + .pm__col .pm__title { animation-delay: 420ms; }
 html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--pm .pm__col + .pm__col li { animation-delay: calc(580ms + var(--k, 0ms)); }
+
+/* deportes de mar: las láminas bajan de izquierda a derecha, en el orden en que se nombran los deportes
+   (la grande se posa mientras baja); el titular y la lista suben detrás, y la frase del kitesurf, la última,
+   cuando su lámina ya está abajo */
+.blade:nth-child(2) { --n: 1; }
+.blade:nth-child(3) { --n: 2; }
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--blades .blade {
+  animation: enter-blade 820ms var(--ease-out) backwards;
+  animation-delay: calc(var(--n, 0) * 120ms);
+}
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--blades :is(.blade--kayak, .blade--kite) img {
+  animation: enter-settle 1300ms var(--ease-out) backwards;
+  animation-delay: calc(var(--n, 0) * 120ms);
+}
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--blades .kicker {
+  animation: enter-rise 560ms var(--ease-out) 60ms backwards;
+}
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--blades .headline {
+  animation: enter-rise 640ms var(--ease-out) 130ms backwards;
+}
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--blades .sports__star { animation-delay: 760ms; }
 
 /* la foto a sangre se abre desde el borde del lienzo hacia el texto */
 html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--bleed .bleed-photo {
