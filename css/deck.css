@@ -1410,6 +1410,14 @@ html.is-list .cats,
   grid-template-rows: minmax(0, 1fr) auto auto;
   min-height: 0;
 }
+/* Nou Cafè: deux photos verticales côte à côte dans la place d'une seule */
+.resto__pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: minmax(0, 1fr);
+  gap: 6px;
+  min-height: 0;
+}
 .resto h3 {
   margin: 14px 0 0;
   font: 400 36px/1.05 var(--font-display);
