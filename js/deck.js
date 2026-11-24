@@ -45,6 +45,7 @@
      ni el presentador. `active` frena la navegación; `running` dura mientras haya descarga en marcha
      (si se pulsa «Commencer quand même» tras un fallo, se libera la navegación y la descarga sigue). */
   const gate = { running: false, active: false, total: 0, done: 0, frac: 0, failed: false };
+  const unswapped = new Set();   // vídeos que aún no han cambiado a su copia en memoria
   function blocked() {
     const c = document.getElementById('ctrl');
     if (!c) return;
@@ -554,6 +555,7 @@
         const v = videoOf(s);
         v.pause();
         if (list) {
+          restoreSources(v);
           v.preload = 'metadata';
           v.poster = v.dataset.endPoster || v.poster;
           s.dataset.state = 'landed';
@@ -630,19 +632,37 @@
   if (!PRESENTER) window.addEventListener('resize', fit);
 
   /* ---------------------------------------------------------------- precarga completa de los vídeos
-     En clase la wifi puede ser lenta: al abrir la página se descargan los vuelos enteros a memoria y,
-     hasta que están todos, la presentación no avanza (gate). La barra (js/chrome.js) enseña el progreso.
-     Si una descarga falla se reintenta sin parar; solo entonces la barra ofrece «Commencer quand même»
-     (D.release()), por si el aula tiene un proxy que lo impide. Sin fetch o desde file:// no hay precarga ni bloqueo:
-     los vídeos se reproducen desde su URL. */
+     En clase la wifi puede ser lenta: al abrir la página los vuelos se pasan a memoria y, hasta que están
+     todos, la presentación no avanza (gate). La barra (js/chrome.js) enseña el progreso.
+     - Los vídeos del HTML llevan preload="none": no se bajan dos veces (una por la etiqueta y otra por aquí).
+     - Se guardan en Cache Storage («benicassim-videos-v1»), así que al recargar no se vuelven a bajar mientras no
+       cambien: se pregunta al servidor con un HEAD (etag o tamaño + fecha) y, si coincide, se usa la copia guardada.
+       Sin respuesta del servidor (sin red, proxy) se fía de lo guardado; si el archivo ha cambiado, se baja de nuevo.
+     - Si una descarga falla se reintenta sin parar; solo entonces la barra ofrece «Commencer quand même»
+       (D.release()), por si el aula tiene un proxy que lo impide. Sin fetch o desde file:// no hay precarga
+       ni bloqueo: los vídeos se reproducen desde su URL. */
 
+  const VIDEO_CACHE = 'benicassim-videos-v1';
+
+  /* Las <source> del HTML llevan data-src, no src: así la etiqueta <video> no pide el archivo por su cuenta
+     (con preload="none" Chrome aún abre una petición «Range: bytes=0-»). restoreSources las activa cuando
+     hay que reproducir desde la URL: modo lectura, sin fetch, file:// o «Commencer quand même». */
   function playableSource(v) {
     const sources = Array.from(v.querySelectorAll('source'));
     for (const s of sources) {
       const type = s.getAttribute('type');
-      if (!type || v.canPlayType(type)) return s.getAttribute('src');
+      if (!type || v.canPlayType(type)) return s.getAttribute('data-src') || s.getAttribute('src');
     }
     return null;
+  }
+  function restoreSources(v) {
+    let changed = false;
+    v.querySelectorAll('source[data-src]').forEach((el) => {
+      el.setAttribute('src', el.getAttribute('data-src'));
+      el.removeAttribute('data-src');
+      changed = true;
+    });
+    if (changed && !v.getAttribute('src')) { try { v.load(); } catch (e) { /* sin vídeo, solo póster */ } }
   }
   // Lee la respuesta a trozos para poder contar los bytes; sin tamaño o sin lector, de una vez
   async function readBlob(res, onFrac) {
@@ -663,35 +683,96 @@
   }
   const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+  // Qué versión es un archivo: etag (sin el W/ de débil) y, si no, tamaño y fecha de modificación
+  const stamp = (h) => ({
+    etag: (h.get('etag') || h.get('x-etag') || '').replace(/^W\//, ''),
+    len: h.get('content-length') || h.get('x-length') || '',
+    mod: h.get('last-modified') || h.get('x-modified') || '',
+  });
+  function sameVersion(a, b) {
+    if (a.etag && b.etag) return a.etag === b.etag;
+    if (a.len && b.len && a.len !== b.len) return false;
+    if (a.mod && b.mod) return a.mod === b.mod;
+    return Boolean(a.len && b.len);
+  }
+  // La copia guardada, si sigue valendo; null si no hay, está incompleta o el archivo ha cambiado
+  async function fromStore(cache, src) {
+    if (!cache) return null;
+    try {
+      const hit = await cache.match(src);
+      if (!hit) return null;
+      const mine = stamp(hit.headers);
+      let same = true;   // sin respuesta del servidor, se fía de lo guardado
+      try {
+        const head = await Promise.race([fetch(src, { method: 'HEAD', cache: 'no-cache' }), wait(4000).then(() => null)]);
+        if (head && head.ok) same = sameVersion(mine, stamp(head.headers));
+      } catch (e) { /* sin red */ }
+      if (!same) return null;
+      const blob = await hit.blob();
+      return mine.len && String(blob.size) !== mine.len ? null : blob;
+    } catch (e) {
+      return null;
+    }
+  }
+  function toStore(cache, src, blob, res) {
+    if (!cache) return;
+    const h = res.headers;
+    cache.put(src, new Response(blob, {
+      headers: {
+        'content-type': blob.type || h.get('content-type') || 'video/mp4',
+        'x-etag': h.get('etag') || '',
+        'x-length': String(blob.size),
+        'x-modified': h.get('last-modified') || '',
+      },
+    })).catch(() => { /* cuota llena o almacenamiento desactivado: se queda solo en memoria */ });
+  }
+
   async function preloadAll() {
-    if (!window.fetch || location.protocol === 'file:') return;
-    const jobs = Array.from(stage.querySelectorAll('video'))
-      .map((v) => [v, playableSource(v)])
-      .filter(([, src]) => src);
+    const videos = Array.from(stage.querySelectorAll('video'));
+    if (!window.fetch || location.protocol === 'file:') {
+      videos.forEach((v) => { restoreSources(v); v.preload = 'auto'; });
+      return;
+    }
+    const jobs = videos.map((v) => [v, playableSource(v)]).filter(([, src]) => src);
+    videos.forEach((v) => { if (!jobs.some(([j]) => j === v)) { restoreSources(v); v.preload = 'auto'; } });
     if (!jobs.length) return;
     Object.assign(gate, { running: true, active: true, total: jobs.length, done: 0, frac: 0, failed: false });
+    jobs.forEach(([v]) => unswapped.add(v));
     emit();
     let lastStep = -1;
     const bump = () => {   // un aviso cada 2 % para no saturar a la barra ni al presentador
       const step = Math.floor(((gate.done + gate.frac) / gate.total) * 50);
       if (step !== lastStep) { lastStep = step; emit(); }
     };
-    for (const [v, src] of jobs) {
+    let cache = null;
+    try { cache = 'caches' in window ? await caches.open(VIDEO_CACHE) : null; } catch (e) { cache = null; }
+    const stored = await Promise.all(jobs.map(([, src]) => fromStore(cache, src)));
+
+    for (let i = 0; i < jobs.length; i += 1) {
+      const [v, src] = jobs[i];
       for (let attempt = 0; ; attempt += 1) {
         try {
           gate.frac = 0;
-          const res = await fetch(src);
-          if (!res.ok) throw new Error(String(res.status));
-          const url = URL.createObjectURL(await readBlob(res, (f) => { gate.frac = f; bump(); }));
+          let blob = stored[i];
+          if (!blob) {
+            const res = await fetch(src);
+            if (!res.ok) throw new Error(String(res.status));
+            blob = await readBlob(res, (f) => { gate.frac = f; bump(); });
+            toStore(cache, src, blob, res);
+          }
+          const url = URL.createObjectURL(blob);
           const swap = () => {
             const t = v.currentTime;
+            v.preload = 'auto';   // la copia está en memoria: cargarla no cuesta red
             v.src = url;
             applyRate(v);
             try { v.currentTime = t; } catch (e) { /* sin metadatos todavía */ }
+            unswapped.delete(v);
           };
           if (v.paused) swap(); else v.addEventListener('pause', swap, { once: true });
           break;
         } catch (e) {
+          stored[i] = null;
           gate.failed = true;
           emit();
           // Liberado a mano: se reintenta un par de veces más y se deja (el vídeo sigue con su URL normal)
@@ -751,7 +832,12 @@
       if (!gate.running) return null;
       return { pct: Math.round(((gate.done + gate.frac) / gate.total) * 100), failed: gate.failed, blocking: gate.active };
     },
-    release() { if (gate.active) { gate.active = false; emit(); } },
+    release() {
+      if (!gate.active) return;
+      gate.active = false;
+      unswapped.forEach((v) => { restoreSources(v); v.preload = 'auto'; });   // sin copia en memoria, que el vídeo se baje por su URL
+      emit();
+    },
     next, prev,
     goTo(i) { if (i !== index && i >= 0 && i < slides.length) go(i, i > index ? 1 : -1); },
     on(fn) { listeners.push(fn); },

@@ -13,7 +13,7 @@ Presentación oral de francés (FLE) sobre Benicàssim, con vuelos de Google Ear
 - **T**: cronómetro discreto en la pantalla de la sala. **B** o **.**: pantalla en negro (un vuelo en marcha se para; cualquier avance la quita). **F**: pantalla completa; en Chrome o Edge con dos monitores deja elegir el proyector.
 - Con dos monitores: extiende la pantalla (no la dupliques), abre la presentación en el proyector y pulsa **P**.
 - El cronómetro empieza en **9:00** (editable, con la rueda dentada) y arranca solo al salir de la portada.
-- Al abrirla, la web descarga los vídeos de los vuelos y **no deja avanzar hasta que están todos** (teclas, clics, puntos y presentador quedan frenados; la barra enseña el progreso y dice «Vidéos prêtes» al acabar). Si una descarga falla, reintenta sola y la barra ofrece «Commencer quand même». Con la wifi del aula, abre la página unos minutos antes.
+- Al abrirla, la web descarga los vídeos de los vuelos y **no deja avanzar hasta que están todos** (teclas, clics, puntos y presentador quedan frenados; la barra enseña el progreso y dice «Vidéos prêtes» al acabar). Si una descarga falla, reintenta sola y la barra ofrece «Commencer quand même». Los vídeos se guardan en el navegador (Cache Storage): al recargar no se vuelven a bajar mientras no cambien (la página pregunta al servidor con un HEAD y solo baja de nuevo el que haya cambiado; sin red usa lo guardado). Vale para el mismo navegador y perfil, no en una ventana privada. La primera vez en un ordenador, abre la página con tiempo: son unos 50 MB.
 
 Funciona en Chrome, Edge, Firefox y Safari, en Windows y en Mac. En móvil se ve como una lista de diapositivas.
 

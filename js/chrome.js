@@ -128,14 +128,22 @@
   let wasLoading = false;
   let lastPct = -1;
   let lastFailed = null;
+  let loadingSince = 0;
+  const SHOW_AFTER_MS = 400;   // con los vídeos ya guardados la carga dura un suspiro: no se enseña
   function renderLoading() {
     const ld = D.loading;
+    if (ld && !loadingSince) {
+      loadingSince = performance.now();
+      setTimeout(renderLoading, SHOW_AFTER_MS + 20);
+    }
+    if (!ld) loadingSince = 0;
     const blocking = !!(ld && ld.blocking);
-    ctrl.classList.toggle('is-loading', !!ld);
+    const visible = !!ld && (ld.failed || performance.now() - loadingSince >= SHOW_AFTER_MS);
+    ctrl.classList.toggle('is-loading', visible);
     ctrl.setAttribute('aria-busy', String(blocking));
-    navBtns.forEach((b) => { b.disabled = blocking; });
+    navBtns.forEach((b) => { b.disabled = blocking && visible; });
     forceBtn.hidden = !(blocking && ld.failed);
-    if (ld) {
+    if (ld && visible) {
       if (ld.pct !== lastPct || ld.failed !== lastFailed) {
         lastPct = ld.pct;
         lastFailed = ld.failed;
@@ -143,6 +151,8 @@
         statusEl.classList.remove('is-done');
         statusEl.innerHTML = `<span>${text}</span><span class="ctrl-status__bar" aria-hidden="true"><i style="--p:${(ld.pct / 100).toFixed(3)}"></i></span>`;
       }
+      wasLoading = true;
+    } else if (ld) {
       wasLoading = true;
     } else if (wasLoading) {
       wasLoading = false;
