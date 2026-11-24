@@ -16,7 +16,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preload" href="fonts/eb-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/jost-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/deck.css?v=20261124-sport4">
+  <link rel="stylesheet" href="css/deck.css?v=20261124-fusion">
   <link rel="stylesheet" href="css/chrome.css?v=20261124h">
   <link rel="stylesheet" href="css/presenter.css?v=20261124h">
   <script>document.documentElement.classList.add('js');</script>
@@ -136,8 +136,10 @@
         </div>
       </section>
 
-      <!-- 6 · Vol 4 : comme un drone, le long de la côte, jusqu'à la plage (la photo reste à la fin) -->
-      <section class="slide slide--flight" id="s-vol-4" data-section="1" data-flight="vol-4-cote-voramar" aria-label="Vol 4 : le long de la côte, jusqu'à la plage">
+      <!-- 6 · Vol 4 y «Que faire» en una sola diapositiva: el vuelo acaba en la foto de la playa, que se queda
+           de fondo, y con la siguiente pulsación (paso 1) el texto aparece encima, en el cielo.
+           Del paso 1 en adelante es ya la parte 2: el altímetro cede su sitio a la barra de partes (data-progress-from-step). -->
+      <section class="slide slide--flight slide--beach" id="s-vol-4" data-section="2" data-steps="1" data-progress-from-step="1" data-flight="vol-4-cote-voramar" aria-label="Vol 4 : jusqu'à la plage, puis que faire à Benicàssim">
         <div class="canvas">
           <video class="flight" muted playsinline preload="none"
                  poster="media/vol-4-debut.jpg" data-end-poster="media/photos/plage-voramar.jpg"
@@ -147,29 +149,20 @@
           </video>
           <img class="flight-still" src="media/photos/plage-voramar.jpg" width="1920" height="1280"
                alt="La plage de Benicàssim en été, avec des catamarans sur le sable et le cap au fond">
-        </div>
-      </section>
-
-      <!-- 7 · Que faire : la photo de la plage se range dans le panneau -->
-      <section class="slide slide--content slide--situation" id="s-situation" data-section="2" data-alt="ville" aria-label="Que faire à Benicàssim">
-        <div class="canvas">
-          <div class="copy">
-            <p class="kicker" data-rise>2 · Que faire à Benicàssim&nbsp;?</p>
-            <h2 class="headline" data-rise>Entre la mer et la&nbsp;montagne</h2>
-            <ul class="keywords">
-              <li data-rise>la plage et la montagne</li>
-              <li data-rise>des tapas et une bière entre amis</li>
-              <li data-rise>du monde tous les soirs</li>
-            </ul>
+          <div class="beach-veil fade-step" data-at="1" aria-hidden="true"></div>
+          <div class="sky-copy fade-step" data-at="1">
+            <p class="kicker">2 · Que faire à Benicàssim&nbsp;?</p>
+            <h2 class="headline">Entre la mer et la&nbsp;montagne</h2>
           </div>
-          <figure class="panel" id="orbit-panel">
-            <img class="orbit" src="media/photos/plage-voramar.jpg" width="1920" height="1280"
-                 alt="La plage de Benicàssim en été, avec des catamarans sur le sable">
-          </figure>
+          <ul class="beach-list fade-step" data-at="1">
+            <li>la plage et la montagne</li>
+            <li>des tapas et une bière entre amis</li>
+            <li>du monde tous les soirs</li>
+          </ul>
         </div>
       </section>
 
-      <!-- 8 · Climat et nature : la foto aérea a sangre. El texto va en el cielo;
+      <!-- 7 · Climat et nature : la foto aérea a sangre. El texto va en el cielo;
            «la mer d'un côté, la montagne de l'autre» se lee sobre la propia foto, cada mitad en su sitio -->
       <section class="slide slide--content slide--sky" id="s-climat" data-section="2" data-alt="ville" data-tone="dark" aria-label="Climat et nature">
         <div class="canvas">
@@ -188,7 +181,7 @@
         </div>
       </section>
 
-      <!-- 9 · Sports de mer : las cinco fotos del usuario a sangre, en tres láminas verticales en el orden en que se
+      <!-- 8 · Sports de mer : las cinco fotos del usuario a sangre, en tres láminas verticales en el orden en que se
            nombran los deportes: kayak y paddle (grande, con el titular en su cielo), vela y windsurf (tres apiladas),
            y el kitesurf cerrando a la derecha, con su «j'ai même essayé !» -->
       <section class="slide slide--content slide--blades" id="s-sports" data-section="2" data-alt="ville" data-tone="dark" aria-label="Les sports de mer">
@@ -227,7 +220,7 @@
         </div>
       </section>
 
-      <!-- 10 · Lieux à découvrir; → los restaurantes; → el Taj Mahal -->
+      <!-- 9 · Lieux à découvrir; → los restaurantes; → el Taj Mahal -->
       <section class="slide slide--content slide--cards" id="s-lieux" data-section="3" data-alt="ville" data-steps="2" data-rail-from-step="1" aria-label="Des lieux à découvrir et mes restaurants">
         <div class="canvas">
           <p class="kicker until-step" data-until="1">3 · Des lieux à découvrir</p>
@@ -337,7 +330,7 @@
         </div>
       </section>
 
-      <!-- 11 · Ma journée parfaite (la nuit acaba en Casablanca → la fiesta) -->
+      <!-- 10 · Ma journée parfaite (la nuit acaba en Casablanca → la fiesta) -->
       <section class="slide slide--content slide--bleed slide--day" id="s-journee" data-section="4" data-alt="ville" aria-label="Ma journée parfaite">
         <div class="canvas">
           <div class="copy copy--wide">
@@ -359,7 +352,7 @@
         </div>
       </section>
 
-      <!-- 12 · La semaine : días de lunes a domingo; cada pulsación marca un día con un tick, empezando por el viernes -->
+      <!-- 11 · La semaine : días de lunes a domingo; cada pulsación marca un día con un tick, empezando por el viernes -->
       <section class="slide slide--content slide--week" id="s-semaine" data-section="5" data-alt="ville" data-steps="7" aria-label="Faire la fête, toute la semaine">
         <div class="canvas">
           <p class="kicker">5 · La fête</p>
@@ -389,7 +382,7 @@
         </div>
       </section>
 
-      <!-- 13 · Carte des sorties : las etiquetas entran volando sobre el plano (OpenStreetMap) -->
+      <!-- 12 · Carte des sorties : las etiquetas entran volando sobre el plano (OpenStreetMap) -->
       <section class="slide slide--map" id="s-sorties" data-section="5" data-alt="ville" data-rail="off" data-steps="1" data-back-delay="700ms" aria-label="Discothèques et pubs sur la carte">
         <div class="canvas">
           <!-- la cámara: el plano y todo lo que va pegado a él se acercan juntos al recinto en el paso 1 -->
@@ -485,7 +478,7 @@
         </div>
       </section>
 
-      <!-- 14 · Festivals : los logos aparecen todos a la vez -->
+      <!-- 13 · Festivals : los logos aparecen todos a la vez -->
       <section class="slide slide--content slide--fest" id="s-festivals" data-section="5" data-alt="ville" data-continues="s-sorties" aria-label="Les festivals">
         <div class="canvas">
           <p class="kicker">5 · La fête</p>
@@ -511,7 +504,7 @@
         </div>
       </section>
 
-      <!-- 15 · Les plus et les moins -->
+      <!-- 14 · Les plus et les moins -->
       <section class="slide slide--content slide--pm" id="s-plus-moins" data-section="6" data-alt="ville" aria-label="Les plus et les moins">
         <div class="canvas">
           <p class="kicker">6 · Les plus et les moins</p>
@@ -538,7 +531,7 @@
         </div>
       </section>
 
-      <!-- 16 · Mon bon plan -->
+      <!-- 15 · Mon bon plan -->
       <section class="slide slide--content slide--photo" id="s-bon-plan" data-section="7" data-alt="ville" data-tone="dark" data-rail="off" aria-label="Mon bon plan">
         <div class="canvas">
           <img class="full-photo" src="media/photos/via-verde-cote.jpg" width="1920" height="1440"
@@ -556,7 +549,7 @@
         </div>
       </section>
 
-      <!-- 17 · Merci -->
+      <!-- 16 · Merci -->
       <section class="slide slide--content slide--photo" id="s-merci" data-alt="ville" data-tone="dark" data-rail="off" aria-label="Merci">
         <div class="canvas">
           <img class="full-photo" style="--pos: 50% 60%" src="media/photos/plage-palmier.jpg" width="1920" height="1277"
@@ -568,7 +561,7 @@
         </div>
       </section>
 
-      <!-- 18 · Crédits -->
+      <!-- 17 · Crédits -->
       <section class="slide slide--content slide--credits" id="s-credits" data-section="fin" data-alt="ville" aria-label="Crédits">
         <div class="canvas">
           <p class="kicker">Crédits</p>
@@ -609,7 +602,7 @@
         <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
       </button>
       <div id="dots"></div>
-      <span id="count" aria-live="polite">1 / 18</span>
+      <span id="count" aria-live="polite">1 / 17</span>
       <button type="button" id="b-next" aria-label="Diapositive suivante">
         <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
       </button>
@@ -649,8 +642,8 @@
 
   <script src="js/altitudes.js?v=20261120f"></script>
   <script src="js/borders.js?v=20261124h"></script>
-  <script src="js/notes.js?v=20261124u"></script>
-  <script src="js/deck.js?v=20261124u"></script>
+  <script src="js/notes.js?v=20261124w"></script>
+  <script src="js/deck.js?v=20261124w"></script>
   <script src="js/fiesta.js?v=20261123a"></script>
   <script src="js/chrome.js?v=20261124h"></script>
   <script src="js/presenter.js?v=20261124h"></script>

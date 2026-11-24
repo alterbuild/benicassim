@@ -244,17 +244,22 @@ html:not(.js) .slide--title { opacity: 1; visibility: visible; }
 .stage:not([data-rail="alt"]) .rail--alt,
 .stage:not([data-rail="progress"]) .rail--progress,
 .stage:not([data-rail="alt"])::before { opacity: 0; }
-/* el clima y los deportes de mar son fotos a sangre con la barra de progreso: el mismo velo, azul como en la portada */
-.stage:is([data-slide="s-climat"], [data-slide="s-sports"])[data-rail="progress"]::before {
+/* el clima, los deportes de mar y la playa (vuelo 4, ya con el texto encima) son fotos a sangre con la barra de progreso:
+   el mismo velo, azul como en la portada */
+.stage:is([data-slide="s-climat"], [data-slide="s-sports"], [data-slide="s-vol-4"])[data-rail="progress"]::before {
   opacity: 1;
   background: linear-gradient(90deg, rgb(8 30 52 / 0.56), rgb(8 30 52 / 0) 100%);
 }
 /* abajo la barra pasa sobre el pueblo, el bosque o la arena: una sombra corta la despega de la foto */
-.stage:is([data-slide="s-climat"], [data-slide="s-sports"]) .rail--progress {
+.stage:is([data-slide="s-climat"], [data-slide="s-sports"], [data-slide="s-vol-4"]) .rail--progress {
   text-shadow: 0 1px 2px rgb(0 0 0 / 0.6), 0 2px 12px rgb(0 0 0 / 0.4);
 }
-.stage:is([data-slide="s-climat"], [data-slide="s-sports"]) .rail--progress .rail__stop { color: rgb(236 235 231 / 0.86); }
-.stage:is([data-slide="s-climat"], [data-slide="s-sports"]) .rail--progress .rail__stop.is-current { color: #fff; }
+.stage:is([data-slide="s-climat"], [data-slide="s-sports"], [data-slide="s-vol-4"]) .rail--progress .rail__stop { color: rgb(236 235 231 / 0.86); }
+.stage:is([data-slide="s-climat"], [data-slide="s-sports"], [data-slide="s-vol-4"]) .rail--progress .rail__stop.is-current { color: #fff; }
+/* paso 1 del vuelo 4: el altímetro cede su hueco a la barra de partes. Para que no se crucen dos textos
+   en el mismo sitio, el altímetro se va deprisa y la barra entra cuando ya se ha ido */
+.stage[data-slide="s-vol-4"][data-rail="progress"] .rail--alt { transition-duration: 140ms; }
+.stage[data-slide="s-vol-4"][data-rail="progress"] .rail--progress { transition-delay: 140ms; }
 
 /* ------------------------------------------------------------ progreso por partes
    El mismo instrumento que el altímetro, en su hueco: las paradas son las partes del plan.
@@ -758,33 +763,6 @@ html.is-list .country,
   font: 400 28px/1.3 var(--font-text);
   color: var(--p-muted);
 }
-
-.panel {
-  position: absolute;
-  left: 960px;
-  top: 304px;
-  width: 840px;
-  height: 472px;
-  overflow: hidden;
-  border-radius: 4px;
-  background: #000;
-  transform-origin: 0 0;
-}
-.orbit {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.keywords { margin-top: 56px; }
-.keywords li {
-  padding: 20px 0;
-  border-top: 2px solid rgb(56 69 15 / 0.22);
-  font: 400 34px/1.3 var(--font-text);
-  color: var(--p-ink);
-}
-
 
 /* ------------------------------------------------------------ fotos y diseños de contenido */
 
@@ -1754,18 +1732,6 @@ html:not(.is-list) .slide--fest.is-continued.is-active .fests__also { animation:
 .slide--day .timeline dt { font-size: 32px; }
 .slide--day .timeline dd { font-size: 27px; }
 
-/* Entrada del texto tras el aterrizaje del panel (solo una vez, tras el vuelo 3) */
-.slide.is-entering [data-rise] {
-  opacity: 0;
-  transform: translateY(10px);
-}
-.slide.is-entering.is-risen [data-rise] {
-  opacity: 1;
-  transform: none;
-  transition: opacity 360ms var(--ease-out), transform 360ms var(--ease-out);
-  transition-delay: calc(var(--i, 0) * 55ms);
-}
-
 /* ------------------------------------------------------------ entradas de diapositiva
    Para las diapositivas que solo tenían el fundido. El mismo lenguaje que la portada y el plan:
    la foto se abre desde el borde del lienzo (o se posa, si lo ocupa todo), el texto sube detrás
@@ -1878,6 +1844,53 @@ html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--credits .credits-list
   animation: enter-rise 600ms var(--ease-out) 240ms backwards;
 }
 
+/* vuelo 4 + «Que faire à Benicàssim ?»: el vuelo acaba en la foto de la playa, que se queda de fondo, y con la
+   siguiente pulsación (paso 1) el texto aparece en el cielo: el titular a la izquierda (.sky-copy, del clima) y las tres
+   frases a la derecha, donde el cielo está limpio (a la izquierda chocarían con el cabo y con los mástiles).
+   El velo azul llega con el texto: mientras vuela y justo al aterrizar la foto va limpia. */
+.beach-veil {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 620px;
+  z-index: 1;
+  background: linear-gradient(180deg, rgb(8 52 92 / 0.44) 0, rgb(8 52 92 / 0.32) 360px, rgb(8 52 92 / 0) 620px);
+  pointer-events: none;
+}
+.slide--beach .beach-veil.is-shown { transition: opacity 600ms var(--ease-out), visibility 0s; }
+.slide--beach .sky-copy { width: 720px; }
+.slide--beach .sky-copy .headline {
+  font-size: 88px;
+  white-space: normal;
+}
+.beach-list {
+  position: absolute;
+  z-index: 2;
+  top: 156px;
+  right: 120px;
+  width: 560px;
+  color: #fff;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.18), 0 2px 22px rgb(0 0 0 / 0.2);
+}
+.beach-list li {
+  padding: 20px 0;
+  border-top: 2px solid rgb(255 255 255 / 0.6);
+  font: 400 34px/1.3 var(--font-text);
+}
+.beach-list > :nth-child(2) { --k: 60ms; }
+.beach-list > :nth-child(3) { --k: 110ms; }
+html:not(.is-list) .slide--beach[data-dir="fwd"] .sky-copy.is-shown .kicker {
+  animation: enter-rise 560ms var(--ease-out) 60ms backwards;
+}
+html:not(.is-list) .slide--beach[data-dir="fwd"] .sky-copy.is-shown .headline {
+  animation: enter-rise 640ms var(--ease-out) 130ms backwards;
+}
+html:not(.is-list) .slide--beach[data-dir="fwd"] .beach-list.is-shown li {
+  animation: enter-rise 520ms var(--ease-out) backwards;
+  animation-delay: calc(280ms + var(--k, 0ms));
+}
+
 /* ------------------------------------------------------------ créditos */
 
 .credit {
@@ -1890,7 +1903,8 @@ html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--credits .credits-list
   opacity: 0;
   transition: opacity 200ms ease;
 }
-.stage[data-slide="s-situation"] .credit { opacity: 1; }
+/* en el vuelo 4 aparece con el texto: el paso 1 es el que cambia el altímetro por la barra de partes */
+.stage[data-slide="s-vol-4"][data-rail="progress"] .credit { opacity: 1; }
 
 /* ------------------------------------------------------------ modo lectura (móvil, vertical) */
 
@@ -1963,7 +1977,6 @@ html.is-list .credit {
   .slide.is-landed .borders path { transition: none; }
   .cartouche,
   .slide.is-landed .cartouche { transform: none; }
-  .slide.is-entering [data-rise] { transform: none; }
   .spot__card,
   .spot__dot,
   .sky-tag,

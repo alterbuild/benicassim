@@ -20,10 +20,8 @@ window.DECK_NOTES = {
     "[→ vuelo 3] On continue vers le nord, jusqu'à la province de Castellón. Et ici, au bord de la Méditerranée, voici Benicàssim."
   ],
   's-vol-4': [
-    "[→ vuelo 4] Comme vous pouvez le voir, Benicàssim a une longue côte et de belles montagnes. Mais elle a aussi d'autres charmes."
-  ],
-  's-situation': [
-    "Entre la mer et la montagne. Ici, bien sûr, on peut profiter de la plage et de la montagne, mais il y a aussi beaucoup de choses à faire. On peut retrouver ses amis dans les bars à tapas pour manger des tapas et boire une bière. Tous les soirs, c'est plein de monde."
+    "[→ vuelo 4] Comme vous pouvez le voir, Benicàssim a une longue côte et de belles montagnes. Mais elle a aussi d'autres charmes.",
+    "[→ aparece el texto sobre la foto] Entre la mer et la montagne. Ici, bien sûr, on peut profiter de la plage et de la montagne, mais il y a aussi beaucoup de choses à faire. On peut retrouver ses amis dans les bars à tapas pour manger des tapas et boire une bière. Tous les soirs, c'est plein de monde."
   ],
   's-climat': [
     "En plus, il fait beau presque toute l'année. Le climat est méditerranéen : les étés sont chauds et les hivers sont doux. Le matin, on peut aller à la plage et l'après-midi, monter au Desert de les Palmes."

@@ -19,8 +19,6 @@
   const stops = Array.from(rail.querySelectorAll('.rail__stop'));
 
   const DATA = window.FLIGHT_DATA || { fps: 30, flights: {} };
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const EASE_IN_OUT = 'cubic-bezier(0.77, 0, 0.175, 1)';
   const PRESENTER = new URLSearchParams(location.search).has('presenter');
 
   let index = 0;
@@ -394,48 +392,6 @@
     emit();
   }
 
-  /* ---------------------------------------------------------------- órbita y paso del vuelo 3 al panel */
-
-  function startOrbit(slide, flip) {
-    const panel = slide.querySelector('.panel');
-    const v = panel.querySelector('video');
-    if (v) {
-      try { v.currentTime = 0; } catch (e) { /* sin metadatos */ }
-      if (!reduceMotion.matches) v.play().catch(() => {});
-    }
-
-    if (!flip) return;
-
-    // FLIP: el panel empieza ocupando todo el lienzo (la misma foto con la que acaba el vuelo 4)
-    const L = panel.offsetLeft;
-    const T = panel.offsetTop;
-    const sx = 1920 / panel.offsetWidth;
-    const sy = 1080 / panel.offsetHeight;
-    stage.dataset.tone = 'dark';
-    slide.classList.add('is-entering');
-    const anim = panel.animate(
-      [
-        { transform: `translate(${-L}px, ${-T}px) scale(${sx}, ${sy})`, borderRadius: '0px' },
-        { transform: 'none', borderRadius: '4px' }
-      ],
-      { duration: 760, easing: EASE_IN_OUT }
-    );
-    setTimeout(() => { if (slides[index] === slide) stage.dataset.tone = 'light'; }, 260);
-    setTimeout(() => { slide.classList.add('is-risen'); }, 420);
-    anim.onfinish = () => {
-      setTimeout(() => slide.classList.remove('is-entering', 'is-risen'), 700);
-    };
-  }
-
-  function stopOrbit(slide) {
-    const panel = slide.querySelector('.panel');
-    if (!panel) return;
-    if (panel.getAnimations) panel.getAnimations().forEach((a) => a.finish());
-    const v = panel.querySelector('video');
-    if (v) v.pause();
-    slide.classList.remove('is-entering', 'is-risen');
-  }
-
   /* ---------------------------------------------------------------- relevo plan → vuelo 1
      El vuelo 1 arranca nada más pulsar, debajo del plan. El texto del plan sube y se desenfoca
      (como la portada al salir) y la foto se funde sobre el espacio: los primeros segundos del vuelo,
@@ -473,9 +429,16 @@
     slide.dataset.step = String(n);
     slide.querySelectorAll('[data-at]').forEach((el) => el.classList.toggle('is-shown', n >= Number(el.dataset.at)));
     slide.querySelectorAll('[data-until]').forEach((el) => el.classList.toggle('is-gone', n >= Number(el.dataset.until)));
-    // data-rail-from-step="k": desde el paso k la barra de partes se retira (un plano a pantalla completa no la quiere encima)
-    if (slide.dataset.railFromStep && slide.classList.contains('is-active')) {
-      stage.dataset.rail = n >= Number(slide.dataset.railFromStep) ? 'off' : 'progress';
+    if (slide.classList.contains('is-active')) {
+      // data-rail-from-step="k": desde el paso k la barra de partes se retira (un plano a pantalla completa no la quiere encima)
+      if (slide.dataset.railFromStep) {
+        stage.dataset.rail = n >= Number(slide.dataset.railFromStep) ? 'off' : 'progress';
+      }
+      // data-progress-from-step="k": un vuelo que se queda en su foto y, en el paso k, se convierte en diapositiva de
+      // contenido: hasta entonces manda el altímetro, desde entonces la barra de partes
+      if (slide.dataset.progressFromStep) {
+        stage.dataset.rail = n >= Number(slide.dataset.progressFromStep) ? 'progress' : 'alt';
+      }
     }
     emit();
   }
@@ -514,10 +477,9 @@
       v.onended = null;
       if (slide.dataset.state === 'playing') slide.dataset.state = 'ready';
     }
-    stopOrbit(slide);
   }
 
-  function activate(slide, dir, flip) {
+  function activate(slide, dir) {
     slide.dataset.dir = dir > 0 ? 'fwd' : 'back';
     slide.classList.add('is-active');
     stage.dataset.slide = slide.id;
@@ -530,6 +492,8 @@
     if (isFlight(slide)) {
       if (dir > 0) play(slide);
       else { land(slide, true, true); }
+      // Un vuelo con pasos (el 4: el texto sobre la foto final) arranca sin ellos y, hacia atrás, vuelve completo
+      if (stepsOf(slide)) setStep(slide, dir > 0 ? 0 : stepsOf(slide));
     } else {
       setAltitude(altFor(slide));
       // Hacia atrás la diapositiva vuelve completa y sin animaciones de entrada
@@ -539,7 +503,6 @@
       }
       if (stepsOf(slide)) setStep(slide, dir > 0 ? 0 : stepsOf(slide));
     }
-    if (slide.classList.contains('slide--situation')) startOrbit(slide, flip);
     emit();
   }
 
@@ -551,21 +514,20 @@
     endHandoff();
     const from = slides[index];
     const to = slides[i];
-    const flip = dir > 0 && from.id === 's-vol-4' && to.id === 's-situation' && !reduceMotion.matches;
     const seamless = dir > 0 && isFlight(from) && isFlight(to);
     const relay = dir > 0 && from.classList.contains('slide--plan') && isFlight(to);
     // data-continues="id": esta diapositiva es la continuación exacta de la anterior (los logos del zoom del plano
     // ya están en su sitio): el cambio es un corte seco, sin fundido, y solo si la animación del paso ya ha terminado
     const continued = (dir > 0 && to.dataset.continues === from.id && stepOf(from) === stepsOf(from)) ||
       (dir < 0 && from.dataset.continues === to.id);
-    const instant = seamless || flip || relay || continued;
+    const instant = seamless || relay || continued;
     from.classList.toggle('is-instant', instant);
     to.classList.toggle('is-instant', instant);
     to.classList.toggle('is-continued', continued && dir > 0);
     leave(from);
     if (relay) startHandoff(from);
     index = i;
-    activate(to, dir, flip);
+    activate(to, dir);
   }
 
   function next() {
@@ -589,7 +551,7 @@
     if (gate.active) { blocked(); return; }
     if (hooks.nav) hooks.nav();
     const s = slides[index];
-    if (stepOf(s) > 0 && !isFlight(s)) { setStep(s, stepOf(s) - 1); return; }
+    if (stepOf(s) > 0) { setStep(s, stepOf(s) - 1); return; }
     go(index - 1, -1);
   }
 
@@ -628,7 +590,7 @@
     if (!list) {
       slides.forEach((s) => s.classList.remove('is-active', 'is-instant', 'is-playing'));
       layoutRail();
-      activate(slides[index], -1, false);
+      activate(slides[index], -1);
     }
   }
 
@@ -686,9 +648,6 @@
     touchX = null;
     if (Math.abs(dx) > 50 && !listMode) { e.preventDefault(); if (dx < 0) next(); else prev(); }
   });
-
-  // Escalonado del texto que entra tras el aterrizaje
-  slides.forEach((s) => s.querySelectorAll('[data-rise]').forEach((el, i) => el.style.setProperty('--i', i)));
 
   if (!PRESENTER) window.addEventListener('resize', fit);
 
@@ -872,9 +831,8 @@
         s.dataset.state = 'landed';
         s.classList.add('is-landed', 'is-drawn');
         trackPins(s, Infinity);
-      } else if (stepsOf(s)) {
-        setStep(s, stepsOf(s));
       }
+      if (stepsOf(s)) setStep(s, stepsOf(s));
     });
   }
 
@@ -926,7 +884,7 @@
   fit();
   if (!listMode) {
     layoutRail();
-    activate(slides[index], fromHash > 0 ? -1 : 1, false);
+    activate(slides[index], fromHash > 0 ? -1 : 1);
   }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(layoutRail);
   if (!listMode) preloadAll();
