@@ -5,23 +5,23 @@
    Cada elemento del array es un párrafo. Una diapositiva sin notas lleva []. */
 window.DECK_NOTES = {
   's-titre': [
-    "Bonjour à tous ! Aujourd'hui, je vais vous présenter Benicasim, la ville où je passe mes étés. C'est une petite ville sur la côte est de l'Espagne, mais en été, elle est pleine de vie."
+    "Bonjour à tous ! Aujourd'hui, je vais vous présenter Benicasim, la ville où je passe mes étés. C'est une petite ville sur la côte est de l'Espagne, où les gens viennent profiter et se reposer, surtout en été."
   ],
   's-plan': [
     "D'abord, je vais vous montrer où se trouve Benicasim. Ensuite, je vais vous parler de ce qu'on peut y faire, des lieux à visiter, de ma journée parfaite, de la fête et des festivals. Pour finir, je vais vous dire les plus et les moins, et je vais vous donner mon bon plan."
   ],
   's-vol-1': [
-    "[→ vuelo 1] On commence de très haut. Voici la péninsule Ibérique, dans le sud-ouest de l'Europe. À gauche, il y a le Portugal, le pays de Jose, et tout ça, c'est l'Espagne."
+    "[→ vuelo 1] On commence de très haut. Voici la péninsule Ibérique, dans le sud-ouest de l'Europe. À gauche, il y a le Portugal, le pays de Jose, et au nord, la France. Et tout ça, c'est l'Espagne."
   ],
   's-vol-2': [
-    "[→ vuelo 2] Maintenant, on descend vers l'est de l'Espagne. Voici la Communauté valencienne. Elle a trois provinces. Ici, il y a Valence, la capitale, et ici, Benissa, le village de Juan."
+    "[→ vuelo 2] Maintenant, on descend vers l'est de l'Espagne. Voici la Communauté valencienne. Elle a trois provinces. Ici, il y a Valence, la capitale ; ici, Benissa, le village de Juan, et ici, Castellón, ma ville."
   ],
   's-vol-3': [
-    "[→ vuelo 3] On continue vers le nord, jusqu'à la province de Castellón. Et ici, au bord de la Méditerranée, voici Benicasim."
+    "[→ vuelo 3] On continue vers le nord, jusqu'à la province de Castellón. Et ici, au bord de la Méditerranée, juste au nord de Castellón, voici Benicasim."
   ],
   's-vol-4': [
-    "[→ vuelo 4] Comme vous pouvez le voir, Benicasim a une longue côte et de belles montagnes. Mais elle a aussi d'autres charmes.",
-    "[→ el texto aparece solo sobre la foto] Entre la mer et la montagne. Ici, bien sûr, on peut profiter de la plage et de la montagne, mais il y a aussi beaucoup de choses à faire. On peut retrouver ses amis dans les bars à tapas pour manger des tapas et boire une bière. Tous les soirs, c'est plein de monde."
+    "[→ vuelo 4] Comme vous pouvez le voir, Benicasim a une longue côte et de belles montagnes. Il y a des kilomètres de plages de sable, avec la mer toujours tout près. Et au fond, on voit le cap de Voramar.",
+    "[→ el texto aparece solo sobre la foto] Entre la mer et la montagne. Ici, bien sûr, on peut profiter de la plage et de la montagne, mais il y a aussi beaucoup de choses à faire. On peut retrouver ses amis sur une terrasse et prendre un verre en fin d'après-midi. Il y a des bars et des restaurants partout dans la ville, et quand la nuit tombe, l'ambiance s'anime et les rues se remplissent de gens qui, pendant la journée, étaient à la plage."
   ],
   's-climat': [
     "En plus, il fait beau presque toute l'année. Le climat est méditerranéen : les étés sont chauds et les hivers sont doux. Le matin, on peut aller à la plage et l'après-midi, monter au Desert de les Palmes."
