@@ -1,4 +1,4 @@
-/* Benicàssim · mandos de la ventana del proyector
+/* Benicasim · mandos de la ventana del proyector
    Barra (anterior, puntos, contador, siguiente), notas (N) e info (I). Escucha a window.DECK (js/deck.js).
    El presentador, el cronómetro, la pantalla en negro y la pantalla completa (P, T, B, F) están en js/presenter.js.
    Adaptado de los mandos de la presentación de International Business. */

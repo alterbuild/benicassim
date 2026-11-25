@@ -1,4 +1,4 @@
-/* Benicàssim · motor de la presentación
+/* Benicasim · motor de la presentación
    - Flechas, espacio, AvPág/RePág (mandos de presentación), Inicio/Fin.
    - En una diapositiva de vuelo, "siguiente" mientras el vídeo corre salta al final (aterriza).
    - El altímetro lee la altitud real de la cámara de cada fotograma (js/altitudes.js).

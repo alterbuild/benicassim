@@ -1,4 +1,4 @@
-/* Benicàssim · Présenter sa ville
+/* Benicasim · Présenter sa ville
    Lienzo fijo de 1920 × 1080 que se escala a la pantalla (modo presentación)
    o se apila diapositiva a diapositiva en pantallas estrechas (modo lectura). */
 
@@ -511,7 +511,7 @@ html:not(.is-list) .slide--plan.is-handoff .plan li:nth-child(8) { transition-de
 /* Durante los 2 últimos segundos del vuelo 4 deck.js fija la opacidad en cada fotograma: sin transición, para no ir retrasado */
 .slide.is-fading .flight-still { transition: none; }
 
-/* Límite (España, Comunitat Valenciana, Benicàssim): se dibuja al aterrizar */
+/* Límite (España, Comunitat Valenciana, Benicasim): se dibuja al aterrizar */
 .borders {
   position: absolute;
   top: 0;
@@ -1950,7 +1950,7 @@ html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--credits .credits-list
   animation: enter-rise 600ms var(--ease-out) 240ms backwards;
 }
 
-/* vuelo 4 + «Que faire à Benicàssim ?»: el vuelo acaba en la foto de la playa, que se queda de fondo, y con la
+/* vuelo 4 + «Que faire à Benicasim ?»: el vuelo acaba en la foto de la playa, que se queda de fondo, y con la
    siguiente pulsación (paso 1) el texto aparece en el cielo: el titular a la izquierda (.sky-copy, del clima) y las tres
    frases a la derecha, donde el cielo está limpio (a la izquierda chocarían con el cabo y con los mástiles).
    El velo azul llega con el texto: mientras vuela y justo al aterrizar la foto va limpia. */

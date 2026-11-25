@@ -1,6 +1,6 @@
-# Benicàssim · Présenter sa ville
+# Benicasim · Présenter sa ville
 
-Presentación oral de francés (FLE) sobre Benicàssim, con vuelos de Google Earth Studio que bajan del espacio a la playa.
+Presentación oral de francés (FLE) sobre Benicasim, con vuelos de Google Earth Studio que bajan del espacio a la playa.
 
 **Ver la presentación:** https://alterbuild.github.io/benicassim/
 

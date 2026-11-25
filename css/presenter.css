@@ -1,4 +1,4 @@
-/* Benicàssim · vista del orador (ventana ?presenter)
+/* Benicasim · vista del orador (ventana ?presenter)
    Hecha para leerse a distancia: letra grande, contraste fuerte, pocas etiquetas pequeñas. Claro u oscuro (html[data-theme], lo pone js/presenter.js).
    Los paneles son hijos flex de un árbol de divisiones; el número de un nodo es su flex-grow.
    Portado de la presentación de International Business con la paleta olivo/hueso y EB Garamond / Jost de este proyecto. */

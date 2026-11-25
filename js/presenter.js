@@ -1,4 +1,4 @@
-/* Benicàssim · modo presentador
+/* Benicasim · modo presentador
    Dos ventanas que se mantienen a la par: la presentación (la del proyector) y la vista del orador (la del portátil,
    con ?presenter), más un cronómetro, la pantalla en negro y la pantalla completa con elección de monitor.
    Portado de la presentación de International Business (que viene de las de Lleida.net y Renault), sin el mando
@@ -1010,7 +1010,7 @@ function buildPresenter(){
   document.title='Vista del orador · '+document.title;
   const r=mkEl('div','pv-root');r.id='pv';
   r.innerHTML=
-    '<header class="pv-top"><div class="pv-brand"><b>Benicàssim</b><span>Vista del orador</span></div>'+
+    '<header class="pv-top"><div class="pv-brand"><b>Benicasim</b><span>Vista del orador</span></div>'+
     '<div class="pv-link" id="pv-link" data-s="off"><i></i><span id="pv-linkt"></span></div>'+
     '<button type="button" class="pv-btn pv-pri" id="pv-aud">Abrir ventana de presentación</button>'+
     '<span class="pv-sp"></span>'+

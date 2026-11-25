@@ -1,4 +1,4 @@
-/* Benicàssim · fiesta de «Toute la semaine !»
+/* Benicasim · fiesta de «Toute la semaine !»
    Cuando aparece la frase final de la diapositiva de la semana (paso 7) cae confeti por toda
    la diapositiva y entran gatitos bailando. Al retroceder o cambiar de diapositiva, todo se retira.
    No toca deck.js: observa la clase .is-shown de .week__end. Con «reducir movimiento» no hace nada. */
