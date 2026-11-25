@@ -533,6 +533,9 @@ html:not(.is-list) .slide--plan.is-handoff .plan li:nth-child(8) { transition-de
 }
 .borders .casing path { stroke: rgb(20 23 11 / 0.5); stroke-width: 8; }
 .borders .line path { stroke: var(--p-inv-ink); stroke-width: 3.5; }
+/* Ceuta y Melilla miden ~10 px: con el trazo normal quedarían como una mancha */
+.borders .casing path.mini { stroke-width: 5; }
+.borders .line path.mini { stroke-width: 2; }
 .slide.is-landed .borders path {
   stroke-dashoffset: 0;
   transition: stroke-dashoffset 1400ms var(--ease-in-out);

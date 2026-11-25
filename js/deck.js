@@ -163,10 +163,12 @@
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
   const BORDERS = window.FLIGHT_BORDERS || {};
+  const BORDERS_MINI = window.FLIGHT_BORDERS_MINI || {};
 
   function buildBorders() {
     slides.filter(isFlight).forEach((slide) => {
       const paths = BORDERS[slide.dataset.flight];
+      const mini = BORDERS_MINI[slide.dataset.flight] || [];
       if (!paths || !paths.length) return;
       const svg = document.createElementNS(SVG_NS, 'svg');
       svg.setAttribute('class', 'borders');
@@ -178,6 +180,12 @@
         paths.forEach((d) => {
           const p = document.createElementNS(SVG_NS, 'path');
           p.setAttribute('d', d);
+          g.appendChild(p);
+        });
+        mini.forEach((d) => {
+          const p = document.createElementNS(SVG_NS, 'path');
+          p.setAttribute('d', d);
+          p.setAttribute('class', 'mini');
           g.appendChild(p);
         });
         svg.appendChild(g);
