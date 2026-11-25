@@ -935,17 +935,6 @@ html.is-list .country,
 }
 /* el bon plan va sobre el cielo, para no tapar el camino ni la costa */
 #s-bon-plan .plate { top: 120px; bottom: auto; }
-.plate--thanks { padding: 30px 56px 40px; }
-.plate--thanks .plate__title {
-  margin: 0;
-  font-size: 160px;
-  line-height: 1;
-}
-.plate__line {
-  margin-top: 10px;
-  font: 400 40px/1.2 var(--font-text);
-  color: var(--p-muted);
-}
 
 /* clima: la foto aérea a sangre y el texto en el cielo, como en la portada.
    «La mer d'un côté, la montagne de l'autre» se reparte sobre la foto: cada mitad encima de lo que nombra,
@@ -1675,6 +1664,44 @@ html:not(.is-list) .slide--fest.is-continued.is-active .fests__also { animation:
 }
 .blade--kite::after {
   background: linear-gradient(0deg, rgb(14 18 8 / 0.8) 0, rgb(14 18 8 / 0.52) 180px, rgb(14 18 8 / 0) 400px);
+}
+
+/* merci: tres fotos propias en láminas verticales iguales (la promenade, la playa al caer la tarde, la crique).
+   Los tres cielos quedan arriba: un velo azul los une y «Merci !» va encima, en blanco, como el titular del clima. */
+.slide--thanks .blade { width: 640px; }
+.slide--thanks .blades::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 620px;
+  left: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgb(8 40 70 / 0.56) 0, rgb(8 40 70 / 0.38) 300px, rgb(8 40 70 / 0) 100%);
+}
+.thanks {
+  position: absolute;
+  z-index: 4;
+  left: 112px;
+  top: 96px;
+  color: #fff;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.2), 0 2px 24px rgb(0 0 0 / 0.26);
+}
+.thanks__title {
+  font: 400 184px/0.95 var(--font-display);
+  letter-spacing: -0.02em;
+}
+.thanks__line {
+  margin-top: 22px;
+  font: 400 48px/1.2 var(--font-text);
+  opacity: 0.96;
+}
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--thanks .thanks__title {
+  animation: enter-rise 700ms var(--ease-out) 520ms backwards;
+}
+html:not(.is-list) .slide[data-dir="fwd"].is-active.slide--thanks .thanks__line {
+  animation: enter-rise 600ms var(--ease-out) 680ms backwards;
 }
 
 .sea-copy {
