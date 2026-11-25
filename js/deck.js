@@ -389,6 +389,10 @@
     trackPins(slide, Infinity);
     const alts = altsOf(slide);
     if (alts.length && slide.classList.contains('is-active')) setAltitude(alts[alts.length - 1]);
+    // Al volver atrás (instant) la diapositiva ya está completa; al aterrizar hacia delante, su texto entra solo
+    if (!instant && slide.dataset.autoStep && slide.classList.contains('is-active') && stepOf(slide) < stepsOf(slide)) {
+      later(Number(slide.dataset.autoStep), () => { if (slides[index] === slide && !listMode) advance(slide); });
+    }
     emit();
   }
 
@@ -441,6 +445,33 @@
       }
     }
     emit();
+  }
+
+  /* ---------------------------------------------------------------- pasos que entran solos
+     Hay diapositivas cuyo texto no merece una pulsación aparte: el orador solo quiere ver llegar la imagen
+     y que el texto la siga.
+     - data-auto-step="ms" (en un vuelo con pasos): en cuanto el vuelo aterriza, el paso siguiente entra solo
+       pasados `ms` (y, si hay más, uno cada `ms`).
+     - data-auto-next="ms": al llegar al último paso, hacia delante, pasa sola a la diapositiva siguiente pasados `ms`
+       (el zoom del plano de salidas acaba en los logos y la diapositiva de los festivales trae el texto).
+     Hacia atrás nunca hay automatismos. Cualquier pulsación o cambio de diapositiva cancela la espera y manda
+     lo que pulse el orador; el relevo automático tampoco quita la pantalla en negro (go(…, true)). */
+  let auto = null;
+  const cancelAuto = () => { if (auto) { clearTimeout(auto); auto = null; } };
+  function later(ms, fn) {
+    cancelAuto();
+    auto = setTimeout(() => { auto = null; fn(); }, ms);
+  }
+
+  // Da el paso siguiente y deja programado lo que toque después (otro paso o el cambio de diapositiva)
+  function advance(slide) {
+    setStep(slide, stepOf(slide) + 1);
+    const here = () => slides[index] === slide && !listMode;
+    if (stepOf(slide) < stepsOf(slide)) {
+      if (slide.dataset.autoStep) later(Number(slide.dataset.autoStep), () => { if (here()) advance(slide); });
+    } else if (slide.dataset.autoNext) {
+      later(Number(slide.dataset.autoNext), () => { if (here()) go(index + 1, 1, true); });
+    }
   }
 
   /* ---------------------------------------------------------------- navegación */
@@ -506,9 +537,10 @@
     emit();
   }
 
-  function go(i, dir) {
+  function go(i, dir, silent = false) {
     if (gate.active) { blocked(); return; }
-    if (hooks.nav) hooks.nav();
+    if (hooks.nav && !silent) hooks.nav();
+    cancelAuto();
     cancelLeaving();
     if (i < 0 || i >= slides.length || i === index) return;
     endHandoff();
@@ -534,6 +566,7 @@
     if (listMode) return;
     if (gate.active) { blocked(); return; }
     if (hooks.nav) hooks.nav();
+    cancelAuto();
     if (leaving) { go(index + 1, 1); return; }
     const s = slides[index];
     if (isFlight(s)) {
@@ -542,7 +575,7 @@
       // solo hace falta esperar si hay algo que desvanecer (fronteras, cartel, chinchetas)
       if (index + 1 < slides.length && s.querySelector('.borders, .cartouche, .pins--track')) { fadeThenNext(s); return; }
     }
-    if (stepOf(s) < stepsOf(s)) { setStep(s, stepOf(s) + 1); return; }
+    if (stepOf(s) < stepsOf(s)) { advance(s); return; }
     go(index + 1, 1);
   }
 
@@ -550,6 +583,7 @@
     if (listMode) return;
     if (gate.active) { blocked(); return; }
     if (hooks.nav) hooks.nav();
+    cancelAuto();
     const s = slides[index];
     if (stepOf(s) > 0) { setStep(s, stepOf(s) - 1); return; }
     go(index - 1, -1);
@@ -569,6 +603,7 @@
   }
 
   function setMode(list) {
+    cancelAuto();
     listMode = list;
     root.classList.toggle('is-list', list);
     slides.forEach((s) => {

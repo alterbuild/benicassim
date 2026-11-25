@@ -21,7 +21,7 @@ window.DECK_NOTES = {
   ],
   's-vol-4': [
     "[→ vuelo 4] Comme vous pouvez le voir, Benicàssim a une longue côte et de belles montagnes. Mais elle a aussi d'autres charmes.",
-    "[→ aparece el texto sobre la foto] Entre la mer et la montagne. Ici, bien sûr, on peut profiter de la plage et de la montagne, mais il y a aussi beaucoup de choses à faire. On peut retrouver ses amis dans les bars à tapas pour manger des tapas et boire une bière. Tous les soirs, c'est plein de monde."
+    "[→ el texto aparece solo sobre la foto] Entre la mer et la montagne. Ici, bien sûr, on peut profiter de la plage et de la montagne, mais il y a aussi beaucoup de choses à faire. On peut retrouver ses amis dans les bars à tapas pour manger des tapas et boire une bière. Tous les soirs, c'est plein de monde."
   ],
   's-climat': [
     "En plus, il fait beau presque toute l'année. Le climat est méditerranéen : les étés sont chauds et les hivers sont doux. Le matin, on peut aller à la plage et l'après-midi, monter au Desert de les Palmes."
@@ -41,7 +41,7 @@ window.DECK_NOTES = {
     "[cada → enciende un día] On peut aussi faire la fête le vendredi, le samedi… le dimanche, c'est aussi un bon jour… le lundi, si on veut, le mardi, le mercredi aussi… et même le jeudi !"
   ],
   's-sorties': [
-    "Voici quelques-unes des meilleures discothèques et des meilleurs pubs. [Nombra los que quieras: La Santa, Casablanca, le Select…] [→ al terminar: zoom sobre el recinto de los festivales y los logos se colocan; con otro → empieza la diapositiva de los festivales]"
+    "Voici quelques-unes des meilleures discothèques et des meilleurs pubs. [Nombra los que quieras: La Santa, Casablanca, le Select…] [→ al terminar: zoom sobre el recinto de los festivales; los logos se colocan y la diapositiva de los festivales entra sola, con su texto]"
   ],
   's-festivals': [
     "Et pour continuer la fête, il y a les festivals : le SanSan à Pâques, le FIB en juillet et le Rototom Sunsplash en août."

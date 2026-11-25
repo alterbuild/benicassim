@@ -137,9 +137,9 @@
       </section>
 
       <!-- 6 · Vol 4 y «Que faire» en una sola diapositiva: el vuelo acaba en la foto de la playa, que se queda
-           de fondo, y con la siguiente pulsación (paso 1) el texto aparece encima, en el cielo.
+           de fondo, y medio segundo después de aterrizar (data-auto-step) el texto entra solo encima, en el cielo.
            Del paso 1 en adelante es ya la parte 2: el altímetro cede su sitio a la barra de partes (data-progress-from-step). -->
-      <section class="slide slide--flight slide--beach" id="s-vol-4" data-section="2" data-steps="1" data-progress-from-step="1" data-flight="vol-4-cote-voramar" aria-label="Vol 4 : jusqu'à la plage, puis que faire à Benicàssim">
+      <section class="slide slide--flight slide--beach" id="s-vol-4" data-section="2" data-steps="1" data-auto-step="500" data-progress-from-step="1" data-flight="vol-4-cote-voramar" aria-label="Vol 4 : jusqu'à la plage, puis que faire à Benicàssim">
         <div class="canvas">
           <video class="flight" muted playsinline preload="none"
                  poster="media/vol-4-debut.jpg" data-end-poster="media/photos/plage-voramar.jpg"
@@ -382,8 +382,10 @@
         </div>
       </section>
 
-      <!-- 12 · Carte des sorties : las etiquetas entran volando sobre el plano (OpenStreetMap) -->
-      <section class="slide slide--map" id="s-sorties" data-section="5" data-alt="ville" data-rail="off" data-steps="1" data-back-delay="700ms" aria-label="Discothèques et pubs sur la carte">
+      <!-- 12 · Carte des sorties : las etiquetas entran volando sobre el plano (OpenStreetMap).
+           Con la pulsación del paso 1 llega el zoom al recinto y, cuando los logos ya están colocados,
+           la diapositiva de los festivales entra sola (data-auto-next: 1,7 s tras el paso; el zoom dura ~1,35 s) -->
+      <section class="slide slide--map" id="s-sorties" data-section="5" data-alt="ville" data-rail="off" data-steps="1" data-auto-next="1700" data-back-delay="700ms" aria-label="Discothèques et pubs sur la carte">
         <div class="canvas">
           <!-- la cámara: el plano y todo lo que va pegado a él se acercan juntos al recinto en el paso 1 -->
           <div class="mapcam">
@@ -642,8 +644,8 @@
 
   <script src="js/altitudes.js?v=20261120f"></script>
   <script src="js/borders.js?v=20261124h"></script>
-  <script src="js/notes.js?v=20261124w"></script>
-  <script src="js/deck.js?v=20261124w"></script>
+  <script src="js/notes.js?v=20261125-auto"></script>
+  <script src="js/deck.js?v=20261125-auto"></script>
   <script src="js/fiesta.js?v=20261123a"></script>
   <script src="js/chrome.js?v=20261124h"></script>
   <script src="js/presenter.js?v=20261124h"></script>
