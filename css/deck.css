@@ -492,6 +492,17 @@ html:not(.is-list) .slide--plan.is-handoff .plan li:nth-child(8) { transition-de
   background: #000;
 }
 
+/* Los vuelos son UN solo vídeo (#flightvideo, deck.js): corre detrás de todas las diapositivas y solo se ve mientras
+   hay un vuelo en pantalla (stage[data-video="on"]). Las diapositivas de vuelo son transparentes y ponen encima el
+   altímetro, los límites, las chinchetas y el cartel. Su <video class="flight--still"> solo trae el póster del último
+   fotograma, para el modo lectura y las miniaturas del presentador. */
+.flight--master { visibility: hidden; }
+.stage[data-video="on"] .flight--master { visibility: visible; }
+html.is-list .flight--master,
+html.is-presenter .flight--master { display: none; }
+html:not(.is-list):not(.is-presenter) .slide--flight .canvas { background: transparent; }
+html:not(.is-list):not(.is-presenter) .flight--still { display: none; }
+
 /* Final del vuelo 4: el último fotograma del dron se funde con la foto de la playa, que se queda */
 .flight-still {
   position: absolute;

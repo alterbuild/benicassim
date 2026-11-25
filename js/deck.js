@@ -1,6 +1,8 @@
 /* Benicasim · motor de la presentación
    - Flechas, espacio, AvPág/RePág (mandos de presentación), Inicio/Fin.
-   - En una diapositiva de vuelo, "siguiente" mientras el vídeo corre salta al final (aterriza).
+   - Los 4 vuelos son UN solo vídeo (#flightvideo) con paradas: cada vuelo empieza en el fotograma donde acabó el
+     anterior (js/altitudes.js, «segments»). En una diapositiva de vuelo, "siguiente" mientras el vídeo corre salta
+     a su parada (aterriza).
    - El altímetro lee la altitud real de la cámara de cada fotograma (js/altitudes.js).
    - Expone window.DECK (diapositiva, paso, fase del vuelo, ir a, siguiente, anterior y un aviso de cambios)
      para la barra (js/chrome.js) y para el modo presentador (js/presenter.js).
@@ -53,19 +55,41 @@
   }
 
   const isFlight = (s) => s.classList.contains('slide--flight');
-  const videoOf = (s) => s.querySelector('video');
   const altsOf = (s) => DATA.flights[s.dataset.flight] || [];
 
-  /* Velocidad por vídeo: data-rate="1.5" en el <video>. defaultPlaybackRate sobrevive al cambio
-     de src de la precarga (el navegador reinicia playbackRate a ese valor). El altímetro y las
-     chinchetas leen currentTime, así que siguen sincronizados a cualquier velocidad. */
-  const rateOf = (v) => Number(v.dataset.rate) || 1;
-  function applyRate(v) {
-    const r = rateOf(v);
-    if (v.defaultPlaybackRate !== r) v.defaultPlaybackRate = r;
-    if (v.playbackRate !== r) v.playbackRate = r;
+  /* Vídeo único de los vuelos. Cada vuelo es un tramo [from, to] (en segundos; en fotogramas, start..end) y el
+     fotograma de aterrizaje de uno es el de partida del siguiente. Las diapositivas de vuelo no llevan vídeo
+     propio (su <video class="flight--still"> solo trae el póster del último fotograma para el modo lectura y las
+     miniaturas del presentador). */
+  const master = document.getElementById('flightvideo');
+  const FPS = DATA.fps || 30;
+  const HALF = 0.5 / FPS;   // medio fotograma, en segundos
+  const SEGMENTS = DATA.segments || {};
+  const HAS_RVFC = 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
+  const stillOf = (s) => s.querySelector('video.flight--still');
+  function segOf(slide) {
+    const [a, b] = SEGMENTS[slide.dataset.flight] || [0, 0];
+    return { start: a, end: b, from: a / FPS, to: b / FPS };
   }
-  stage.querySelectorAll('video[data-rate]').forEach(applyRate);
+
+  // El vídeo solo se ve mientras hay un vuelo en pantalla (CSS: stage[data-video="on"]); al salir se espera al fundido
+  let videoOff = null;
+  function showVideo(on) {
+    clearTimeout(videoOff);
+    videoOff = null;
+    if (on) stage.dataset.video = 'on';
+    else videoOff = setTimeout(() => { delete stage.dataset.video; videoOff = null; }, 320);
+  }
+
+  // Saltar a un instante; si aún no hay metadatos (precarga en marcha) se hace al llegar
+  let pendingSeek = null;
+  function seekMaster(t) {
+    if (master.readyState >= 1) master.currentTime = t;
+    else pendingSeek = t;
+  }
+  master.addEventListener('loadedmetadata', () => {
+    if (pendingSeek !== null) { master.currentTime = pendingSeek; pendingSeek = null; }
+  });
 
   /* ---------------------------------------------------------------- altímetro */
 
@@ -322,15 +346,15 @@
   /* ---------------------------------------------------------------- vuelos */
 
   /* Fundido final del vuelo 4: la foto que viene después (.flight-still) empieza a aparecer FADE_S segundos antes
-     de que acabe el vídeo y llega a opacidad 1 justo al terminar. La opacidad se calcula en cada fotograma a partir
-     del tiempo que le queda al vídeo (y de su velocidad), así el fundido y el vuelo van siempre a la par. */
+     de que acabe el vuelo y llega a opacidad 1 justo al terminar. La opacidad se calcula en cada fotograma a partir
+     del tiempo que le queda al vuelo, así el fundido y el vuelo van siempre a la par. */
   const FADE_S = 2;
   const smooth = (t) => t * t * (3 - 2 * t);
 
-  function crossfade(slide, v) {
+  function crossfade(slide, v, seg) {
     const still = slide.querySelector('.flight-still');
     if (!still || !Number.isFinite(v.duration)) return;
-    const left = (v.duration - v.currentTime) / (v.playbackRate || 1);
+    const left = seg.to - v.currentTime;
     const t = Math.min(1, Math.max(0, 1 - left / FADE_S));
     slide.classList.toggle('is-fading', t > 0);
     still.style.opacity = t > 0 ? smooth(t).toFixed(3) : '';
@@ -341,54 +365,89 @@
     slide.classList.remove('is-fading');
   }
 
-  function follow(slide) {
-    const v = videoOf(slide);
+  /* La parada: cuando se presenta el último fotograma del vuelo el vídeo se detiene ahí (requestVideoFrameCallback
+     avisa fotograma a fotograma; sin él, lo comprueba el bucle de follow) y el vuelo aterriza. `watchId` identifica
+     al vuelo en curso: cambiarlo anula cualquier vigilancia o aterrizaje pendiente de uno anterior. */
+  let watchId = 0;
+
+  function arrive(slide, id) {
+    if (id !== watchId || slide.dataset.state !== 'playing') return;
+    master.pause();
+    const seg = segOf(slide);
+    // Si el vídeo ya ha enseñado fotogramas del vuelo siguiente (sin rVFC), vuelve al de aterrizaje
+    if (!master.ended && master.currentTime > seg.to + HALF) master.currentTime = seg.to + HALF / 2;
+    land(slide, false);
+  }
+
+  function watchStop(slide, id) {
+    if (!HAS_RVFC) return;
+    const seg = segOf(slide);
+    const check = (now, meta) => {
+      if (id !== watchId) return;
+      if (meta.mediaTime >= seg.to - HALF) arrive(slide, id);
+      else master.requestVideoFrameCallback(check);
+    };
+    master.requestVideoFrameCallback(check);
+  }
+
+  function follow(slide, id) {
+    const v = master;
+    const seg = segOf(slide);
     const alts = altsOf(slide);
-    const fps = DATA.fps || 30;
     const tick = () => {
-      if (slide.dataset.state !== 'playing') return;
-      const frame = Math.round(v.currentTime * fps);
+      if (slide.dataset.state !== 'playing' || id !== watchId) return;
+      const frame = Math.min(seg.end - seg.start, Math.max(0, Math.round((v.currentTime - seg.from) * FPS)));
       if (alts.length) setAltitude(alts[Math.min(alts.length - 1, frame)]);
       trackPins(slide, frame);
-      crossfade(slide, v);
+      crossfade(slide, v, seg);
+      if (!HAS_RVFC && v.currentTime >= seg.to - HALF) { arrive(slide, id); return; }
       requestAnimationFrame(tick);
     };
     tick();
   }
 
-  function seekToEnd(v) {
-    const go = () => { v.currentTime = Math.max(0, v.duration - 0.04); };
-    if (v.readyState >= 1 && Number.isFinite(v.duration)) go();
-    else {
-      v.poster = v.dataset.endPoster || v.poster;
-      v.addEventListener('loadedmetadata', go, { once: true });
-    }
+  function seekToEnd(slide) {
+    // el centro del fotograma de aterrizaje: se ve ese y no el siguiente
+    seekMaster(segOf(slide).to + HALF / 2);
+    if (master.readyState < 1) master.poster = stillOf(slide).dataset.endPoster || master.poster;
   }
 
   function play(slide) {
-    const v = videoOf(slide);
+    const v = master;
+    const seg = segOf(slide);
     slide.classList.remove('is-landed');
     clearCrossfade(slide);
     slide.dataset.state = 'playing';
-    v.onended = () => land(slide, false);
-    try { v.currentTime = 0; } catch (e) { /* aún sin metadatos */ }
+    const id = ++watchId;
+    v.onended = () => arrive(slide, id);
     trackPins(slide, 0);
-    applyRate(v);
-    const p = v.play();
-    if (p && p.catch) {
-      p.catch(() => {
-        // Si el navegador no deja reproducir, espera a poder hacerlo
-        v.addEventListener('canplay', () => { if (slide.dataset.state === 'playing') v.play().catch(() => land(slide, true)); }, { once: true });
-      });
+    showVideo(true);
+    const start = () => {
+      if (id !== watchId) return;
+      const p = v.play();
+      if (p && p.catch) {
+        p.catch(() => {
+          // Si el navegador no deja reproducir, espera a poder hacerlo
+          v.addEventListener('canplay', () => { if (id === watchId && slide.dataset.state === 'playing') v.play().catch(() => land(slide, true)); }, { once: true });
+        });
+      }
+    };
+    // Desde la parada anterior no hay salto: el vuelo sigue justo donde aterrizó el anterior
+    if (v.readyState >= 1 && Math.abs(v.currentTime - seg.from) > 2 * HALF) {
+      v.addEventListener('seeked', start, { once: true });
+      v.currentTime = seg.from;
+    } else {
+      if (v.readyState < 1) seekMaster(seg.from);
+      start();
     }
-    follow(slide);
+    watchStop(slide, id);
+    follow(slide, id);
     emit();
   }
 
   function land(slide, jump, instant = false) {
-    const v = videoOf(slide);
-    v.onended = null;
-    if (jump) { v.pause(); seekToEnd(v); }
+    master.onended = null;
+    if (jump) { watchId += 1; master.pause(); seekToEnd(slide); }
     slide.dataset.state = 'landed';
     clearCrossfade(slide);
     // Al volver atrás el límite ya está dibujado; al aterrizar se dibuja
@@ -511,9 +570,9 @@
     slide.classList.remove('is-active', 'is-leaving');
     held = false;
     if (isFlight(slide)) {
-      const v = videoOf(slide);
-      v.pause();
-      v.onended = null;
+      watchId += 1;
+      master.pause();
+      master.onended = null;
       if (slide.dataset.state === 'playing') slide.dataset.state = 'ready';
     }
   }
@@ -522,6 +581,7 @@
     slide.dataset.dir = dir > 0 ? 'fwd' : 'back';
     slide.classList.add('is-active');
     stage.dataset.slide = slide.id;
+    showVideo(isFlight(slide));
     stage.dataset.tone = slide.dataset.tone || (isFlight(slide) ? 'dark' : 'light');
     // El altímetro solo acompaña a los vuelos; en su hueco, el resto de partes muestran el progreso
     stage.dataset.rail = slide.dataset.rail || (isFlight(slide) ? 'alt' : (slide.dataset.section ? 'progress' : 'off'));
@@ -614,15 +674,15 @@
     cancelAuto();
     listMode = list;
     root.classList.toggle('is-list', list);
+    watchId += 1;
+    master.pause();
+    if (list) { clearTimeout(videoOff); delete stage.dataset.video; }
     slides.forEach((s) => {
       // En modo lectura cada diapositiva se ve en su último paso
       if (list && stepsOf(s)) setStep(s, stepsOf(s));
       if (isFlight(s)) {
-        const v = videoOf(s);
-        v.pause();
+        const v = stillOf(s);
         if (list) {
-          restoreSources(v);
-          v.preload = 'metadata';
           v.poster = v.dataset.endPoster || v.poster;
           s.dataset.state = 'landed';
           s.classList.add('is-landed');
@@ -636,21 +696,6 @@
       activate(slides[index], -1);
     }
   }
-
-  // En modo lectura, tocar un vuelo lo reproduce desde el principio
-  slides.forEach((s) => {
-    if (!isFlight(s)) return;
-    s.addEventListener('click', () => {
-      if (!listMode) return;
-      const v = videoOf(s);
-      if (!v.paused) { v.pause(); s.classList.remove('is-playing'); return; }
-      s.classList.add('is-playing');
-      v.currentTime = 0;
-      applyRate(v);
-      v.onended = () => s.classList.remove('is-playing');
-      v.play().catch(() => s.classList.remove('is-playing'));
-    });
-  });
 
   /* ---------------------------------------------------------------- entrada */
 
@@ -698,14 +743,14 @@
      En clase la wifi puede ser lenta: al abrir la página los vuelos se pasan a memoria y, hasta que están
      todos, la presentación no avanza (gate). La barra (js/chrome.js) enseña el progreso.
      - Los vídeos del HTML llevan preload="none": no se bajan dos veces (una por la etiqueta y otra por aquí).
-     - Se guardan en Cache Storage («benicassim-videos-v1»), así que al recargar no se vuelven a bajar mientras no
+     - Se guardan en Cache Storage («benicassim-videos-v2»), así que al recargar no se vuelven a bajar mientras no
        cambien: se pregunta al servidor con un HEAD (etag o tamaño + fecha) y, si coincide, se usa la copia guardada.
        Sin respuesta del servidor (sin red, proxy) se fía de lo guardado; si el archivo ha cambiado, se baja de nuevo.
      - Si una descarga falla se reintenta sin parar; solo entonces la barra ofrece «Commencer quand même»
        (D.release()), por si el aula tiene un proxy que lo impide. Sin fetch o desde file:// no hay precarga
        ni bloqueo: los vídeos se reproducen desde su URL. */
 
-  const VIDEO_CACHE = 'benicassim-videos-v1';
+  const VIDEO_CACHE = 'benicassim-videos-v2';
 
   /* Las <source> del HTML llevan data-src, no src: así la etiqueta <video> no pide el archivo por su cuenta
      (con preload="none" Chrome aún abre una petición «Range: bytes=0-»). restoreSources las activa cuando
@@ -791,7 +836,7 @@
   }
 
   async function preloadAll() {
-    const videos = Array.from(stage.querySelectorAll('video'));
+    const videos = [master];
     if (!window.fetch || location.protocol === 'file:') {
       videos.forEach((v) => { restoreSources(v); v.preload = 'auto'; });
       return;
@@ -809,6 +854,8 @@
     };
     let cache = null;
     try { cache = 'caches' in window ? await caches.open(VIDEO_CACHE) : null; } catch (e) { cache = null; }
+    // Los 4 vídeos sueltos de la versión anterior ya no se usan: se libera su sitio
+    try { if ('caches' in window) caches.delete('benicassim-videos-v1'); } catch (e) { /* da igual */ }
     const stored = await Promise.all(jobs.map(([, src]) => fromStore(cache, src)));
 
     for (let i = 0; i < jobs.length; i += 1) {
@@ -828,7 +875,6 @@
             const t = v.currentTime;
             v.preload = 'auto';   // la copia está en memoria: cargarla no cuesta red
             v.src = url;
-            applyRate(v);
             try { v.currentTime = t; } catch (e) { /* sin metadatos todavía */ }
             unswapped.delete(v);
           };
@@ -860,6 +906,13 @@
      y js/presenter.js las clona para las miniaturas. No se activa ninguna. */
   function preparePresenter() {
     root.classList.add('is-presenter');
+    master.pause();
+    master.preload = 'none';
+    master.removeAttribute('poster');
+    master.querySelectorAll('source').forEach((src) => src.remove());
+    master.removeAttribute('src');
+    try { master.load(); } catch (e) { /* sin vídeo */ }
+    delete stage.dataset.video;
     slides.forEach((s) => {
       s.querySelectorAll('video').forEach((v) => {
         v.pause();
@@ -909,7 +962,7 @@
     hold(on) {
       const s = slides[index];
       if (!isFlight(s)) return;
-      const v = videoOf(s);
+      const v = master;
       if (on) { if (s.dataset.state === 'playing' && !v.paused) { v.pause(); held = true; } }
       else if (held) { held = false; v.play().catch(() => {}); }
     },
