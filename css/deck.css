@@ -1363,35 +1363,28 @@ html.is-list .cats,
 
 .slide--map[data-step="1"].is-active .mapcam {
   transform: translate(79px, -18px) scale(3.4);
-  transition: transform 1250ms cubic-bezier(0.7, 0, 0.25, 1);
+  transition: transform 850ms cubic-bezier(0.6, 0, 0.2, 1);
 }
 .slide--map[data-step="1"].is-active :is(.spot__card, .spot__dot) {
   opacity: 0;
   transform: none;
-  transition: opacity 180ms ease;
+  transition: opacity 140ms ease;
   transition-delay: 0ms;
 }
 .slide--map[data-step="1"].is-active .spots__lines line {
   opacity: 0;
-  transition: opacity 180ms ease;
+  transition: opacity 140ms ease;
   transition-delay: 0ms;
 }
 .slide--map[data-step="1"].is-active :is(.plate, .map__sea) {
   opacity: 0;
-  transition: opacity 180ms ease;
+  transition: opacity 140ms ease;
 }
-.slide--map[data-step="1"].is-active :is(.map, .recinto) {
-  opacity: 0;
-  transition: opacity 550ms ease 600ms;
-}
-.slide--map[data-step="1"].is-active .canvas {
-  background-color: var(--p-bg);
-  transition: background-color 550ms ease 600ms;
-}
+/* el plano y el recinto se quedan debajo de las fotos, que los cubren; ya no hace falta pasar por el crema */
 .slide--map[data-step="1"].is-active .fz__logo {
   opacity: 1;
   transform: none;
-  transition: transform 950ms cubic-bezier(0.22, 1, 0.36, 1) calc(250ms + var(--kf) * 70ms);
+  transition: transform 650ms cubic-bezier(0.22, 1, 0.36, 1) calc(110ms + var(--kf) * 50ms);
 }
 .slide.is-active .spot__dot {
   opacity: 1;
@@ -1513,8 +1506,8 @@ html.is-list .cats,
 
 /* festivales: dos fotos propias a sangre (la escena del Rototom, vertical, y una vista aérea nocturna). Los dos cielos son
    negros: ahí arriba va todo el texto, en blanco, y la mitad de abajo (escenario y multitud) queda a la vista.
-   Solo los logos llevan una placa del color del papel, porque no se leen sobre negro: al llegar desde el plano
-   (corte duro) la página sigue siendo crema y las fotos se funden detrás, sin saltos. */
+   Los logos van sin placa, solo con sombra. Las mismas fotos se funden ya sobre el plano durante el zoom (.fbg--map),
+   así que el corte duro a esta diapositiva no cambia el fondo. */
 .fbg {
   position: absolute;
   top: 0;
@@ -1535,6 +1528,19 @@ html.is-list .cats,
   object-position: 72% 50%;
   border-left: 3px solid var(--night);
 }
+/* la copia sobre el plano: invisible hasta el paso 1; entonces se funde encima del plano (que sigue debajo, ya sin necesidad de apagarse) */
+.fbg--map {
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+.slide--map[data-step="1"].is-active .fbg--map {
+  opacity: 1;
+  transition: opacity 420ms ease-out 180ms;
+}
+html.is-list .fbg--map,
+.pvs .fbg--map { display: none; }
 /* velo arriba (el texto sobre el borde del cielo), abajo (la línea «Et aussi» sobre la multitud) y a la izquierda
    (la barra de progreso sobre las luces de la escena) */
 .fbg::after {
@@ -1558,15 +1564,10 @@ html.is-list .cats,
 .slide--fest .headline { color: #fff; }
 .slide--fest .fests__also { color: #fff; }
 .slide--fest .fest { position: relative; }
-.slide--fest .fest::before {
-  content: "";
-  position: absolute;
-  top: 28px;
-  left: 0;
-  width: calc(var(--w) + 36px);
-  height: 181.8px;
-  background: var(--p-bg);
-  border-radius: 4px;
+/* los logos van sin placa, solo con sombra: un halo blanco fino (el negro del Rototom no se vería sobre el cielo) y una sombra oscura debajo */
+.slide--fest .fest img,
+.fz__logo {
+  filter: drop-shadow(0 0 1.5px rgb(255 255 255 / 0.95)) drop-shadow(0 0 9px rgb(255 255 255 / 0.3)) drop-shadow(0 5px 16px rgb(0 0 0 / 0.55));
 }
 .slide--fest .fest__when { color: #fff; }
 .slide--fest .fest__what { color: rgb(255 255 255 / 0.94); }
@@ -1654,20 +1655,18 @@ html.is-list .cats,
   transform: none;
   transition: none;
 }
-/* las fotos se funden desde el crema del plano (480 ms); el texto blanco llega cuando ya hay fondo oscuro */
-@keyframes fbg-in { from { opacity: 0; } }
-html:not(.is-list) .slide--fest.is-continued.is-active .fbg { animation: fbg-in 520ms ease-out backwards; }
-html:not(.is-list) .slide--fest.is-continued.is-active .kicker { animation: enter-rise 560ms var(--ease-out) 360ms backwards; }
-html:not(.is-list) .slide--fest.is-continued.is-active .headline { animation: enter-rise 640ms var(--ease-out) 430ms backwards; }
+/* el fondo ya estaba puesto (lo funde el plano antes del corte): solo entra el texto */
+html:not(.is-list) .slide--fest.is-continued.is-active .kicker { animation: enter-rise 480ms var(--ease-out) 40ms backwards; }
+html:not(.is-list) .slide--fest.is-continued.is-active .headline { animation: enter-rise 540ms var(--ease-out) 90ms backwards; }
 html:not(.is-list) .slide--fest.is-continued.is-active .fest {
   animation: enter-line 700ms ease backwards;
-  animation-delay: calc(400ms + var(--k, 0ms));
+  animation-delay: calc(110ms + var(--k, 0ms) * 0.7);
 }
 html:not(.is-list) .slide--fest.is-continued.is-active :is(.fest__when, .fest__what) {
   animation: enter-rise 560ms var(--ease-out) backwards;
-  animation-delay: calc(480ms + var(--k, 0ms));
+  animation-delay: calc(170ms + var(--k, 0ms) * 0.7);
 }
-html:not(.is-list) .slide--fest.is-continued.is-active .fests__also { animation: enter-rise 560ms var(--ease-out) 820ms backwards; }
+html:not(.is-list) .slide--fest.is-continued.is-active .fests__also { animation: enter-rise 480ms var(--ease-out) 380ms backwards; }
 
 /* deportes de mar: las cinco fotos del usuario a sangre, en láminas verticales de izquierda a derecha
    (kayak y paddle, kitesurf, vela y windsurf, windsurf en la arena). Los cielos de las fotos quedan arriba:

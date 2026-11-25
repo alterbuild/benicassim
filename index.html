@@ -385,7 +385,7 @@
       <!-- 12 · Carte des sorties : las etiquetas entran volando sobre el plano (OpenStreetMap).
            Con la pulsación del paso 1 llega el zoom al recinto y, cuando los logos ya están colocados,
            la diapositiva de los festivales entra sola (data-auto-next: 1,7 s tras el paso; el zoom dura ~1,35 s) -->
-      <section class="slide slide--map" id="s-sorties" data-section="5" data-alt="ville" data-rail="off" data-steps="1" data-auto-next="1700" data-back-delay="700ms" aria-label="Discothèques et pubs sur la carte">
+      <section class="slide slide--map" id="s-sorties" data-section="5" data-alt="ville" data-rail="off" data-steps="1" data-auto-next="950" data-back-delay="700ms" aria-label="Discothèques et pubs sur la carte">
         <div class="canvas">
           <!-- la cámara: el plano y todo lo que va pegado a él se acercan juntos al recinto en el paso 1 -->
           <div class="mapcam">
@@ -471,6 +471,11 @@
             <h2 class="plate__title">Discothèques et pubs</h2>
             <p class="plate__note">Photos d'illustration</p>
           </div>
+          <!-- las fotos de fondo de los festivales (las mismas de la diapositiva siguiente) se funden sobre el plano mientras la cámara se acerca: así el corte a la diapositiva siguiente no cambia nada -->
+          <div class="fbg fbg--map" aria-hidden="true">
+            <img class="fbg__a" src="media/photos/festival-rototom-scene.jpg" width="1500" height="2000" alt="">
+            <img class="fbg__b" src="media/photos/festival-vue-aerienne.webp" width="1200" height="900" alt="">
+          </div>
           <!-- los logos viajan solos: pequeños en la tarjeta del recinto y, con el zoom, a las cajas exactas de .fest img de la diapositiva siguiente (--k: orden de llegada a la tarjeta; --kf: orden de salida, el de más lejos primero para que no se pisen) -->
           <div class="fz" aria-hidden="true">
             <img class="fz__logo" style="--k:0; --kf:2; left:378px; top:247px; width:219.9px; height:147.8px; --tx:-338px; --ty:95px" src="media/logos/sansan.svg" width="119" height="80" alt="">
@@ -510,7 +515,7 @@
           </ul>
           <div class="fests__also">
             <img src="media/logos/arenalsound.png" width="800" height="122" alt="Arenal Sound">
-            <p>Et dans un village voisin, Burriana, on profite de l'un des meilleurs festivals de reggaeton.</p>
+            <p>Près de Benicasim, on trouve l'un des meilleurs festivals de reggaeton.</p>
           </div>
         </div>
       </section>

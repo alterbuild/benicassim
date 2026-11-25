@@ -44,7 +44,7 @@ window.DECK_NOTES = {
     "Voici quelques-unes des meilleures discothèques et des meilleurs pubs. [Nombra los que quieras: La Santa, Casablanca, le Select…] [→ al terminar: zoom sobre el recinto de los festivales; los logos se colocan y la diapositiva de los festivales entra sola, con su texto]"
   ],
   's-festivals': [
-    "Et pour continuer la fête, il y a les festivals : le SanSan à Pâques, le FIB en juillet et le Rototom Sunsplash en août, le plus grand festival de reggae du monde. Et dans un village voisin, à Burriana, on peut profiter de l'un des meilleurs festivals de reggaeton : l'Arenal Sound."
+    "Et pour continuer la fête, il y a les festivals : le SanSan à Pâques, le FIB en juillet et le Rototom Sunsplash en août, le plus grand festival de reggae du monde. Et tout près de Benicasim, il y a l'un des meilleurs festivals de reggaeton : l'Arenal Sound."
   ],
   's-plus-moins': [
     "Les plus de Benicasim, ce sont la mer et la montagne, l'ambiance de l'été, les festivals et surtout mes amis. Les moins : en hiver, c'est très calme. Pendant les festivals, il y a des bouchons. Et les transports en commun ne sont pas très bons, alors il faut souvent prendre la voiture ou une trottinette électrique."
