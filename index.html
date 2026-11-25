@@ -16,7 +16,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preload" href="fonts/eb-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/jost-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/deck.css?v=20261125-merci2">
+  <link rel="stylesheet" href="css/deck.css?v=20261125-fest6">
   <link rel="stylesheet" href="css/chrome.css?v=20261124h">
   <link rel="stylesheet" href="css/presenter.css?v=20261124h">
   <script>document.documentElement.classList.add('js');</script>
@@ -473,36 +473,45 @@
           </div>
           <!-- los logos viajan solos: pequeños en la tarjeta del recinto y, con el zoom, a las cajas exactas de .fest img de la diapositiva siguiente (--k: orden de llegada a la tarjeta; --kf: orden de salida, el de más lejos primero para que no se pisen) -->
           <div class="fz" aria-hidden="true">
-            <img class="fz__logo" style="--k:0; --kf:2; left:360px; --tx:-320px; --ty:-80px" src="media/logos/sansan.svg" width="119" height="80" alt="">
-            <img class="fz__logo" style="--k:1; --kf:1; left:861.3px; --tx:-696px; --ty:-80px" src="media/logos/fib.svg" width="222" height="102" alt="">
-            <img class="fz__logo" style="--k:2; --kf:0; left:1362.7px; --tx:-1072.1px; --ty:-80px" src="media/logos/rototom.png" width="900" height="340" alt="">
+            <img class="fz__logo" style="--k:0; --kf:2; left:378px; top:247px; width:219.9px; height:147.8px; --tx:-338px; --ty:95px" src="media/logos/sansan.svg" width="119" height="80" alt="">
+            <img class="fz__logo" style="--k:1; --kf:1; left:879.3px; top:247px; width:322.4px; height:147.8px; --tx:-714px; --ty:95px" src="media/logos/fib.svg" width="222" height="102" alt="">
+            <img class="fz__logo" style="--k:2; --kf:0; left:1380.7px; top:256.7px; width:340px; height:128.4px; --tx:-1090.1px; --ty:88.4px" src="media/logos/rototom.png" width="900" height="340" alt="">
           </div>
         </div>
       </section>
 
       <!-- 13 · Festivals : los logos aparecen todos a la vez -->
-      <section class="slide slide--content slide--fest" id="s-festivals" data-section="5" data-alt="ville" data-continues="s-sorties" aria-label="Les festivals">
+      <section class="slide slide--content slide--fest" id="s-festivals" data-section="5" data-alt="ville" data-tone="dark" data-continues="s-sorties" aria-label="Les festivals">
         <div class="canvas">
+          <div class="fbg">
+            <img class="fbg__a" src="media/photos/festival-rototom-scene.jpg" width="1500" height="2000"
+                 alt="Devant la scène du Rototom Sunsplash, de nuit : la foule, des drapeaux et des banderoles « United for Peace »">
+            <img class="fbg__b" src="media/photos/festival-vue-aerienne.webp" width="1200" height="900"
+                 alt="Vue aérienne d'un festival de nuit : une foule immense devant la scène et ses grands écrans">
+          </div>
           <p class="kicker">5 · La fête</p>
           <h2 class="headline">La ville des festivals</h2>
           <ul class="fests">
-            <li class="fest">
+            <li class="fest" style="--w: 219.9px; --h: 147.8px">
               <img src="media/logos/sansan.svg" width="119" height="80" alt="SanSan Festival">
               <p class="fest__when">À Pâques</p>
               <p class="fest__what">le SanSan, pop et indie</p>
             </li>
-            <li class="fest">
+            <li class="fest" style="--w: 322.4px; --h: 147.8px">
               <img src="media/logos/fib.svg" width="222" height="102" alt="FIB, Festival Internacional de Benicàssim">
               <p class="fest__when">Mi-juillet</p>
               <p class="fest__what">le FIB, pop, rock et électro depuis 1995</p>
             </li>
-            <li class="fest">
+            <li class="fest" style="--w: 340px; --h: 128.4px">
               <img src="media/logos/rototom.png" width="900" height="340" alt="Rototom Sunsplash">
               <p class="fest__when">En août</p>
-              <p class="fest__what">le Rototom, le plus grand festival de reggae d'Europe</p>
+              <p class="fest__what">le Rototom, le plus grand festival de reggae du monde</p>
             </li>
           </ul>
-          <p class="fests__also">Et aussi&nbsp;: le Benicàssim Blues Festival, fin mai ou début juin.</p>
+          <div class="fests__also">
+            <img src="media/logos/arenalsound.png" width="800" height="122" alt="Arenal Sound">
+            <p>Et dans un village voisin, Burriana, on profite de l'un des meilleurs festivals de reggaeton.</p>
+          </div>
         </div>
       </section>
 
@@ -573,7 +582,7 @@
       <section class="slide slide--content slide--credits" id="s-credits" data-section="fin" data-alt="ville" aria-label="Crédits">
         <div class="canvas">
           <p class="kicker">Crédits</p>
-          <p class="credits-lead">Vols&nbsp;: Google Earth Studio (Data SIO, NOAA, U.S. Navy, Landsat / Copernicus, Airbus). Limites&nbsp;: IGN via geoBoundaries et OpenStreetMap. Plan des sorties&nbsp;: © les contributeurs d'OpenStreetMap (ODbL). Logos&nbsp;: SanSan Festival, FIB et Rototom Sunsplash. Photos&nbsp;: Wikimedia Commons&nbsp;; celles des bars et de trois restaurants sont des illustrations.</p>
+          <p class="credits-lead">Vols&nbsp;: Google Earth Studio (Data SIO, NOAA, U.S. Navy, Landsat / Copernicus, Airbus). Limites&nbsp;: IGN via geoBoundaries et OpenStreetMap. Plan des sorties&nbsp;: © les contributeurs d'OpenStreetMap (ODbL). Logos&nbsp;: SanSan Festival, FIB, Rototom Sunsplash et Arenal Sound. Photos&nbsp;: Wikimedia Commons&nbsp;; celles des bars et de trois restaurants sont des illustrations.</p>
           <ul class="credits-list">
               <li><span>Plage de Benicàssim (fin du vol)</span> photo fournie</li>
               <li><span>Plage de Benicàssim (couverture)</span> photo fournie</li>
@@ -583,6 +592,7 @@
               <li><span>Aquarama</span> photo fournie</li>
               <li><span>Ma journée parfaite (au jardin, avec mes amis)</span> photo fournie</li>
               <li><span>Côte d'Orpesa et Benicàssim</span> Millars · CC BY-SA 4.0</li>
+              <li><span>Les festivals (la scène du Rototom, une vue aérienne)</span> photos fournies</li>
               <li><span>Merci (la promenade, la plage au soir, la crique)</span> photos fournies</li>
               <li><span>Terraza Voramar</span> photo fournie</li>
               <li><span>Sports de mer (kayak, voile, planche à voile, kitesurf)</span> photos fournies</li>
@@ -650,7 +660,7 @@
 
   <script src="js/altitudes.js?v=20261120f"></script>
   <script src="js/borders.js?v=20261124h"></script>
-  <script src="js/notes.js?v=20261125-auto"></script>
+  <script src="js/notes.js?v=20261125-fest"></script>
   <script src="js/deck.js?v=20261125-auto"></script>
   <script src="js/fiesta.js?v=20261123a"></script>
   <script src="js/chrome.js?v=20261124h"></script>

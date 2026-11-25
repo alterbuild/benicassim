@@ -1342,16 +1342,17 @@ html.is-list .cats,
   z-index: 3;
   pointer-events: none;
 }
-/* misma caja que «.fest img» de la diapositiva de los festivales; el estado de partida es la copia a 1/4 sobre la tarjeta */
+/* misma caja que «.fest img» de la diapositiva de los festivales (cada logo con la proporción propia, 147,8 px de alto como máximo);
+   el estado de partida es la copia a 0,3214 sobre la tarjeta, con el tamaño de su casilla (47,5 px de alto) */
 .fz__logo {
   position: absolute;
-  top: 422px;
-  width: 437.3px;
-  height: 190px;
+  top: 247px;
+  width: 219.9px;
+  height: 147.8px;
   object-fit: contain;
   object-position: 0 50%;
   transform-origin: 0 0;
-  transform: translate(var(--tx), var(--ty)) scale(0.25);
+  transform: translate(var(--tx), var(--ty)) scale(0.3214);
   opacity: 0;
   transition: opacity 120ms ease, transform 120ms ease;
 }
@@ -1510,35 +1511,98 @@ html.is-list .cats,
   color: var(--p-inv-ink);
 }
 
+/* festivales: dos fotos propias a sangre (la escena del Rototom, vertical, y una vista aérea nocturna). Los dos cielos son
+   negros: ahí arriba va todo el texto, en blanco, y la mitad de abajo (escenario y multitud) queda a la vista.
+   Solo los logos llevan una placa del color del papel, porque no se leen sobre negro: al llegar desde el plano
+   (corte duro) la página sigue siendo crema y las fotos se funden detrás, sin saltos. */
+.fbg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  background: var(--night);
+}
+.fbg img {
+  flex: none;
+  height: 1080px;
+  object-fit: cover;
+}
+.fbg__a { width: 600px; object-position: 50% 50%; }
+.fbg__b {
+  width: 1320px;
+  object-position: 72% 50%;
+  border-left: 3px solid var(--night);
+}
+/* velo arriba (el texto sobre el borde del cielo), abajo (la línea «Et aussi» sobre la multitud) y a la izquierda
+   (la barra de progreso sobre las luces de la escena) */
+.fbg::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgb(8 8 6 / 0.7) 0, rgb(8 8 6 / 0.55) 420px, rgb(8 8 6 / 0) 660px),
+    linear-gradient(0deg, rgb(8 8 6 / 0.78) 0, rgb(8 8 6 / 0.46) 110px, rgb(8 8 6 / 0) 240px),
+    linear-gradient(90deg, rgb(8 8 6 / 0.6) 0, rgb(8 8 6 / 0.32) 240px, rgb(8 8 6 / 0) 430px);
+}
+/* sombra en dos capas (una cerrada para el trazo, otra amplia para separar del fondo) en todo el texto sobre las fotos */
+.slide--fest :is(.kicker, .headline, .fest__when, .fest__what, .fests__also) {
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.75), 0 2px 10px rgb(0 0 0 / 0.7), 0 4px 34px rgb(0 0 0 / 0.65);
+}
+.slide--fest .kicker { color: #fff; opacity: 1; }
+.slide--fest .headline { color: #fff; }
+.slide--fest .fests__also { color: #fff; }
+.slide--fest .fest { position: relative; }
+.slide--fest .fest::before {
+  content: "";
+  position: absolute;
+  top: 28px;
+  left: 0;
+  width: calc(var(--w) + 36px);
+  height: 181.8px;
+  background: var(--p-bg);
+  border-radius: 4px;
+}
+.slide--fest .fest__when { color: #fff; }
+.slide--fest .fest__what { color: rgb(255 255 255 / 0.94); }
+
 /* festivales: los tres logos llegan a la vez */
 .slide--fest .kicker {
   position: absolute;
   left: var(--gutter);
-  top: 160px;
+  top: 52px;
 }
 .slide--fest .headline {
   position: absolute;
   left: var(--gutter);
-  top: 198px;
+  top: 88px;
   margin: 0;
 }
 .fests {
   position: absolute;
   left: var(--gutter);
   right: 120px;
-  top: 380px;
+  top: 200px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   column-gap: 64px;
 }
 .fest {
-  padding-top: 40px;
-  border-top: 2px solid rgb(56 69 15 / 0.22);
+  padding-top: 28px;
+  border-top: 2px solid rgb(255 255 255 / 0.3);
 }
+/* cada logo con la proporción propia dentro de una placa de 181,8 px de alto (--w y --h en el <li>) */
 .fest img {
+  position: relative;
   display: block;
-  width: 100%;
-  height: 190px;
+  width: var(--w);
+  height: var(--h);
+  margin: calc(17px + (147.8px - var(--h)) / 2) 0 calc(35px + (147.8px - var(--h)) / 2) 18px;
   object-fit: contain;
   object-position: 0 50%;
   opacity: 0;
@@ -1552,8 +1616,8 @@ html.is-list .cats,
   transition: opacity 360ms var(--ease-out) 120ms, transform 420ms var(--ease-out) 120ms;
 }
 .fest__when {
-  margin-top: 40px;
-  font: 400 50px/1.05 var(--font-display);
+  margin-top: 0;
+  font: 400 48px/1.05 var(--font-display);
   letter-spacing: -0.01em;
 }
 .fest__what {
@@ -1561,13 +1625,25 @@ html.is-list .cats,
   font: 400 26px/1.35 var(--font-text);
   color: var(--p-muted);
 }
+/* abajo a la izquierda: el logo de Arenal Sound (blanco, se lee directo sobre la foto) y una frase */
 .fests__also {
   position: absolute;
   left: var(--gutter);
-  bottom: 110px;
-  font: 400 26px/1.3 var(--font-text);
+  bottom: 96px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  font: 400 30px/1.3 var(--font-text);
   color: var(--p-muted);
 }
+.fests__also img {
+  flex: none;
+  display: block;
+  width: 400px;
+  height: auto;
+  filter: drop-shadow(0 2px 8px rgb(0 0 0 / 0.55));
+}
+.fests__also p { max-width: 640px; }
 /* viene del zoom del plano (deck.js pone .is-continued): los logos ya están en su sitio y no se animan,
    el rótulo, el titular y los textos llegan detrás, de izquierda a derecha */
 @keyframes enter-line { from { border-top-color: transparent; } }
@@ -1578,17 +1654,20 @@ html.is-list .cats,
   transform: none;
   transition: none;
 }
-html:not(.is-list) .slide--fest.is-continued.is-active .kicker { animation: enter-rise 560ms var(--ease-out) 60ms backwards; }
-html:not(.is-list) .slide--fest.is-continued.is-active .headline { animation: enter-rise 640ms var(--ease-out) 130ms backwards; }
+/* las fotos se funden desde el crema del plano (480 ms); el texto blanco llega cuando ya hay fondo oscuro */
+@keyframes fbg-in { from { opacity: 0; } }
+html:not(.is-list) .slide--fest.is-continued.is-active .fbg { animation: fbg-in 520ms ease-out backwards; }
+html:not(.is-list) .slide--fest.is-continued.is-active .kicker { animation: enter-rise 560ms var(--ease-out) 360ms backwards; }
+html:not(.is-list) .slide--fest.is-continued.is-active .headline { animation: enter-rise 640ms var(--ease-out) 430ms backwards; }
 html:not(.is-list) .slide--fest.is-continued.is-active .fest {
   animation: enter-line 700ms ease backwards;
-  animation-delay: calc(220ms + var(--k, 0ms));
+  animation-delay: calc(400ms + var(--k, 0ms));
 }
 html:not(.is-list) .slide--fest.is-continued.is-active :is(.fest__when, .fest__what) {
   animation: enter-rise 560ms var(--ease-out) backwards;
-  animation-delay: calc(320ms + var(--k, 0ms));
+  animation-delay: calc(480ms + var(--k, 0ms));
 }
-html:not(.is-list) .slide--fest.is-continued.is-active .fests__also { animation: enter-rise 560ms var(--ease-out) 760ms backwards; }
+html:not(.is-list) .slide--fest.is-continued.is-active .fests__also { animation: enter-rise 560ms var(--ease-out) 820ms backwards; }
 
 /* deportes de mar: las cinco fotos del usuario a sangre, en láminas verticales de izquierda a derecha
    (kayak y paddle, kitesurf, vela y windsurf, windsurf en la arena). Los cielos de las fotos quedan arriba:
